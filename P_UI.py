@@ -1,10 +1,10 @@
 import bpy
-
+import os
+import bpy.utils.previews
 from . import P_View3D_Operators
 from . import P_UvEditor_Operators
 from . import P_Funtion
 from bpy.types import Menu, Operator, Panel, AddonPreferences, PropertyGroup
-
 class VIEW3D_Panda(bpy.types.Panel):
     
     bl_idname = "VIEW3D_PT_tool"
@@ -12,15 +12,16 @@ class VIEW3D_Panda(bpy.types.Panel):
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'UI'
     bl_category = '🐼'
+    bl_icon = "custom_icon_1"
     # bl_options = {"DEFAULT_CLOSED"}
 
     def draw(self, context):
         scene = context.scene
         layout = self.layout
+        global custom_icons
+        self.layout.label(text="Blender SE", icon_value=custom_icons["custom_icon_1"].icon_id)
         box = layout.box()
         row = box.row()
-        
-
         row.operator(P_View3D_Operators.Speed_process.bl_idname, text="Set Orient", icon="ORIENTATION_GLOBAL").action="@_Get_Orientation"
         row = box.row()
         row.operator(P_View3D_Operators.Empty_area.bl_idname, text="Empty", icon="EMPTY_AXIS").action="@_Add_Empty"        
@@ -59,13 +60,14 @@ class VIEW3D_Panda(bpy.types.Panel):
         row = box.row()
         # row.operator(P_View3D_Operators.Box_Builder.bl_idname, text="UBX").action="@_Create_UBX"
         # row = layout.row()
+
 class View3D_Object(bpy.types.Panel):
     bl_idname = "ObjectReadyMade_PT_panel"
     bl_label = "🐼 Object"
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'UI'
     bl_category = '🐼'
-    bl_options = {"DEFAULT_CLOSED"}
+    # bl_options = {"DEFAULT_CLOSED"}
 
 
     def draw(self, context):
@@ -99,10 +101,17 @@ class UVEdit_Panda(bpy.types.Panel):
         row.prop(context.scene, "uv_offset", text="Offset new pack")
         row = layout.row()
 
+custom_icons = None
 
 classes = [VIEW3D_Panda,UVEdit_Panda,View3D_Object]
 
 def register():
+    global custom_icons
+    custom_icons = bpy.utils.previews.new()
+    addon_path =  os.path.dirname(__file__)
+    icons_dir = os.path.join(addon_path, "icons")
+
+    custom_icons.load("custom_icon_1", os.path.join(icons_dir, "icon1.png"), 'IMAGE')
     
     for cls in classes:
         bpy.utils.register_class(cls)
@@ -110,7 +119,18 @@ def register():
     
 
 def unregister():
-    
+    global custom_icons
+    bpy.utils.previews.remove(custom_icons)
+
     for cls in classes:
         bpy.utils.unregister_class(cls)
     
+if __name__ == "__main__":
+    # Test run
+    # edit to folder containing your icons folder
+    # __file__ = "/home/user/Desktop/"
+    # The path of this text (if saved)
+    #__file__ = bpy.context.space_data.text.filepath
+    # The path of this blend file (if saved)
+    #__file__ = bpy.data.filepath
+    register()

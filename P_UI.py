@@ -1,25 +1,28 @@
 import bpy
 import os
-import bpy.utils.previews
 from . import P_View3D_Operators
 from . import P_UvEditor_Operators
-from . import P_Funtion
+from . import P_icons
 from bpy.types import Menu, Operator, Panel, AddonPreferences, PropertyGroup
-class VIEW3D_Panda(bpy.types.Panel):
-    
-    bl_idname = "VIEW3D_PT_tool"
-    bl_label = "🐼 Quicker"
+
+class VIEW3D_PT_Panda(bpy.types.Panel):  
+    # bl_idname = "VIEW3D_PT_tool"
+    bl_label = ""
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'UI'
     bl_category = '🐼'
-    bl_icon = "custom_icon_1"
     # bl_options = {"DEFAULT_CLOSED"}
+    def draw_header(self, context):
+        
+        layout = self.layout
+        row = layout.row()
+        layout.label(text="Tools", icon_value=P_icons.custom_icons["custom_icon_1"].icon_id)
 
     def draw(self, context):
         scene = context.scene
         layout = self.layout
-        global custom_icons
-        self.layout.label(text="Blender SE", icon_value=custom_icons["custom_icon_1"].icon_id)
+       
+       
         box = layout.box()
         row = box.row()
         row.operator(P_View3D_Operators.Speed_process.bl_idname, text="Set Orient", icon="ORIENTATION_GLOBAL").action="@_Get_Orientation"
@@ -61,8 +64,8 @@ class VIEW3D_Panda(bpy.types.Panel):
         # row.operator(P_View3D_Operators.Box_Builder.bl_idname, text="UBX").action="@_Create_UBX"
         # row = layout.row()
 
-class View3D_Object(bpy.types.Panel):
-    bl_idname = "ObjectReadyMade_PT_panel"
+class VIEW3D_PT_Object(bpy.types.Panel):
+    # bl_idname = "ObjectReadyMade_PT_panel"
     bl_label = "🐼 Object"
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'UI'
@@ -77,16 +80,19 @@ class View3D_Object(bpy.types.Panel):
         row.operator(P_View3D_Operators.Ready_made.bl_idname, text="Hexagon").action="@_Hexagon"
         row = layout.row()
 
-class UVEdit_Panda(bpy.types.Panel):
-    bl_idname = "UV_EDIT_PT_my_panel"
-    bl_label = "🐼 UV Editor"
+class UV_PT_Panda(bpy.types.Panel):
+    # bl_idname = "UV_EDIT_PT_my_panel"
+    bl_label = ""
     bl_space_type = 'IMAGE_EDITOR'
     bl_region_type = 'UI'
     bl_category = '🐼'
-
+    def draw_header(self, context): 
+        
+        self.layout.label(text="UV Editor", icon_value=P_icons.custom_icons["custom_icon_1"].icon_id)
     def draw(self, context):
         scene = context.scene
         layout = self.layout
+        
         row = layout.row()
         row.operator(P_UvEditor_Operators.UV_Editor.bl_idname, text="Smart Unwrap").action="@_SmartUnwrap"  
         row = layout.row()
@@ -101,36 +107,17 @@ class UVEdit_Panda(bpy.types.Panel):
         row.prop(context.scene, "uv_offset", text="Offset new pack")
         row = layout.row()
 
-custom_icons = None
 
-classes = [VIEW3D_Panda,UVEdit_Panda,View3D_Object]
+classes = [VIEW3D_PT_Panda,VIEW3D_PT_Object,UV_PT_Panda]
 
 def register():
-    global custom_icons
-    custom_icons = bpy.utils.previews.new()
-    addon_path =  os.path.dirname(__file__)
-    icons_dir = os.path.join(addon_path, "icons")
-
-    custom_icons.load("custom_icon_1", os.path.join(icons_dir, "icon1.png"), 'IMAGE')
     
     for cls in classes:
         bpy.utils.register_class(cls)
-    
-    
+      
 
 def unregister():
-    global custom_icons
-    bpy.utils.previews.remove(custom_icons)
-
+  
     for cls in classes:
         bpy.utils.unregister_class(cls)
     
-if __name__ == "__main__":
-    # Test run
-    # edit to folder containing your icons folder
-    # __file__ = "/home/user/Desktop/"
-    # The path of this text (if saved)
-    #__file__ = bpy.context.space_data.text.filepath
-    # The path of this blend file (if saved)
-    #__file__ = bpy.data.filepath
-    register()

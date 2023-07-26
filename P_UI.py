@@ -61,8 +61,8 @@ class VIEW3D_PT_Panda(bpy.types.Panel):
         row.operator(P_View3D_Operators.Box_Builder.bl_idname, text="UBX").action="@_Create_UBX"
         row.prop(context.scene, "remove_reference", text="", icon="TRASH")
         row = box.row()
-        # row.operator(P_View3D_Operators.Box_Builder.bl_idname, text="UBX").action="@_Create_UBX"
-        # row = layout.row()
+        row.operator(P_View3D_Operators.Box_Builder.bl_idname, text="FaceToBox").action="@_FaceToBox"
+        row = layout.row()
 
 class VIEW3D_PT_Object(bpy.types.Panel):
     # bl_idname = "ObjectReadyMade_PT_panel"

@@ -1,6 +1,6 @@
 import bpy
 import math
-import mathutils
+import bmesh
 from bpy.types import Scene
 from bpy.types import ( PropertyGroup, )
 from bpy.props import (PointerProperty, StringProperty)
@@ -277,6 +277,8 @@ class Box_Builder(bpy.types.Operator):
 
         if self.action == "@_Create_UBX": 
             self.Create_UBX(self, context)
+        elif self.action == "@_FaceToBox": 
+            self.FaceToBox(self, context)
         else:
             print("Empty area has no action")
 
@@ -360,6 +362,34 @@ class Box_Builder(bpy.types.Operator):
         print(" Created UBX") 
         
         return {'FINISHED'}
+    
+    @staticmethod
+    def FaceToBox(self, context):
+
+        try:
+            
+            P_Funtion.SetOriantface()
+            bpy.ops.object.mode_set(mode='OBJECT')
+            P_Funtion.TransFromToOrient_Origin()
+            bpy.ops.object.mode_set(mode='EDIT')
+            P_Funtion.find_opposite_face()
+            P_Funtion.GetFaceSeperated()
+            
+            selected_objects = bpy.context.selected_objects
+            object_names = []
+            for obj in selected_objects:
+                object_names.append(obj.name)
+            
+            P_Funtion.BoundingToBox()
+            
+            for obj_name in object_names:
+                    obj = bpy.data.objects.get(obj_name)
+                    if obj:
+                        bpy.data.objects.remove(obj, do_unlink=True)
+        except:
+            self.report({'ERROR'}, "Pls,Select a face.")
+        return {'FINISHED'}
+
 
 class Ready_made(bpy.types.Operator):
     bl_idname = "object.ready_made"

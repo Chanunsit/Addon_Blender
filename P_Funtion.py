@@ -1,4 +1,5 @@
 import bpy
+import bmesh
 import mathutils
 
 def GetBiggestFace():
@@ -35,7 +36,7 @@ def GetFaceSeperated():
     
     obj = bpy.context.active_object
 
-    bpy.ops.mesh.duplicate_move(MESH_OT_duplicate={"mode":1})
+    #   bpy.ops.mesh.duplicate_move(MESH_OT_duplicate={"mode":1})
     #bpy.ops.object.mode_set(mode='EDIT')
     bpy.ops.mesh.separate(type='SELECTED')
     bpy.ops.object.mode_set(mode='OBJECT')
@@ -116,5 +117,65 @@ def SetOriantface():
     except:
         bpy.ops.transform.create_orientation(name='Face', use=True)
 
+def find_opposite_face():
+    if bpy.context.mode != 'EDIT_MESH':
+        print("Please enter Edit Mode with a mesh object selected.")
+        return
 
+    obj = bpy.context.edit_object
+    me = obj.data
+    bm = bmesh.from_edit_mesh(me)
+
+    selected_faces = [f for f in bm.faces if f.select]
+
+    if len(selected_faces) != 1:
+        print("Please select a single face.")
+        return
+
+    selected_face = selected_faces[0]
+
+    # Calculate the normal vector of the selected face
+    selected_normal = selected_face.normal
+
+    # Find the closest opposite face with the opposite normal
+    closest_opposite_face = None
+    min_distance = float('inf')
+
+    for face in bm.faces:
+        if face.normal.dot(selected_normal) < -0.9999:
+            distance = (face.calc_center_median() - selected_face.calc_center_median()).length
+            if distance < min_distance:
+                closest_opposite_face = face
+                min_distance = distance
+
+    if closest_opposite_face:
+        # Deselect all faces
+        for face in bm.faces:
+            face.select = False
+
+        # closest_opposite_face.select = True  # Select the closest opposite face
+        selected_face.select = True
+        bpy.ops.mesh.duplicate_move(MESH_OT_duplicate={"mode":1})
+
+        # Update the mesh to reflect the selection change
+        bmesh.update_edit_mesh(me)
+
+        # Extrude the selected face to the closest opposite face
+        bpy.ops.mesh.extrude_region_move(TRANSFORM_OT_translate={"value": (closest_opposite_face.calc_center_median() - selected_face.calc_center_median())})
+        bpy.ops.mesh.select_linked() # select the element
+
+        print("Closest opposite face found and selected.")
+    else:
+        print("No opposite face found.")
+
+def TransFromToOrient_Origin():
+    bpy.context.scene.tool_settings.use_transform_data_origin = True
+    bpy.ops.transform.transform(mode='ALIGN', orient_type='Face')
+    bpy.context.scene.tool_settings.use_transform_data_origin = False  
     
+def ObjNameToList():
+    selected_objects = bpy.context.selected_objects
+    # Collect object name to remove in the end 
+    object_names = []
+    for obj in selected_objects:
+        object_names.append(obj.name)

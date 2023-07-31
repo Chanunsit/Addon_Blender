@@ -13,7 +13,8 @@ option_tap = {
     "B": {"icon": "UV_FACESEL", "label": "UV edit"},
     "C": {"icon": "FILE_3D", "label": "Box builder"},
     "D": {"icon": "SHADERFX", "label": "Object"},
-    "E": {"icon": "OUTLINER_OB_VOLUME", "label": "Internet"}
+    "E": {"icon": "OUTLINER_OB_VOLUME", "label": "Internet"},
+    # "F": {"icon": "OUTLINER_OB_VOLUME", "label": "open appication on youre pc"} NEW!
 }
 
 class VIEW3D_PT_Panda(bpy.types.Panel):  

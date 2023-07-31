@@ -3,18 +3,21 @@ bl_info = {
     "author" : "Gramma",
     "description" : "",
     "blender" : (3, 5, 0),
-    "version" : (0, 0, 6),
+    "version" : (0, 0, 7),
     "location" : "",
     "warning" : "",
     "category" : "3D View"
 }
 from . import P_View3D_Operators
 from . import P_UvEditor_Operators
+from . import P_Website_Operators
+from . import P_Boolean_Operators
 from . import P_UI
 from . import P_Updater
 from . import P_icons
 
-classes=[P_icons ,P_View3D_Operators, P_UvEditor_Operators, P_UI, P_Updater]
+
+classes=[P_icons ,P_View3D_Operators, P_UvEditor_Operators, P_UI, P_Updater,P_Website_Operators,P_Boolean_Operators]
 def register():
     for cls in classes:
         cls.register()

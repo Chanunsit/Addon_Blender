@@ -1,7 +1,10 @@
 import bpy
 import bmesh
 import mathutils
-
+from . import P_icons
+def report_message(message, type='INFO'):
+    bpy.ops.wm.popup_menu(message=message, title="Message", icon=type,icon_value=P_icons.custom_icons["custom_icon_1"].icon_id)
+    # bpy.ops.wm.popup_menu(message=message, title="Message", icon=type, icon_value=bpy.data.images.load(icon_path).icon_id)
 def GetBiggestFace():
     # Get the active object
     obj = bpy.context.active_object
@@ -130,7 +133,8 @@ def find_opposite_face():
 
     if len(selected_faces) != 1:
         print("Please select a single face.")
-        return
+        report_message("One face only.", type='INFO')
+        return {'FINISHED'}
 
     selected_face = selected_faces[0]
 
@@ -153,20 +157,20 @@ def find_opposite_face():
         for face in bm.faces:
             face.select = False
 
-        # closest_opposite_face.select = True  # Select the closest opposite face
+        closest_opposite_face.select = True  # Select the closest opposite face
         selected_face.select = True
-        bpy.ops.mesh.duplicate_move(MESH_OT_duplicate={"mode":1})
-
         # Update the mesh to reflect the selection change
         bmesh.update_edit_mesh(me)
 
         # Extrude the selected face to the closest opposite face
-        bpy.ops.mesh.extrude_region_move(TRANSFORM_OT_translate={"value": (closest_opposite_face.calc_center_median() - selected_face.calc_center_median())})
-        bpy.ops.mesh.select_linked() # select the element
+        # bpy.ops.mesh.extrude_region_move(TRANSFORM_OT_translate={"value": (closest_opposite_face.calc_center_median() - selected_face.calc_center_median())})
+        # bpy.ops.mesh.select_linked() # select the element
 
         print("Closest opposite face found and selected.")
     else:
         print("No opposite face found.")
+        report_message("I'm not found opposite face", icon_value=P_icons.custom_icons["custom_icon_1"].icon_id ,type='INFO')
+        # report_message("Please, select a face.", icon_path, type='INFO')
 
 def TransFromToOrient_Origin():
     bpy.context.scene.tool_settings.use_transform_data_origin = True
@@ -179,3 +183,22 @@ def ObjNameToList():
     object_names = []
     for obj in selected_objects:
         object_names.append(obj.name)
+
+def Assign_Material():
+    #  Get the active object
+    
+    obj = bpy.context.active_object
+    material_name = "Color_Collider"
+    material = bpy.data.materials.get(material_name)
+
+    # If material doesn't exist, create a new material
+    if material is None:
+        material = bpy.data.materials.new(name=material_name)
+        
+    material.diffuse_color = (0.385147, 0.8, 0.31554, 1)
+
+    # Assign the material to the object
+    if obj.data.materials:
+        obj.data.materials[0] = material
+    else:
+        obj.data.materials.append(material)

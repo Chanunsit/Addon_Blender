@@ -1,13 +1,42 @@
 import bpy
 import math
-import bmesh
 from bpy.types import Scene
 from bpy.types import ( PropertyGroup, )
 from bpy.props import (PointerProperty, StringProperty)
 from . import P_Funtion
+
    
 class MyProperties(PropertyGroup):
     saveList : StringProperty(name="Save List")
+
+class ExampleClass(bpy.types.Operator):
+    bl_idname = "object.name"
+    bl_label = "name"
+    bl_icon = "CONSOLE"
+    bl_space_type = "VIEW_3D" 
+    bl_region_type = "UI" 
+    bl_description = "Empty & Socket: to center of active "
+    bl_options = {"REGISTER", "UNDO"}
+    action : StringProperty(name="action")
+
+    def execute(self, context):
+
+        if self.action == "@_name":
+            self.Funtion(self, context)
+
+        else:
+            print("Descriptiont")
+
+        return {'FINISHED'}
+    
+    @staticmethod
+    def Add_Empty(self, context):
+        scene = context.scene
+      
+        # Add Funtion
+
+        print("Added_Socket")
+        return {'FINISHED'}
 
 class Empty_area(bpy.types.Operator):
     bl_idname = "object.empty_area"
@@ -24,8 +53,6 @@ class Empty_area(bpy.types.Operator):
         if self.action == "@_Add_Empty":
             self.Add_Empty(self, context)
 
-        elif self.action == "@_Setup_Socket": 
-            self.Setup_Socket(self, context)
         else:
             print("Empty area has no action")
 
@@ -35,44 +62,28 @@ class Empty_area(bpy.types.Operator):
     def Add_Empty(self, context):
         scene = context.scene
         try:
-            bpy.ops.view3d.snap_cursor_to_selected()
-            bpy.ops.object.empty_add(type='PLAIN_AXES', align='WORLD', location=(0, 0, 0), scale=(1, 1, 1))
-            bpy.context.object.name = "COM_"
-            bpy.ops.view3d.snap_selected_to_cursor(use_offset=False)
-            bpy.ops.view3d.snap_cursor_to_center()  
+            if bpy.context.active_object.mode == 'OBJECT': 
+                bpy.ops.object.origin_set(type='ORIGIN_GEOMETRY', center='MEDIAN')
+                bpy.ops.view3d.snap_cursor_to_selected()
+                bpy.ops.object.empty_add(type='PLAIN_AXES', align='WORLD', location=(0, 0, 0), scale=(1, 1, 1))
+                bpy.context.object.name = "COM_"
+                bpy.ops.view3d.snap_selected_to_cursor(use_offset=False)
+                bpy.ops.view3d.snap_cursor_to_center() 
+                 
+            elif bpy.context.active_object.mode == 'EDIT': 
+                bpy.ops.view3d.snap_cursor_to_selected()
+                P_Funtion.SetOriantface()
+                bpy.ops.view3d.snap_cursor_to_selected()
+                bpy.ops.object.editmode_toggle()
+                bpy.ops.object.empty_add(type='ARROWS', align='WORLD', location=(0, 0, 0), scale=(1, 1, 1))
+                bpy.context.object.name = "Socket_"
+                bpy.ops.view3d.snap_selected_to_cursor(use_offset=False)    
+                bpy.ops.transform.transform(mode='ALIGN', orient_type='Face')
+                bpy.ops.view3d.snap_cursor_to_center()   
         except:
             self.report({'ERROR'}, "For object mode only.")
 
         print("Add_Empty")
-        return {'FINISHED'}
-    
-    @staticmethod
-    def Setup_Socket(self, context):
-        scene = context.scene
-        context = bpy.context 
-            
-        if bpy.context.active_object.mode == 'OBJECT': 
-            bpy.ops.object.transform_apply(location=True, rotation=True, scale=True)
-            P_Funtion.GetBiggestFace()
-            bpy.ops.view3d.snap_cursor_to_selected()
-
-            
-        try:
-            bpy.context.scene.transform_orientation_slots[0].type
-            bpy.ops.transform.delete_orientation()
-            bpy.ops.transform.create_orientation(name='Face', use=True)
-        except:
-            bpy.ops.transform.create_orientation(name='Face', use=True)
-
-        bpy.ops.view3d.snap_cursor_to_selected()
-        bpy.ops.object.editmode_toggle()
-        bpy.ops.object.empty_add(type='ARROWS', align='WORLD', location=(0, 0, 0), scale=(1, 1, 1))
-        bpy.context.object.name = "Socket_"
-        bpy.ops.view3d.snap_selected_to_cursor(use_offset=False)    
-        bpy.ops.transform.transform(mode='ALIGN', orient_type='Face')
-        bpy.ops.view3d.snap_cursor_to_center()   
-
-        print("Added_Socket")
         return {'FINISHED'}
 
 class Speed_process(bpy.types.Operator):
@@ -100,11 +111,22 @@ class Speed_process(bpy.types.Operator):
         elif self.action == "@_Get_Orientation": 
             self.Get_Orientation(self, context) 
         
+        elif self.action == "@_AppAllTrasfrom": 
+            self.Appy_all_trasfrom(self, context)
+        
         else:
              print("worng")
 
         return {'FINISHED'}
     
+    @staticmethod
+    def Appy_all_trasfrom(self, context):
+
+        bpy.ops.object.transform_apply(location=True, rotation=True, scale=True)
+
+
+        print("Appy all trasfrom")
+        return {'FINISHED'}
     @staticmethod
     def X_axis(self, context):
         scene = context.scene
@@ -174,8 +196,7 @@ class Uv(bpy.types.Operator):
     action : StringProperty(name="action")
 
     def execute(self, context):
-        
-       
+    
         if self.action == "@_UV_quick":
             self.Quick_UV(self, context)
         elif self.action == "@_RotateUV90":
@@ -186,20 +207,41 @@ class Uv(bpy.types.Operator):
             self.IslandToSeam(self, context)
         elif self.action == "@_OpenUVEditWindow":
             self.OpenUVEditWindow(self, context)
+        elif self.action == "@_MakeSeam":
+            self.MakeSeam(self, context)
+        elif self.action == "@_ClearSeam":
+            self.ClearSeam(self, context)
         
         else:
             print("UV_quick has no action")
 
         
         return {'FINISHED'}
+    
+    @staticmethod
+    def MakeSeam(self, context):
+        try:
+           bpy.ops.mesh.mark_seam(clear=False)
+        except:
+            self.report({'ERROR'}, "Pls,Do in edit mode")
         
+        return {'FINISHED'}
+    @staticmethod
+    def ClearSeam(self, context):
+        try:
+            bpy.ops.mesh.mark_seam(clear=True)
+        except:
+            self.report({'ERROR'}, "Pls,Do in edit mode")
+        return {'FINISHED'}    
     
     @staticmethod
     def ShapToSeam(self, context):
-        bpy.ops.mesh.edges_select_sharp()
-        bpy.ops.mesh.mark_seam(clear=False)
-
-        return {'FINISHED'}
+        try:
+            bpy.ops.mesh.edges_select_sharp()
+            bpy.ops.mesh.mark_seam(clear=False)
+        except:
+            self.report({'ERROR'}, "Pls,Do in edit mode")
+        return {'FINISHED'} 
     
     @staticmethod
     def IslandToSeam(self, context):
@@ -275,117 +317,77 @@ class Box_Builder(bpy.types.Operator):
 
     def execute(self, context):
 
-        if self.action == "@_Create_UBX": 
-            self.Create_UBX(self, context)
-        elif self.action == "@_FaceToBox": 
-            self.FaceToBox(self, context)
+        if self.action == "@_MakeToBox": 
+            self.MakeToBox(self, context)
+        elif self.action == "@_Opposite_Face": 
+            self.Opposite_Face(self, context)
         else:
             print("Empty area has no action")
 
         return {'FINISHED'}
     
     @staticmethod
-    def Create_UBX(self, context):
-        #  loop to run funtion to object one by one 
-        selected_objects = bpy.context.selected_objects
-        # Collect object name to remove in the end 
-        object_names = []
-        for obj in selected_objects:
-            object_names.append(obj.name)
-
-        bpy.ops.object.select_all(action='DESELECT') 
+    def MakeToBox(self, context):
         
-        for obj in selected_objects: 
-            obj.select_set(True)
-            bpy.context.view_layer.objects.active = obj   
-            # Find and select the biggest  face
-            if obj.type != 'MESH':
-                continue
-            # Get the face with the maximum area
-            max_area = 0
-            max_face_index = None
+        if bpy.context.active_object.mode == 'OBJECT':
+            #  loop to run funtion to object one by one 
+            selected_objects = bpy.context.selected_objects
+            # Collect object name to remove in the end 
+            object_names = []
+            for obj in selected_objects:
+                object_names.append(obj.name)
 
-            for face_index, face in enumerate(obj.data.polygons):
-                area = face.area
-                if area > max_area:
-                    max_area = area
-                    max_face_index = face_index
-
-            bpy.ops.object.mode_set(mode='EDIT')
-            bpy.ops.mesh.select_all(action='DESELECT')
-            bpy.ops.object.mode_set(mode='OBJECT')
+            bpy.ops.object.select_all(action='DESELECT') 
             
-            # Select the biggest face
-            if max_face_index is not None:
-                obj.data.polygons[max_face_index].select = True
-                bpy.ops.object.mode_set(mode='EDIT')  
+            for obj in selected_objects: 
+                obj.select_set(True)
+                bpy.context.view_layer.objects.active = obj   
+                P_Funtion.GetBiggestFace() 
                 P_Funtion.SetOriantface() 
-            #_________________________________________________________________________ 
-            # Turn on setting transform origin and align to origin
                 bpy.ops.object.mode_set(mode='OBJECT')
                 bpy.ops.object.origin_set(type='ORIGIN_GEOMETRY', center='MEDIAN')
-                bpy.context.scene.tool_settings.use_transform_data_origin = True
-                bpy.ops.transform.transform(mode='ALIGN', orient_type='Face')
-                bpy.context.scene.tool_settings.use_transform_data_origin = False        
-                #_________________________________________________________________________
-            P_Funtion.BoundingToBox()
-            # set name new box after BoundingToBox
-            bpy.context.object.name = "UBX_"
-              # Assign material named Color_Collider
-            #  Get the active object
-            obj = bpy.context.active_object
-            material_name = "Color_Collider"
-            material = bpy.data.materials.get(material_name)
+                P_Funtion.TransFromToOrient_Origin()
+                P_Funtion.BoundingToBox()
+                bpy.context.object.name = "UBX_"
+                P_Funtion.Assign_Material()
+                P_Funtion.MoveObjectToCollection()
+                obj.select_set(False)
 
-            # If material doesn't exist, create a new material
-            if material is None:
-                material = bpy.data.materials.new(name=material_name)
-               
-            material.diffuse_color = (0.385147, 0.8, 0.31554, 1)
+                # delete object referent if checck box = True
+            if context.scene.remove_reference:  
+                for obj_name in object_names:
+                    obj = bpy.data.objects.get(obj_name)
+                    if obj:
+                        bpy.data.objects.remove(obj, do_unlink=True)
+            print(" Created UBX") 
 
-            # Assign the material to the object
-            if obj.data.materials:
-                obj.data.materials[0] = material
-            else:
-                obj.data.materials.append(material)
-                # _________________________________________________________________________ 
-            P_Funtion.MoveObjectToCollection()
-            obj.select_set(False)
-
-            # delete object referent if checck box = True
-        if context.scene.remove_reference:  
-            for obj_name in object_names:
-                obj = bpy.data.objects.get(obj_name)
-                if obj:
-                    bpy.data.objects.remove(obj, do_unlink=True)
-        
-        print(" Created UBX") 
-        
-        return {'FINISHED'}
-    
-    @staticmethod
-    def FaceToBox(self, context):
-
-        try:
+        if bpy.context.active_object.mode == 'EDIT':
             
-            P_Funtion.SetOriantface()
-            bpy.ops.object.mode_set(mode='OBJECT')
-            P_Funtion.TransFromToOrient_Origin()
-            bpy.ops.object.mode_set(mode='EDIT')
-            P_Funtion.find_opposite_face()
+            bpy.ops.mesh.duplicate_move(MESH_OT_duplicate={"mode":1})
             P_Funtion.GetFaceSeperated()
-            
+            bpy.ops.object.origin_set(type='ORIGIN_GEOMETRY', center='MEDIAN')
             selected_objects = bpy.context.selected_objects
             object_names = []
             for obj in selected_objects:
                 object_names.append(obj.name)
-            
+            P_Funtion.GetBiggestFace()
+            P_Funtion.SetOriantface()
+            bpy.ops.object.mode_set(mode='OBJECT') 
+            P_Funtion.TransFromToOrient_Origin()
             P_Funtion.BoundingToBox()
-            
+            P_Funtion.Assign_Material()
+            P_Funtion.MoveObjectToCollection()
+            bpy.context.object.name = "UBX_"
             for obj_name in object_names:
-                    obj = bpy.data.objects.get(obj_name)
-                    if obj:
-                        bpy.data.objects.remove(obj, do_unlink=True)
+                obj = bpy.data.objects.get(obj_name)
+                if obj:
+                    bpy.data.objects.remove(obj, do_unlink=True)
+        return {'FINISHED'}
+    
+    @staticmethod
+    def Opposite_Face(self, context):
+        try:
+            P_Funtion.find_opposite_face()
         except:
             self.report({'ERROR'}, "Pls,Select a face.")
         return {'FINISHED'}
@@ -431,9 +433,10 @@ class Ready_made(bpy.types.Operator):
 
 
     
-classes = [Empty_area, Speed_process,Uv, Box_Builder, MyProperties,Ready_made]
+classes = [Empty_area, Speed_process,Uv, Box_Builder, MyProperties,Ready_made,ExampleClass]
 
 def register():
+    bpy.types.Scene.uv_sync= bpy.props.BoolProperty(name="Uv Sync selection",default=False)
     bpy.types.Scene.remove_reference= bpy.props.BoolProperty(name="Remove referent object")
     bpy.types.Scene.my_rotation_angle = bpy.props.FloatProperty(
         name="My Rotation Angle",
@@ -447,6 +450,7 @@ def register():
     Scene.PandaTools = PointerProperty(type= MyProperties)
 
 def unregister():
+    del bpy.types.Scene.uv_sync
     del bpy.types.Scene.remove_reference
     
     for cls in classes:

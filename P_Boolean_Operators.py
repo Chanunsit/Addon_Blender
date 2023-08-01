@@ -36,7 +36,44 @@ class Boolean_Origin_OP(bpy.types.Operator):
             print("UV Sync False")
         return {'FINISHED'}
 
-classes = [Boolean_OP,Boolean_Origin_OP]
+class Boolean_follow_uv_data_OP(bpy.types.Operator):
+    bl_idname = "addon.follow_uvdata"
+    bl_label = "My Operator"
+    bl_options = {'REGISTER', 'UNDO'}
+
+    def execute(self, context):
+        if context.scene.bool_follow_uv_data:
+
+            bpy.context.scene.tool_settings.use_transform_correct_face_attributes = True
+            
+            print("Correct face attricutes = True")
+        else:
+            bpy.context.scene.tool_settings.use_transform_correct_face_attributes = False
+
+            print("Correct face attricutes = False")
+        return {'FINISHED'}
+
+    
+class Boolean_keep_uv_conect_OP(bpy.types.Operator):
+    bl_idname = "addon.keep_uv_conect"
+    bl_label = "My Operator"
+    bl_options = {'REGISTER', 'UNDO'}
+
+    def execute(self, context):
+        if context.scene.bool_keep_uv_conect:
+            bpy.context.scene.tool_settings.use_transform_correct_keep_connected = True
+
+            
+            print("Keep_UV_Conect = True")
+        else:
+            bpy.context.scene.tool_settings.use_transform_correct_keep_connected = False
+
+
+            print("Keep_UV_Conect = False")
+        return {'FINISHED'}
+    
+
+classes = [Boolean_OP,Boolean_Origin_OP,Boolean_follow_uv_data_OP,Boolean_keep_uv_conect_OP]
 
 def register():
  

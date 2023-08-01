@@ -55,6 +55,8 @@ class VIEW3D_PT_Panda(bpy.types.Panel):
             row.label(text=": Setting ", icon_value=P_icons.custom_icons["custom_icon_6"].icon_id)
             row = box.row() 
             row.prop(context.scene, "bool_set_origin", text="", icon="OBJECT_ORIGIN", emboss=True)
+            row.prop(context.scene, "bool_follow_uv_data", text="", icon="UV_SYNC_SELECT", emboss=True)
+            row.prop(context.scene, "bool_keep_uv_conect", text="", icon="LINKED", emboss=True)
             row = box.row() 
             row.operator(P_View3D_Operators.Speed_process.bl_idname, text="Transfrom").action="@_AppAllTrasfrom"
             row.operator(P_View3D_Operators.Speed_process.bl_idname, text="Orient").action="@_Get_Orientation"
@@ -109,7 +111,7 @@ class VIEW3D_PT_Panda(bpy.types.Panel):
 
             box = layout.box()
             row = box.row() 
-            row.label(text=": Collider Builder", icon_value=P_icons.custom_icons["custom_icon_5"].icon_id)
+            row.label(text=": Collider Builder", icon_value=P_icons.custom_icons["custom_icon_9"].icon_id)
             row = box.row()
             row.operator(P_View3D_Operators.Box_Builder.bl_idname, text="Make Box").action="@_MakeToBox"
             row = box.row()
@@ -187,10 +189,17 @@ def bool_property_update(self, context):
 def bool_origin_update(self, context): 
     bpy.ops.addon.boolean_origin()
     return {'FINISHED'}
+def bool_follow_uv_data(self, context): 
+    bpy.ops.addon.follow_uvdata()
+    return {'FINISHED'}
+def bool_keep_uv_conect(self, context): 
+    bpy.ops.addon.keep_uv_conect()
+    return {'FINISHED'}
 
 classes = [VIEW3D_PT_Panda,UV_PT_Panda]
 
 def register():
+    
     bpy.types.Scene.bool_uv_sync = bpy.props.BoolProperty(
         name="UV Sync",
         description="Turn on/off UV Sync",
@@ -203,6 +212,18 @@ def register():
         default=False,
         update=bool_origin_update
     )
+    bpy.types.Scene.bool_follow_uv_data = bpy.props.BoolProperty(
+        name="Correct UV data",
+        description="Turn on/off UV data",
+        default=False,
+        update=bool_follow_uv_data
+    )
+    bpy.types.Scene.bool_keep_uv_conect = bpy.props.BoolProperty(
+        name="keep uv conect",
+        description="Turn on/off keep uv conect",
+        default=False,
+        update=bool_keep_uv_conect
+    )
     bpy.types.Scene.option_menu_ui = bpy.props.EnumProperty(items=[(name, option_tap[name]["label"], "", option_tap[name]["icon"], i) for i, name in enumerate(option_tap.keys())])
     for cls in classes:
         bpy.utils.register_class(cls)
@@ -211,6 +232,8 @@ def register():
 def unregister():
     del bpy.types.Scene.bool_uv_sync
     del bpy.types.Scene.bool_set_origin
+    del bpy.types.Scene.bool_follow_uv_data
+    del bpy.types.Scene.bool_keep_uv_conect
     del bpy.types.Scene.option_menu_ui
     
     for cls in classes:

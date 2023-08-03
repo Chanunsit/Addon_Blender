@@ -321,6 +321,8 @@ class Box_Builder(bpy.types.Operator):
             self.MakeToBox(self, context)
         elif self.action == "@_Opposite_Face": 
             self.Opposite_Face(self, context)
+        elif self.action == "@_Extrude_to_opposite": 
+            self.Extrude_to_opposite(self, context)
         else:
             print("Empty area has no action")
 
@@ -370,8 +372,18 @@ class Box_Builder(bpy.types.Operator):
             object_names = []
             for obj in selected_objects:
                 object_names.append(obj.name)
-            P_Funtion.GetBiggestFace()
-            P_Funtion.SetOriantface()
+                
+            if context.scene.auto_orient:
+                P_Funtion.GetBiggestFace()
+                P_Funtion.SetOriantface()
+            else:
+                print("pass")
+            # try:
+            #     bpy.context.scene.transform_orientation_slots[0].type
+            #     bpy.ops.transform.delete_orientation()
+            # except:
+            #     pass
+
             bpy.ops.object.mode_set(mode='OBJECT') 
             P_Funtion.TransFromToOrient_Origin()
             P_Funtion.BoundingToBox()
@@ -391,6 +403,19 @@ class Box_Builder(bpy.types.Operator):
         except:
             self.report({'ERROR'}, "Pls,Select a face.")
         return {'FINISHED'}
+    
+    @staticmethod
+    def Extrude_to_opposite(self, context):
+        
+        bpy.ops.mesh.duplicate_move(MESH_OT_duplicate={"mode":1})
+        # P_Funtion.GetFaceSeperated()
+        # P_Funtion.GetBiggestFace()
+        # P_Funtion.SetOriantface()
+        P_Funtion.Extrude_to_opposite()
+        
+        
+        return {'FINISHED'}
+    
 
 
 class Ready_made(bpy.types.Operator):
@@ -437,6 +462,7 @@ classes = [Empty_area, Speed_process,Uv, Box_Builder, MyProperties,Ready_made,Ex
 
 def register():
     bpy.types.Scene.uv_sync= bpy.props.BoolProperty(name="Uv Sync selection",default=False)
+    bpy.types.Scene.auto_orient= bpy.props.BoolProperty(name="Auto Orient",default=True)
     bpy.types.Scene.remove_reference= bpy.props.BoolProperty(name="Remove referent object")
     bpy.types.Scene.my_rotation_angle = bpy.props.FloatProperty(
         name="My Rotation Angle",
@@ -451,6 +477,7 @@ def register():
 
 def unregister():
     del bpy.types.Scene.uv_sync
+    del bpy.types.Scene.auto_orient
     del bpy.types.Scene.remove_reference
     
     for cls in classes:

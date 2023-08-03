@@ -115,14 +115,16 @@ class VIEW3D_PT_Panda(bpy.types.Panel):
             row = box.row()
             row.operator(P_View3D_Operators.Box_Builder.bl_idname, text="Make Box").action="@_MakeToBox"
             row = box.row()
-            
-            row.prop(context.scene, "remove_reference", text="")
-            row.label(text=": Delete original")
+            row.prop(context.scene, "auto_orient", text=": Auto Orient")
+            row = box.row()
+            row.prop(context.scene, "remove_reference", text=": Delete original")
             row = layout.row()
+            # row.operator(P_View3D_Operators.Box_Builder.bl_idname, text="Extrude to Opposite").action="@_Extrude_to_opposite"
             box = layout.box()
             row = box.row()
             row.label(text=": Selection", icon_value=P_icons.custom_icons["custom_icon_3"].icon_id)
             row = box.row()
+            
             row.operator(P_View3D_Operators.Box_Builder.bl_idname, text="Opposite Face").action="@_Opposite_Face"
             row = layout.row()
         if scene.option_menu_ui == "D":

@@ -43,7 +43,8 @@ class VIEW3D_PT_Panda(bpy.types.Panel):
     def draw(self, context):
         layout = self.layout
         scene = context.scene
-
+        PandaTools = scene.Panda_Tools
+        print(PandaTools.bool_keep_uv_conect)
         row = layout.row(align=True)    
         # row.label(text="Select Name:")
         row.prop(scene, "option_menu_ui",text="", expand=True)
@@ -52,14 +53,25 @@ class VIEW3D_PT_Panda(bpy.types.Panel):
             row = layout.row()
             box = layout.box()
             row = box.row() 
-            row.label(text=": Option ", icon_value=P_icons.custom_icons["custom_icon_6"].icon_id)
+            row.label(text=": Turn ON/Off Option ", icon_value=P_icons.custom_icons["custom_icon_6"].icon_id)
             row = box.row() 
             
-            row.prop(context.scene, "bool_follow_uv_data", text="", icon="UV_SYNC_SELECT", emboss=True)
-            row.prop(context.scene, "bool_keep_uv_conect", text="", icon="LINKED", emboss=True)
-            row = box.row()
-            row.label(text="Overlay edge:")
-            row = box.row() 
+            row.prop(context.scene, "bool_follow_uv_data", text="UV", icon="UV_SYNC_SELECT", emboss=True)
+            # if bpy.context.scene.tool_settings.use_transform_correct_keep_connected == True :
+            #     PandaTools.bool_keep_uv_conect = True
+            #     # bpy.context.scene.bool_keep_uv_conect = True
+                
+            #     # print("Keep_UV_Conect = True")
+            # elif bpy.context.scene.tool_settings.use_transform_correct_keep_connected == False:
+            #     PandaTools.bool_keep_uv_conect = False
+            #     # bpy.context.scene.bool_keep_uv_conect = False
+            #     # print("Keep_UV_Conect = False")
+                
+            PandaTools.bool_keep_uv_conect = False   
+            row.prop(PandaTools, "bool_keep_uv_conect", text="Kep", icon="LINKED", emboss=True)
+            # row = box.row()
+            # row.label(text="Overlay edge:")
+            # row = box.row() 
             row.prop(context.scene, "bool_overayshape", text="Shape")
              
             row.prop(context.scene, "bool_overayseam", text="Seam")
@@ -214,22 +226,23 @@ class UV_PT_Panda(bpy.types.Panel):
 
 def bool_property_update(self, context): 
     bpy.ops.addon.boolean_operator()
-    return {'FINISHED'}
+    
 def bool_origin_update(self, context): 
     bpy.ops.addon.boolean_origin()
-    return {'FINISHED'}
+    
 def bool_follow_uv_data(self, context): 
     bpy.ops.addon.follow_uvdata()
-    return {'FINISHED'}
-def bool_keep_uv_conect(self, context): 
-    bpy.ops.addon.keep_uv_conect()
-    return {'FINISHED'}
+    
+# def bool_keep_uv_conect(self, context): 
+#     # bpy.ops.addon.keep_uv_conect()
+#     pass
+#     return {'FINISHED'}
 def bool_overayshape(self, context): 
     bpy.ops.addon.show_overayshape()
-    return {'FINISHED'}
+    
 def bool_overayseam(self, context): 
     bpy.ops.addon.show_overayseam()
-    return {'FINISHED'}
+    
 
 classes = [VIEW3D_PT_Panda,UV_PT_Panda]
 
@@ -253,12 +266,12 @@ def register():
         default=False,
         update=bool_follow_uv_data
     )
-    bpy.types.Scene.bool_keep_uv_conect = bpy.props.BoolProperty(
-        name="keep uv conect",
-        description="Turn on/off keep uv conect",
-        default=False,
-        update=bool_keep_uv_conect
-    )
+    # bpy.types.Scene.bool_keep_uv_conect = bpy.props.BoolProperty(
+    #     name="keep uv conect",
+    #     description="Turn on/off keep uv conect",
+    #     default=True,
+    #     update=bool_keep_uv_conect
+    # )
     bpy.types.Scene.bool_overayshape = bpy.props.BoolProperty(
         name="overay shape",
         description="Turn on/off show overay shape edge",
@@ -281,7 +294,7 @@ def unregister():
     del bpy.types.Scene.bool_uv_sync
     del bpy.types.Scene.bool_set_origin
     del bpy.types.Scene.bool_follow_uv_data
-    del bpy.types.Scene.bool_keep_uv_conect
+    # del bpy.types.Scene.bool_keep_uv_conect
     del bpy.types.Scene.bool_overayshape
     del bpy.types.Scene.bool_overayseam
     del bpy.types.Scene.option_menu_ui

@@ -45,11 +45,11 @@ class Boolean_follow_uv_data_OP(bpy.types.Operator):
         if context.scene.bool_follow_uv_data:
 
             bpy.context.scene.tool_settings.use_transform_correct_face_attributes = True
-            
+            bpy.context.scene.tool_settings.use_transform_correct_keep_connected = True
             print("Correct face attricutes = True")
         else:
             bpy.context.scene.tool_settings.use_transform_correct_face_attributes = False
-
+            bpy.context.scene.tool_settings.use_transform_correct_keep_connected = True
             print("Correct face attricutes = False")
         return {'FINISHED'}
 
@@ -60,14 +60,13 @@ class Boolean_keep_uv_conect_OP(bpy.types.Operator):
     bl_options = {'REGISTER', 'UNDO'}
 
     def execute(self, context):
-        if context.scene.bool_keep_uv_conect:
-            bpy.context.scene.tool_settings.use_transform_correct_keep_connected = True
+        
+        if bpy.context.scene.tool_settings.use_transform_correct_keep_connected == True :
+            bpy.context.scene.bool_keep_uv_conect = True
 
-            
             print("Keep_UV_Conect = True")
-        else:
-            bpy.context.scene.tool_settings.use_transform_correct_keep_connected = False
-
+        elif bpy.context.scene.tool_settings.use_transform_correct_keep_connected == False:
+            bpy.context.scene.bool_keep_uv_conect = False
 
             print("Keep_UV_Conect = False")
         return {'FINISHED'}

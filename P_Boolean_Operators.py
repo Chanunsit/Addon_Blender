@@ -71,9 +71,40 @@ class Boolean_keep_uv_conect_OP(bpy.types.Operator):
 
             print("Keep_UV_Conect = False")
         return {'FINISHED'}
-    
 
-classes = [Boolean_OP,Boolean_Origin_OP,Boolean_follow_uv_data_OP,Boolean_keep_uv_conect_OP]
+class Boolean_OverayShape_OP(bpy.types.Operator):
+    bl_idname = "addon.show_overayshape"
+    bl_label = "My Operator"
+    bl_options = {'REGISTER', 'UNDO'}
+
+    def execute(self, context):
+        if context.scene.bool_overayshape:
+            bpy.context.space_data.overlay.show_edge_sharp = True
+            
+            print("Enble overay shape edge")
+        else:
+            bpy.context.space_data.overlay.show_edge_sharp = False
+
+            print("Disble overay shape edge")
+        return {'FINISHED'}
+
+class Boolean_OveraySeamUV_OP(bpy.types.Operator):
+    bl_idname = "addon.show_overayseam"
+    bl_label = "My Operator"
+    bl_options = {'REGISTER', 'UNDO'}
+
+    def execute(self, context):
+        if context.scene.bool_overayseam:
+            bpy.context.space_data.overlay.show_edge_seams = True
+            
+            print("Enble overay seam UV")
+        else:
+            bpy.context.space_data.overlay.show_edge_seams = False
+
+            print("Disble overay seam UV")
+        return {'FINISHED'}
+
+classes = [Boolean_OP,Boolean_Origin_OP,Boolean_follow_uv_data_OP,Boolean_keep_uv_conect_OP,Boolean_OverayShape_OP,Boolean_OveraySeamUV_OP]
 
 def register():
  

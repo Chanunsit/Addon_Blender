@@ -113,6 +113,9 @@ class Speed_process(bpy.types.Operator):
         
         elif self.action == "@_AppAllTrasfrom": 
             self.Appy_all_trasfrom(self, context)
+
+        elif self.action == "@_Bevel_Custom": 
+            self.Bevel_Custom(self, context)
         
         else:
              print("worng")
@@ -120,13 +123,30 @@ class Speed_process(bpy.types.Operator):
         return {'FINISHED'}
     
     @staticmethod
+    def Bevel_Custom(self, context):
+        scene = context.scene
+        bevel_offset_shape = (context.scene.bevel_offset_input_shape)
+        bevel_segments_shape = (context.scene.bevel_segments_input_shape)
+
+        bevel_offset_smooth = (context.scene.bevel_offset_input_smooth)
+        bevel_segments_smooth = (context.scene.bevel_segments_input_smooth)
+
+        bpy.ops.mesh.mark_sharp(clear=True)
+        if context.scene.bevle_shape:
+             bpy.ops.mesh.bevel(offset=bevel_offset_shape, segments=bevel_segments_shape ,profile=1)
+        else:
+            bpy.ops.mesh.bevel(offset=bevel_offset_smooth, segments=bevel_segments_smooth ,profile=0.5)
+            
+        print("Bevel_Custom")
+        return {'FINISHED'}
+    
+    @staticmethod
     def Appy_all_trasfrom(self, context):
 
         bpy.ops.object.transform_apply(location=True, rotation=True, scale=True)
-
-
         print("Appy all trasfrom")
         return {'FINISHED'}
+    
     @staticmethod
     def X_axis(self, context):
         scene = context.scene
@@ -464,12 +484,43 @@ def register():
     bpy.types.Scene.uv_sync= bpy.props.BoolProperty(name="Uv Sync selection",default=False)
     bpy.types.Scene.auto_orient= bpy.props.BoolProperty(name="Auto Orient",default=True)
     bpy.types.Scene.remove_reference= bpy.props.BoolProperty(name="Remove referent object")
+    bpy.types.Scene.bevle_shape= bpy.props.BoolProperty(name="bevel Shape",default=False)
+    
     bpy.types.Scene.my_rotation_angle = bpy.props.FloatProperty(
         name="My Rotation Angle",
         description="Input any number with a maximum value of 360",
         default=90.0,
         min=-360.0,
         max=360.0,
+    )
+    bpy.types.Scene.bevel_offset_input_shape = bpy.props.FloatProperty(
+        name="Bevel Offset Input Shape",
+        description="Input offset",
+        default=0.1,
+        min=0.0,
+        max=10.0,
+    )
+    bpy.types.Scene.bevel_segments_input_shape = bpy.props.IntProperty(
+        name="Bevel segments Input Shape",
+        description="Input segments",
+        default= 2,
+        min=0,
+        max=10,
+    )
+    
+    bpy.types.Scene.bevel_offset_input_smooth = bpy.props.FloatProperty(
+        name="Bevel Offset Input Smooth",
+        description="Input offset",
+        default=0.02,
+        min=0.0,
+        max=10.0,
+    )
+    bpy.types.Scene.bevel_segments_input_smooth = bpy.props.IntProperty(
+        name="Bevel segments Input smooth",
+        description="Input segments",
+        default= 1,
+        min=0,
+        max=10,
     )
     for cls in classes:
         bpy.utils.register_class(cls)
@@ -479,6 +530,7 @@ def unregister():
     del bpy.types.Scene.uv_sync
     del bpy.types.Scene.auto_orient
     del bpy.types.Scene.remove_reference
+    del bpy.types.Scene.bevle_shape
     
     for cls in classes:
         bpy.utils.unregister_class(cls)

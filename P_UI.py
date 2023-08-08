@@ -44,7 +44,7 @@ class VIEW3D_PT_Panda(bpy.types.Panel):
         layout = self.layout
         scene = context.scene
 
-        row = layout.row(align=True)
+        row = layout.row(align=True)    
         # row.label(text="Select Name:")
         row.prop(scene, "option_menu_ui",text="", expand=True)
 
@@ -52,24 +52,34 @@ class VIEW3D_PT_Panda(bpy.types.Panel):
             row = layout.row()
             box = layout.box()
             row = box.row() 
-            row.label(text=": Setting ", icon_value=P_icons.custom_icons["custom_icon_6"].icon_id)
+            row.label(text=": Option ", icon_value=P_icons.custom_icons["custom_icon_6"].icon_id)
             row = box.row() 
-            row.prop(context.scene, "bool_set_origin", text="", icon="OBJECT_ORIGIN", emboss=True)
+            
             row.prop(context.scene, "bool_follow_uv_data", text="", icon="UV_SYNC_SELECT", emboss=True)
             row.prop(context.scene, "bool_keep_uv_conect", text="", icon="LINKED", emboss=True)
+            row = box.row()
+            row.label(text="Overlay edge:")
             row = box.row() 
-            row.operator(P_View3D_Operators.Speed_process.bl_idname, text="Transfrom").action="@_AppAllTrasfrom"
-            row.operator(P_View3D_Operators.Speed_process.bl_idname, text="Orient").action="@_Get_Orientation"
+            row.prop(context.scene, "bool_overayshape", text="Shape")
+             
+            row.prop(context.scene, "bool_overayseam", text="Seam")
+            row = box.row() 
             row = layout.row()
+
             box = layout.box()
             row = box.row()
-            row.label(text="Add", icon_value=P_icons.custom_icons["custom_icon_3"].icon_id)
+            row.label(text=": Tools", icon_value=P_icons.custom_icons["custom_icon_3"].icon_id)
+            row = box.row()
+            row.prop(context.scene, "bool_set_origin", text="Set Origin", icon="OBJECT_ORIGIN", emboss=True)
+            row = box.row()
+            row.operator(P_View3D_Operators.Speed_process.bl_idname, text="Transfrom").action="@_AppAllTrasfrom"
+            row.operator(P_View3D_Operators.Speed_process.bl_idname, text="Orient").action="@_Get_Orientation"
             row = box.row()
             row.operator(P_View3D_Operators.Empty_area.bl_idname, text="Empty", icon="EMPTY_AXIS").action="@_Add_Empty"        
             row = layout.row()
             box = layout.box()
             row = box.row()
-            row.label(text="Rotation", icon_value=P_icons.custom_icons["custom_icon_8"].icon_id)
+            row.label(text=": Rotation", icon_value=P_icons.custom_icons["custom_icon_8"].icon_id)
             row = box.row()
             row.label(text=" Angle:")
             row.prop(context.scene, "my_rotation_angle", text="")
@@ -77,6 +87,23 @@ class VIEW3D_PT_Panda(bpy.types.Panel):
             row.operator(P_View3D_Operators.Speed_process.bl_idname, text="X").action="@_RotateX"
             row.operator(P_View3D_Operators.Speed_process.bl_idname, text="Y").action="@_RotateY"
             row.operator(P_View3D_Operators.Speed_process.bl_idname, text="Z").action="@_RotateZ"    
+
+            box = layout.box()
+            row = box.row() 
+            row.label(text=": Bevel")
+            row = box.row()
+            row.prop(context.scene, "bevle_shape", text=": Shape")
+            row = box.row()
+            if context.scene.bevle_shape:
+                row.prop(context.scene, "bevel_offset_input_shape", text="")
+                row.prop(context.scene, "bevel_segments_input_shape", text="")
+            else:
+                row.prop(context.scene, "bevel_offset_input_smooth", text="")
+                row.prop(context.scene, "bevel_segments_input_smooth", text="")
+            row = box.row()
+            row.operator(P_View3D_Operators.Speed_process.bl_idname, text="Bevel").action="@_Bevel_Custom" 
+           
+        
         if scene.option_menu_ui == "B":
             row = layout.row()
             box = layout.box()
@@ -197,6 +224,12 @@ def bool_follow_uv_data(self, context):
 def bool_keep_uv_conect(self, context): 
     bpy.ops.addon.keep_uv_conect()
     return {'FINISHED'}
+def bool_overayshape(self, context): 
+    bpy.ops.addon.show_overayshape()
+    return {'FINISHED'}
+def bool_overayseam(self, context): 
+    bpy.ops.addon.show_overayseam()
+    return {'FINISHED'}
 
 classes = [VIEW3D_PT_Panda,UV_PT_Panda]
 
@@ -226,6 +259,19 @@ def register():
         default=False,
         update=bool_keep_uv_conect
     )
+    bpy.types.Scene.bool_overayshape = bpy.props.BoolProperty(
+        name="overay shape",
+        description="Turn on/off show overay shape edge",
+        default=True,
+        update=bool_overayshape
+    )
+    bpy.types.Scene.bool_overayseam = bpy.props.BoolProperty(
+        name="overay seam UV",
+        description="Turn on/off show overay seam UV",
+        default=True,
+        update=bool_overayseam
+    )
+   
     bpy.types.Scene.option_menu_ui = bpy.props.EnumProperty(items=[(name, option_tap[name]["label"], "", option_tap[name]["icon"], i) for i, name in enumerate(option_tap.keys())])
     for cls in classes:
         bpy.utils.register_class(cls)
@@ -236,6 +282,8 @@ def unregister():
     del bpy.types.Scene.bool_set_origin
     del bpy.types.Scene.bool_follow_uv_data
     del bpy.types.Scene.bool_keep_uv_conect
+    del bpy.types.Scene.bool_overayshape
+    del bpy.types.Scene.bool_overayseam
     del bpy.types.Scene.option_menu_ui
     
     for cls in classes:

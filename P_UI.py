@@ -46,7 +46,6 @@ class VIEW3D_PT_Panda(bpy.types.Panel):
         PandaTools = scene.Panda_Tools
         print(PandaTools.bool_keep_uv_conect)
         row = layout.row(align=True)    
-        # row.label(text="Select Name:")
         row.prop(scene, "option_menu_ui",text="", expand=True)
 
         if scene.option_menu_ui == "A":
@@ -55,34 +54,19 @@ class VIEW3D_PT_Panda(bpy.types.Panel):
             row = box.row() 
             row.label(text=": Turn ON/Off Option ", icon_value=P_icons.custom_icons["custom_icon_6"].icon_id)
             row = box.row() 
+            row.prop(context.scene.tool_settings, "use_transform_correct_face_attributes", text="UV Trasfrom", icon_value=P_icons.custom_icons["custom_icon_10"].icon_id)
+            row.prop(context.scene.tool_settings, "use_transform_correct_keep_connected", text="Keep connect", icon_value=P_icons.custom_icons["custom_icon_8"].icon_id)
             
-            row.prop(context.scene, "bool_follow_uv_data", text="UV", icon="UV_SYNC_SELECT", emboss=True)
-            # if bpy.context.scene.tool_settings.use_transform_correct_keep_connected == True :
-            #     PandaTools.bool_keep_uv_conect = True
-            #     # bpy.context.scene.bool_keep_uv_conect = True
-                
-            #     # print("Keep_UV_Conect = True")
-            # elif bpy.context.scene.tool_settings.use_transform_correct_keep_connected == False:
-            #     PandaTools.bool_keep_uv_conect = False
-            #     # bpy.context.scene.bool_keep_uv_conect = False
-            #     # print("Keep_UV_Conect = False")
-                
-            PandaTools.bool_keep_uv_conect = False   
-            row.prop(PandaTools, "bool_keep_uv_conect", text="Kep", icon="LINKED", emboss=True)
-            # row = box.row()
-            # row.label(text="Overlay edge:")
-            # row = box.row() 
-            row.prop(context.scene, "bool_overayshape", text="Shape")
-             
-            row.prop(context.scene, "bool_overayseam", text="Seam")
             row = box.row() 
+            row.prop(context.space_data.overlay, "show_edge_sharp", text="Sharp", icon_value=P_icons.custom_icons["custom_icon_8"].icon_id)
+            row.prop(context.space_data.overlay, "show_edge_seams", text="Seams", icon_value=P_icons.custom_icons["custom_icon_8"].icon_id)
             row = layout.row()
 
             box = layout.box()
             row = box.row()
             row.label(text=": Tools", icon_value=P_icons.custom_icons["custom_icon_3"].icon_id)
             row = box.row()
-            row.prop(context.scene, "bool_set_origin", text="Set Origin", icon="OBJECT_ORIGIN", emboss=True)
+            row.prop(context.scene.tool_settings, "use_transform_data_origin", text="Set Origin", icon="OBJECT_ORIGIN")
             row = box.row()
             row.operator(P_View3D_Operators.Speed_process.bl_idname, text="Transfrom").action="@_AppAllTrasfrom"
             row.operator(P_View3D_Operators.Speed_process.bl_idname, text="Orient").action="@_Get_Orientation"
@@ -191,7 +175,6 @@ class VIEW3D_PT_Panda(bpy.types.Panel):
 
 class UV_PT_Panda(bpy.types.Panel):
 
-    # bl_idname = "UV_EDIT_PT_my_panel"
     bl_label = ""
     bl_space_type = 'IMAGE_EDITOR'
     bl_region_type = 'UI'
@@ -229,62 +212,19 @@ def bool_property_update(self, context):
     
 def bool_origin_update(self, context): 
     bpy.ops.addon.boolean_origin()
-    
-def bool_follow_uv_data(self, context): 
-    bpy.ops.addon.follow_uvdata()
-    
-# def bool_keep_uv_conect(self, context): 
-#     # bpy.ops.addon.keep_uv_conect()
-#     pass
-#     return {'FINISHED'}
-def bool_overayshape(self, context): 
-    bpy.ops.addon.show_overayshape()
-    
-def bool_overayseam(self, context): 
-    bpy.ops.addon.show_overayseam()
-    
 
 classes = [VIEW3D_PT_Panda,UV_PT_Panda]
 
 def register():
-    
+   
     bpy.types.Scene.bool_uv_sync = bpy.props.BoolProperty(
         name="UV Sync",
         description="Turn on/off UV Sync",
         default=False,
         update=bool_property_update
     )
-    bpy.types.Scene.bool_set_origin = bpy.props.BoolProperty(
-        name="Set origin",
-        description="Turn on/off Set origin",
-        default=False,
-        update=bool_origin_update
-    )
-    bpy.types.Scene.bool_follow_uv_data = bpy.props.BoolProperty(
-        name="Correct UV data",
-        description="Turn on/off UV data",
-        default=False,
-        update=bool_follow_uv_data
-    )
-    # bpy.types.Scene.bool_keep_uv_conect = bpy.props.BoolProperty(
-    #     name="keep uv conect",
-    #     description="Turn on/off keep uv conect",
-    #     default=True,
-    #     update=bool_keep_uv_conect
-    # )
-    bpy.types.Scene.bool_overayshape = bpy.props.BoolProperty(
-        name="overay shape",
-        description="Turn on/off show overay shape edge",
-        default=True,
-        update=bool_overayshape
-    )
-    bpy.types.Scene.bool_overayseam = bpy.props.BoolProperty(
-        name="overay seam UV",
-        description="Turn on/off show overay seam UV",
-        default=True,
-        update=bool_overayseam
-    )
    
+
     bpy.types.Scene.option_menu_ui = bpy.props.EnumProperty(items=[(name, option_tap[name]["label"], "", option_tap[name]["icon"], i) for i, name in enumerate(option_tap.keys())])
     for cls in classes:
         bpy.utils.register_class(cls)
@@ -292,11 +232,6 @@ def register():
 
 def unregister():
     del bpy.types.Scene.bool_uv_sync
-    del bpy.types.Scene.bool_set_origin
-    del bpy.types.Scene.bool_follow_uv_data
-    # del bpy.types.Scene.bool_keep_uv_conect
-    del bpy.types.Scene.bool_overayshape
-    del bpy.types.Scene.bool_overayseam
     del bpy.types.Scene.option_menu_ui
     
     for cls in classes:

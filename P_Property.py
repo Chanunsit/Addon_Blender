@@ -36,10 +36,11 @@ class MyProperties(PropertyGroup):
     )
     my_scale_value:bpy.props.FloatProperty(
         name="My Scale value",
-        description="Input any number with a maximum value of 360",
-        default=0.0,
-        min=-100.0,
-        max=100.0,
+        description="Input value scale",
+        default=1.0,
+        min=-1.0,
+        soft_max=10.0,
+        precision=1,
     )
     bevel_offset_input_shape:bpy.props.FloatProperty(
         name="Bevel Offset Input Shape",
@@ -47,6 +48,7 @@ class MyProperties(PropertyGroup):
         default=0.1,
         min=0.0,
         max=10.0,
+        precision=3,
     )
     bevel_segments_input_shape:bpy.props.IntProperty(
         name="Bevel segments Input Shape",
@@ -62,6 +64,7 @@ class MyProperties(PropertyGroup):
         default=0.02,
         min=0.00000,
         max=10.0000,
+        precision=3,
     )
     bevel_segments_input_smooth:bpy.props.IntProperty(
         name="Bevel segments Input smooth",

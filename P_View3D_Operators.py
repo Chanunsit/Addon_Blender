@@ -107,14 +107,14 @@ class Speed_process(bpy.types.Operator):
         elif self.action == "@_RotateZ": 
             self.Z_axis(self, context) 
 
-        elif self.action == "@_ScaleX": 
-            self.X_Scale(self, context)
+        # elif self.action == "@_ScaleX": 
+        #     self.X_Scale(self, context)
 
-        elif self.action == "@_ScaleY": 
-            self.Y_Scale(self, context)  
+        # elif self.action == "@_ScaleY": 
+        #     self.Y_Scale(self, context)  
         
-        elif self.action == "@_ScaleZ": 
-            self.Z_Scale(self, context)
+        # elif self.action == "@_ScaleZ": 
+        #     self.Z_Scale(self, context)
 
         elif self.action == "@_ScaleXYZ": 
             self.XYZ_Scale(self, context)  
@@ -176,11 +176,9 @@ class Speed_process(bpy.types.Operator):
 
         if Panda_Property.option_trasfrom_xyz == "Scale":
             scale_value = (context.scene.Panda_Tools.my_scale_value)
-            if obj.mode == 'OBJECT':
-                print ("45")
-            elif obj.mode == 'EDIT':
-                orient_type = bpy.context.scene.transform_orientation_slots[0].type
-                bpy.ops.transform.resize(value= scale_value, orient_axis='X', orient_type=orient_type)
+            orient_type = bpy.context.scene.transform_orientation_slots[0].type
+            bpy.ops.transform.resize(value=(scale_value, 1, 1))
+            print("scale X axis")
 
 
         return {'FINISHED'}
@@ -189,29 +187,53 @@ class Speed_process(bpy.types.Operator):
     def Y_axis(self, context):
         scene = context.scene
         obj = context.active_object
-        rotation_angle = math.radians(context.scene.Panda_Tools.my_rotation_angle)
-        if obj.mode == 'OBJECT':
-            obj.rotation_euler.y += rotation_angle
-        elif obj.mode == 'EDIT':
-            orient_type = bpy.context.scene.transform_orientation_slots[0].type
-            bpy.ops.transform.rotate(value=rotation_angle, orient_axis='Y', orient_type=orient_type)
+        Panda_Property = scene.Panda_Tools
 
-        print("Rotated Y axis")
+        if Panda_Property.option_trasfrom_xyz == "Rotate":
+            rotation_angle = math.radians(context.scene.Panda_Tools.my_rotation_angle)
+            if obj.mode == 'OBJECT':
+                obj.rotation_euler.y += rotation_angle
+            elif obj.mode == 'EDIT':
+                orient_type = bpy.context.scene.transform_orientation_slots[0].type
+                bpy.ops.transform.rotate(value=rotation_angle, orient_axis='Y', orient_type=orient_type)
+            print("Rotated Y axis")
+
+        if Panda_Property.option_trasfrom_xyz == "Scale":
+            scale_value = (context.scene.Panda_Tools.my_scale_value)
+            orient_type = bpy.context.scene.transform_orientation_slots[0].type
+            bpy.ops.transform.resize(value=(1, scale_value, 1))
+            print("scale Y axis")
+        
         return {'FINISHED'}
     
     @staticmethod
     def Z_axis(self, context):
         scene = context.scene
         obj = context.active_object
-        rotation_angle = math.radians(context.scene.Panda_Tools.my_rotation_angle)
+        Panda_Property = scene.Panda_Tools
+        if Panda_Property.option_trasfrom_xyz == "Rotate":
+            rotation_angle = math.radians(context.scene.Panda_Tools.my_rotation_angle)
 
-        if obj.mode == 'OBJECT':
-            obj.rotation_euler.z += rotation_angle
-        elif obj.mode == 'EDIT':
+            if obj.mode == 'OBJECT':
+                obj.rotation_euler.z += rotation_angle
+            elif obj.mode == 'EDIT':
+                orient_type = bpy.context.scene.transform_orientation_slots[0].type
+                bpy.ops.transform.rotate(value=rotation_angle, orient_axis='Z', orient_type=orient_type)
+
+            print("Rotated Z axis")
+
+        if Panda_Property.option_trasfrom_xyz == "Scale":
+            scale_value = (context.scene.Panda_Tools.my_scale_value)
             orient_type = bpy.context.scene.transform_orientation_slots[0].type
-            bpy.ops.transform.rotate(value=rotation_angle, orient_axis='Z', orient_type=orient_type)
-
-        print("Rotated Z axis")
+            bpy.ops.transform.resize(value=(1 ,1 , scale_value))
+            print("scale Z axis")
+        
+        return {'FINISHED'}
+    @staticmethod
+    def XYZ_Scale(self, context):
+        scale_value = (context.scene.Panda_Tools.my_scale_value)
+        bpy.ops.transform.resize(value=(scale_value ,scale_value , scale_value))
+        print("scale Z axis")
         return {'FINISHED'}
 
     @staticmethod

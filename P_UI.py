@@ -73,8 +73,10 @@ class VIEW3D_PT_Panda(bpy.types.Panel):
             row = box.row()
 
             
-            
-            row.label(text="", icon_value=P_icons.custom_icons["custom_icon_8"].icon_id)
+            if Panda_Property.option_trasfrom_xyz == "Rotate":
+                row.label(text="", icon_value=P_icons.custom_icons["custom_icon_8"].icon_id)
+            else:
+                row.label(text="", icon_value=P_icons.custom_icons["custom_icon_11"].icon_id)
             row.prop(Panda_Property, "option_trasfrom_xyz",text="list", expand=True)
             row = box.row()
             
@@ -93,10 +95,11 @@ class VIEW3D_PT_Panda(bpy.types.Panel):
                 row.operator(P_View3D_Operators.Speed_process.bl_idname, text="X").action="@_RotateX"
                 row.operator(P_View3D_Operators.Speed_process.bl_idname, text="Y").action="@_RotateY"
                 row.operator(P_View3D_Operators.Speed_process.bl_idname, text="Z").action="@_RotateZ"    
-                row.operator(P_View3D_Operators.Speed_process.bl_idname, text="XYZ").action="@_RotateZ" 
+                row.operator(P_View3D_Operators.Speed_process.bl_idname, text="XYZ").action="@_ScaleXYZ" 
 
             box = layout.box()
             row = box.row() 
+            row.label(text="", icon_value=P_icons.custom_icons["custom_icon_12"].icon_id)
             row.label(text=": Bevel")
             row = box.row()
             row.prop(Panda_Property, "bevle_shape", text=": Shape")
@@ -116,7 +119,8 @@ class VIEW3D_PT_Panda(bpy.types.Panel):
             box = layout.box()
             row = box.row() 
             row.label(text=": UV Status ", icon_value=P_icons.custom_icons["custom_icon_6"].icon_id)
-            
+            row = box.row()
+            row.prop(context.scene.tool_settings, "use_uv_select_sync", text="UV sync")
             
             row = layout.row()
             box = layout.box()

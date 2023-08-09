@@ -8,14 +8,7 @@ from . import P_Website_Operators
 from . import P_icons
 
 from bpy.types import Menu, Operator, Panel, AddonPreferences, PropertyGroup
-option_tap = {
-    "A": {"icon": "MODIFIER", "label": "Modify"},
-    "B": {"icon": "UV_FACESEL", "label": "UV edit"},
-    "C": {"icon": "FILE_3D", "label": "Box builder"},
-    "D": {"icon": "SHADERFX", "label": "Object"},
-    "E": {"icon": "OUTLINER_OB_VOLUME", "label": "Internet"},
-    # "F": {"icon": "OUTLINER_OB_VOLUME", "label": "open appication on youre pc"} NEW!
-}
+
 
 class VIEW3D_PT_Panda(bpy.types.Panel):  
     # bl_idname = "VIEW3D_PT_tool"
@@ -27,37 +20,40 @@ class VIEW3D_PT_Panda(bpy.types.Panel):
     def draw_header(self, context):
         scene = context.scene
         layout = self.layout
+        Panda_Property = scene.Panda_Tools
         row = layout.row()
-        if scene.option_menu_ui == "A":
+        if Panda_Property.option_menu_ui == "A":
             layout.label(text="Modifire", icon_value=P_icons.custom_icons["custom_icon_1"].icon_id)
-        elif scene.option_menu_ui == "B":
+        elif Panda_Property.option_menu_ui == "B":
             layout.label(text="UV Editor", icon_value=P_icons.custom_icons["custom_icon_1"].icon_id)
-        elif scene.option_menu_ui == "C":  
+        elif Panda_Property.option_menu_ui == "C":  
             layout.label(text="Collider", icon_value=P_icons.custom_icons["custom_icon_1"].icon_id)
-        elif scene.option_menu_ui == "D":  
+        elif Panda_Property.option_menu_ui == "D":  
             layout.label(text="Object", icon_value=P_icons.custom_icons["custom_icon_1"].icon_id)
-        elif scene.option_menu_ui == "E":  
+        elif Panda_Property.option_menu_ui == "E":  
             layout.label(text="Internet", icon_value=P_icons.custom_icons["custom_icon_1"].icon_id)
 
 
     def draw(self, context):
         layout = self.layout
         scene = context.scene
-        PandaTools = scene.Panda_Tools
-        print(PandaTools.bool_keep_uv_conect)
+        Panda_Property = scene.Panda_Tools
         row = layout.row(align=True)    
-        row.prop(scene, "option_menu_ui",text="", expand=True)
+        row.prop(Panda_Property, "option_menu_ui",text="", expand=True)
 
-        if scene.option_menu_ui == "A":
+        if Panda_Property.option_menu_ui == "A":
             row = layout.row()
             box = layout.box()
             row = box.row() 
             row.label(text=": Turn ON/Off Option ", icon_value=P_icons.custom_icons["custom_icon_6"].icon_id)
             row = box.row() 
-            row.prop(context.scene.tool_settings, "use_transform_correct_face_attributes", text="UV Trasfrom", icon_value=P_icons.custom_icons["custom_icon_10"].icon_id)
-            row.prop(context.scene.tool_settings, "use_transform_correct_keep_connected", text="Keep connect", icon_value=P_icons.custom_icons["custom_icon_8"].icon_id)
+            row.prop(context.scene.tool_settings, "use_transform_correct_face_attributes", text="", icon_value=P_icons.custom_icons["custom_icon_10"].icon_id)
+            if bpy.context.scene.tool_settings.use_transform_correct_face_attributes == True:
+                row.prop(context.scene.tool_settings, "use_transform_correct_keep_connected", text="Connect", icon_value=P_icons.custom_icons["custom_icon_10"].icon_id)
+                
+
             
-            row = box.row() 
+                row = box.row() 
             row.prop(context.space_data.overlay, "show_edge_sharp", text="Sharp", icon_value=P_icons.custom_icons["custom_icon_8"].icon_id)
             row.prop(context.space_data.overlay, "show_edge_seams", text="Seams", icon_value=P_icons.custom_icons["custom_icon_8"].icon_id)
             row = layout.row()
@@ -75,38 +71,53 @@ class VIEW3D_PT_Panda(bpy.types.Panel):
             row = layout.row()
             box = layout.box()
             row = box.row()
-            row.label(text=": Rotation", icon_value=P_icons.custom_icons["custom_icon_8"].icon_id)
+
+            
+            
+            row.label(text="", icon_value=P_icons.custom_icons["custom_icon_8"].icon_id)
+            row.prop(Panda_Property, "option_trasfrom_xyz",text="list", expand=True)
             row = box.row()
-            row.label(text=" Angle:")
-            row.prop(context.scene, "my_rotation_angle", text="")
-            row = box.row()
-            row.operator(P_View3D_Operators.Speed_process.bl_idname, text="X").action="@_RotateX"
-            row.operator(P_View3D_Operators.Speed_process.bl_idname, text="Y").action="@_RotateY"
-            row.operator(P_View3D_Operators.Speed_process.bl_idname, text="Z").action="@_RotateZ"    
+            
+            if Panda_Property.option_trasfrom_xyz == "Rotate":
+                row.label(text=" Angle:")
+                row.prop(Panda_Property, "my_rotation_angle", text="")
+                row = box.row()
+                row.operator(P_View3D_Operators.Speed_process.bl_idname, text="X").action="@_RotateX"
+                row.operator(P_View3D_Operators.Speed_process.bl_idname, text="Y").action="@_RotateY"
+                row.operator(P_View3D_Operators.Speed_process.bl_idname, text="Z").action="@_RotateZ"    
+           
+            if Panda_Property.option_trasfrom_xyz == "Scale":
+                row.label(text=" scale:")
+                row.prop(Panda_Property, "my_scale_value", text="")
+                row = box.row()
+                row.operator(P_View3D_Operators.Speed_process.bl_idname, text="X").action="@_RotateX"
+                row.operator(P_View3D_Operators.Speed_process.bl_idname, text="Y").action="@_RotateY"
+                row.operator(P_View3D_Operators.Speed_process.bl_idname, text="Z").action="@_RotateZ"    
+                row.operator(P_View3D_Operators.Speed_process.bl_idname, text="XYZ").action="@_RotateZ" 
 
             box = layout.box()
             row = box.row() 
             row.label(text=": Bevel")
             row = box.row()
-            row.prop(context.scene, "bevle_shape", text=": Shape")
+            row.prop(Panda_Property, "bevle_shape", text=": Shape")
             row = box.row()
-            if context.scene.bevle_shape:
-                row.prop(context.scene, "bevel_offset_input_shape", text="")
-                row.prop(context.scene, "bevel_segments_input_shape", text="")
+            if Panda_Property.bevle_shape:
+                row.prop(Panda_Property, "bevel_offset_input_shape", text="")
+                row.prop(Panda_Property, "bevel_segments_input_shape", text="")
             else:
-                row.prop(context.scene, "bevel_offset_input_smooth", text="")
-                row.prop(context.scene, "bevel_segments_input_smooth", text="")
+                row.prop(Panda_Property, "bevel_offset_input_smooth", text="")
+                row.prop(Panda_Property, "bevel_segments_input_smooth", text="")
             row = box.row()
             row.operator(P_View3D_Operators.Speed_process.bl_idname, text="Bevel").action="@_Bevel_Custom" 
            
         
-        if scene.option_menu_ui == "B":
+        if Panda_Property.option_menu_ui == "B":
             row = layout.row()
             box = layout.box()
             row = box.row() 
             row.label(text=": UV Status ", icon_value=P_icons.custom_icons["custom_icon_6"].icon_id)
-            row = box.row() 
-            row.prop(context.scene, "bool_uv_sync", text="", icon="UV_SYNC_SELECT", emboss=True)
+            
+            
             row = layout.row()
             box = layout.box()
             row = box.row() 
@@ -129,7 +140,7 @@ class VIEW3D_PT_Panda(bpy.types.Panel):
             row = box.row() 
             row.operator(P_View3D_Operators.Uv.bl_idname, text="UV Window").action="@_OpenUVEditWindow"
             row = layout.row()
-        if scene.option_menu_ui == "C":
+        if Panda_Property.option_menu_ui == "C":
             row = layout.row()
 
             box = layout.box()
@@ -138,9 +149,9 @@ class VIEW3D_PT_Panda(bpy.types.Panel):
             row = box.row()
             row.operator(P_View3D_Operators.Box_Builder.bl_idname, text="Make Box").action="@_MakeToBox"
             row = box.row()
-            row.prop(context.scene, "auto_orient", text=": Auto Orient")
+            row.prop(Panda_Property, "auto_orient", text=": Auto Orient")
             row = box.row()
-            row.prop(context.scene, "remove_reference", text=": Delete original")
+            row.prop(Panda_Property, "remove_reference", text=": Delete original")
             row = layout.row()
             # row.operator(P_View3D_Operators.Box_Builder.bl_idname, text="Extrude to Opposite").action="@_Extrude_to_opposite"
             box = layout.box()
@@ -150,7 +161,7 @@ class VIEW3D_PT_Panda(bpy.types.Panel):
             
             row.operator(P_View3D_Operators.Box_Builder.bl_idname, text="Opposite Face").action="@_Opposite_Face"
             row = layout.row()
-        if scene.option_menu_ui == "D":
+        if Panda_Property.option_menu_ui == "D":
             row = layout.row()
             box = layout.box()
             row = box.row()
@@ -158,7 +169,7 @@ class VIEW3D_PT_Panda(bpy.types.Panel):
             row = box.row() 
             row.operator(P_View3D_Operators.Ready_made.bl_idname, text="Hexagon").action="@_Hexagon"
             row = layout.row()
-        if scene.option_menu_ui == "E": 
+        if Panda_Property.option_menu_ui == "E": 
             # row.label(text="Web site")
             box = layout.box()
             row = box.row()
@@ -184,6 +195,7 @@ class UV_PT_Panda(bpy.types.Panel):
         self.layout.label(text="UV Editor", icon_value=P_icons.custom_icons["custom_icon_1"].icon_id)
     def draw(self, context):
         scene = context.scene
+        Panda_Property = scene.Panda_Tools
         layout = self.layout
         row = layout.row()
         box = layout.box()
@@ -204,7 +216,7 @@ class UV_PT_Panda(bpy.types.Panel):
         row = box.row()
         row.operator(P_UvEditor_Operators.UV_Editor.bl_idname, text="PackUV").action="@_PackUV_Together"
         row = box.row()
-        row.prop(context.scene, "uv_offset", text="Offset new pack")
+        row.prop(Panda_Property, "uv_offset", text="Offset new pack")
         row = layout.row()
 
 def bool_property_update(self, context): 
@@ -216,24 +228,13 @@ def bool_origin_update(self, context):
 classes = [VIEW3D_PT_Panda,UV_PT_Panda]
 
 def register():
-   
-    bpy.types.Scene.bool_uv_sync = bpy.props.BoolProperty(
-        name="UV Sync",
-        description="Turn on/off UV Sync",
-        default=False,
-        update=bool_property_update
-    )
-   
 
-    bpy.types.Scene.option_menu_ui = bpy.props.EnumProperty(items=[(name, option_tap[name]["label"], "", option_tap[name]["icon"], i) for i, name in enumerate(option_tap.keys())])
+    
     for cls in classes:
         bpy.utils.register_class(cls)
       
-
 def unregister():
-    del bpy.types.Scene.bool_uv_sync
-    del bpy.types.Scene.option_menu_ui
-    
+      
     for cls in classes:
         bpy.utils.unregister_class(cls)
     

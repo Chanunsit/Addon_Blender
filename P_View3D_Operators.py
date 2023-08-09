@@ -4,10 +4,7 @@ from bpy.types import Scene
 from bpy.types import ( PropertyGroup, )
 from bpy.props import (PointerProperty, StringProperty)
 from . import P_Funtion
-
-   
-class MyProperties(PropertyGroup):
-    saveList : StringProperty(name="Save List")
+from . import P_UI
 
 class ExampleClass(bpy.types.Operator):
     bl_idname = "object.name"
@@ -85,6 +82,8 @@ class Empty_area(bpy.types.Operator):
 
         print("Add_Empty")
         return {'FINISHED'}
+    
+
 
 class Speed_process(bpy.types.Operator):
 
@@ -106,7 +105,19 @@ class Speed_process(bpy.types.Operator):
             self.Y_axis(self, context)
 
         elif self.action == "@_RotateZ": 
-            self.Z_axis(self, context)  
+            self.Z_axis(self, context) 
+
+        elif self.action == "@_ScaleX": 
+            self.X_Scale(self, context)
+
+        elif self.action == "@_ScaleY": 
+            self.Y_Scale(self, context)  
+        
+        elif self.action == "@_ScaleZ": 
+            self.Z_Scale(self, context)
+
+        elif self.action == "@_ScaleXYZ": 
+            self.XYZ_Scale(self, context)  
         
         elif self.action == "@_Get_Orientation": 
             self.Get_Orientation(self, context) 
@@ -125,14 +136,14 @@ class Speed_process(bpy.types.Operator):
     @staticmethod
     def Bevel_Custom(self, context):
         scene = context.scene
-        bevel_offset_shape = (context.scene.bevel_offset_input_shape)
-        bevel_segments_shape = (context.scene.bevel_segments_input_shape)
+        bevel_offset_shape = (context.scene.Panda_Tools.bevel_offset_input_shape)
+        bevel_segments_shape = (context.scene.Panda_Tools.bevel_segments_input_shape)
 
-        bevel_offset_smooth = (context.scene.bevel_offset_input_smooth)
-        bevel_segments_smooth = (context.scene.bevel_segments_input_smooth)
+        bevel_offset_smooth = (context.scene.Panda_Tools.bevel_offset_input_smooth)
+        bevel_segments_smooth = (context.scene.Panda_Tools.bevel_segments_input_smooth)
 
         bpy.ops.mesh.mark_sharp(clear=True)
-        if context.scene.bevle_shape:
+        if context.scene.Panda_Tools.bevle_shape:
              bpy.ops.mesh.bevel(offset=bevel_offset_shape, segments=bevel_segments_shape ,profile=1)
         else:
             bpy.ops.mesh.bevel(offset=bevel_offset_smooth, segments=bevel_segments_smooth ,profile=0.5)
@@ -151,21 +162,34 @@ class Speed_process(bpy.types.Operator):
     def X_axis(self, context):
         scene = context.scene
         obj = context.active_object
-        rotation_angle = math.radians(context.scene.my_rotation_angle)
-        if obj.mode == 'OBJECT':
-            obj.rotation_euler.x += rotation_angle
-        elif obj.mode == 'EDIT':
-            orient_type = bpy.context.scene.transform_orientation_slots[0].type
-            bpy.ops.transform.rotate(value=rotation_angle, orient_axis='X', orient_type=orient_type)
+        Panda_Property = scene.Panda_Tools
 
-        print("Rotated X axis")
+        if Panda_Property.option_trasfrom_xyz == "Rotate":
+            rotation_angle = math.radians(context.scene.Panda_Tools.my_rotation_angle)
+            if obj.mode == 'OBJECT':
+                obj.rotation_euler.x += rotation_angle
+            elif obj.mode == 'EDIT':
+                orient_type = bpy.context.scene.transform_orientation_slots[0].type
+                bpy.ops.transform.rotate(value=rotation_angle, orient_axis='X', orient_type=orient_type)
+            
+            print("Rotated X axis")
+
+        if Panda_Property.option_trasfrom_xyz == "Scale":
+            scale_value = (context.scene.Panda_Tools.my_scale_value)
+            if obj.mode == 'OBJECT':
+                print ("45")
+            elif obj.mode == 'EDIT':
+                orient_type = bpy.context.scene.transform_orientation_slots[0].type
+                bpy.ops.transform.resize(value= scale_value, orient_axis='X', orient_type=orient_type)
+
+
         return {'FINISHED'}
     
     @staticmethod
     def Y_axis(self, context):
         scene = context.scene
         obj = context.active_object
-        rotation_angle = math.radians(context.scene.my_rotation_angle)
+        rotation_angle = math.radians(context.scene.Panda_Tools.my_rotation_angle)
         if obj.mode == 'OBJECT':
             obj.rotation_euler.y += rotation_angle
         elif obj.mode == 'EDIT':
@@ -179,7 +203,7 @@ class Speed_process(bpy.types.Operator):
     def Z_axis(self, context):
         scene = context.scene
         obj = context.active_object
-        rotation_angle = math.radians(context.scene.my_rotation_angle)
+        rotation_angle = math.radians(context.scene.Panda_Tools.my_rotation_angle)
 
         if obj.mode == 'OBJECT':
             obj.rotation_euler.z += rotation_angle
@@ -376,7 +400,7 @@ class Box_Builder(bpy.types.Operator):
                 obj.select_set(False)
 
                 # delete object referent if checck box = True
-            if context.scene.remove_reference:  
+            if context.scene.Panda_Tools.remove_reference:  
                 for obj_name in object_names:
                     obj = bpy.data.objects.get(obj_name)
                     if obj:
@@ -384,7 +408,7 @@ class Box_Builder(bpy.types.Operator):
             print(" Created UBX") 
 
         if bpy.context.active_object.mode == 'EDIT':
-            if context.scene.remove_reference == False:  
+            if context.scene.Panda_Tools.remove_reference == False:  
                 bpy.ops.mesh.duplicate_move(MESH_OT_duplicate={"mode":1}, TRANSFORM_OT_translate={"value":(0, 0, 0), "orient_axis_ortho":'X', "orient_type":'GLOBAL', "orient_matrix":((0, 0, 0), (0, 0, 0), (0, 0, 0)), "orient_matrix_type":'GLOBAL', "constraint_axis":(False, False, False), "mirror":False, "use_proportional_edit":False, "proportional_edit_falloff":'SMOOTH', "proportional_size":1, "use_proportional_connected":False, "use_proportional_projected":False, "snap":False, "snap_elements":{'INCREMENT'}, "use_snap_project":False, "snap_target":'CLOSEST', "use_snap_self":True, "use_snap_edit":True, "use_snap_nonedit":True, "use_snap_selectable":False, "snap_point":(0, 0, 0), "snap_align":False, "snap_normal":(0, 0, 0), "gpencil_strokes":False, "cursor_transform":False, "texture_space":False, "remove_on_cancel":False, "view2d_edge_pan":False, "release_confirm":False, "use_accurate":False, "use_automerge_and_split":False})
             P_Funtion.GetFaceSeperated()
             bpy.ops.object.origin_set(type='ORIGIN_GEOMETRY', center='MEDIAN')
@@ -393,7 +417,7 @@ class Box_Builder(bpy.types.Operator):
             for obj in selected_objects:
                 object_names.append(obj.name)
                 
-            if context.scene.auto_orient:
+            if context.scene.Panda_Tools.auto_orient:
                 P_Funtion.GetBiggestFace()
                 P_Funtion.SetOriantface()
             else:
@@ -478,63 +502,18 @@ class Ready_made(bpy.types.Operator):
 
 
     
-classes = [Empty_area, Speed_process,Uv, Box_Builder, MyProperties,Ready_made,ExampleClass]
+classes = [Empty_area, Speed_process,Uv, Box_Builder, Ready_made,ExampleClass]
 
 def register():
-    bpy.types.Scene.uv_sync= bpy.props.BoolProperty(name="Uv Sync selection",default=False)
-    bpy.types.Scene.auto_orient= bpy.props.BoolProperty(name="Auto Orient",default=True)
-    bpy.types.Scene.remove_reference= bpy.props.BoolProperty(name="Remove referent object")
-    bpy.types.Scene.bevle_shape= bpy.props.BoolProperty(name="bevel Shape",default=False)
-    
-    bpy.types.Scene.my_rotation_angle = bpy.props.FloatProperty(
-        name="My Rotation Angle",
-        description="Input any number with a maximum value of 360",
-        default=90.0,
-        min=-360.0,
-        max=360.0,
-    )
-    bpy.types.Scene.bevel_offset_input_shape = bpy.props.FloatProperty(
-        name="Bevel Offset Input Shape",
-        description="Input offset",
-        default=0.1,
-        min=0.0,
-        max=10.0,
-    )
-    bpy.types.Scene.bevel_segments_input_shape = bpy.props.IntProperty(
-        name="Bevel segments Input Shape",
-        description="Input segments",
-        default= 2,
-        min=0,
-        max=10,
-    )
-    
-    bpy.types.Scene.bevel_offset_input_smooth = bpy.props.FloatProperty(
-        name="Bevel Offset Input Smooth",
-        description="Input offset",
-        default=0.02,
-        min=0.0,
-        max=10.0,
-    )
-    bpy.types.Scene.bevel_segments_input_smooth = bpy.props.IntProperty(
-        name="Bevel segments Input smooth",
-        description="Input segments",
-        default= 1,
-        min=0,
-        max=10,
-    )
+   
     for cls in classes:
         bpy.utils.register_class(cls)
-    Scene.PandaTools = PointerProperty(type= MyProperties)
-
-def unregister():
-    del bpy.types.Scene.uv_sync
-    del bpy.types.Scene.auto_orient
-    del bpy.types.Scene.remove_reference
-    del bpy.types.Scene.bevle_shape
     
+def unregister():
+ 
     for cls in classes:
         bpy.utils.unregister_class(cls)
-    del Scene.PandaTools
+   
 
 
 

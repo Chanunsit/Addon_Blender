@@ -220,14 +220,8 @@ class UV_PT_Panda(bpy.types.Panel):
         row = box.row()
         row.operator(P_UvEditor_Operators.UV_Editor.bl_idname, text="PackUV").action="@_PackUV_Together"
         row = box.row()
-        row.prop(Panda_Property, "uv_offset", text="Offset new pack")
+        # row.prop(Panda_Property, "uv_offset", text="Offset new pack")
         row = layout.row()
-
-def bool_property_update(self, context): 
-    bpy.ops.addon.boolean_operator()
-    
-def bool_origin_update(self, context): 
-    bpy.ops.addon.boolean_origin()
 
 classes = [VIEW3D_PT_Panda,UV_PT_Panda]
 

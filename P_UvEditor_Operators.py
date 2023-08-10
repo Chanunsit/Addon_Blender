@@ -31,6 +31,8 @@ class UV_Editor(bpy.types.Operator):
         scene = context.scene
         bpy.ops.uv.snap_cursor(target='SELECTED')
         bpy.ops.uv.unwrap(method='ANGLE_BASED', margin=0.05)
+        bpy.ops.uv.align_rotation(method='GEOMETRY', axis='Z')
+        bpy.ops.uv.align_rotation(method='AUTO')
         bpy.ops.uv.snap_selected(target='CURSOR_OFFSET')
         P_Funtion.settexel_512(self, context)
         bpy.ops.uv.snap_cursor(target='ORIGIN')
@@ -56,13 +58,17 @@ class UV_Editor(bpy.types.Operator):
     @staticmethod
     def PackUV_Together(self, context):
         scene = context.scene
+        bpy.ops.uv.snap_cursor(target='SELECTED')
         bpy.ops.uv.pack_islands(udim_source='ACTIVE_UDIM', rotate=False, margin_method='SCALED', margin=0.05)
+        bpy.ops.uv.snap_selected(target='CURSOR_OFFSET')
         P_Funtion.settexel_512(self, context)
-        if context.scene.uv_offset: 
-            # Set the 3D cursor position in the Image Editor
-            context.space_data.cursor_location[0] += 2.0
-            context.space_data.cursor_location[1] += 0
-            bpy.ops.uv.snap_selected(target='CURSOR_OFFSET')
+        bpy.ops.uv.snap_cursor(target='ORIGIN')
+
+        # if context.scene.Panda_Tools.uv_offset: 
+        #     # Set the 3D cursor position in the Image Editor
+        #     context.space_data.cursor_location[0] += 2.0
+        #     context.space_data.cursor_location[1] += 0
+        #     bpy.ops.uv.snap_selected(target='CURSOR_OFFSET')
         
         print("AlignEdgeUV")
         return {'FINISHED'}
@@ -71,11 +77,10 @@ class UV_Editor(bpy.types.Operator):
 
 
 def register():
-    bpy.types.Scene.uv_offset = bpy.props.BoolProperty(name="ofFset UV")
+    
     bpy.utils.register_class(UV_Editor)
     bpy.utils.register_class(MyProperties)
 def unregister():
-    del bpy.types.Scene.uv_offset
     bpy.utils.unregister_class(UV_Editor)
     bpy.utils.unregister_class(MyProperties)
 

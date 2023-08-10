@@ -26,7 +26,7 @@ class MyProperties(PropertyGroup):
     auto_orient:bpy.props.BoolProperty(name="Auto Orient",default=True)
     remove_reference:bpy.props.BoolProperty(name="Remove referent object")
     bevle_shape:bpy.props.BoolProperty(name="bevel Shape",default=False)
-
+    # uv_offset:bpy.props.BoolProperty(name="ofFset UV")
     my_rotation_angle:bpy.props.FloatProperty(
         name="My Rotation Angle",
         description="Input any number with a maximum value of 360",

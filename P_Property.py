@@ -65,6 +65,7 @@ class MyProperties(PropertyGroup):
         min=0.00000,
         max=10.0000,
         precision=3,
+        step=0.5,
     )
     bevel_segments_input_smooth:bpy.props.IntProperty(
         name="Bevel segments Input smooth",
@@ -73,6 +74,17 @@ class MyProperties(PropertyGroup):
         min=0,
         max=10,
     )
+
+    uv_texel_value:bpy.props.IntProperty(
+        name="",
+        description="Input valuse texel density",
+        default= 512,
+        min=1,
+        max=4096,
+        step=1,
+        
+    )
+    
     
 classes = [MyProperties]
 def register():

@@ -69,10 +69,9 @@ class VIEW3D_PT_Panda(bpy.types.Panel):
             row = box.row()
             row.operator(P_View3D_Operators.Empty_area.bl_idname, text="Empty", icon="EMPTY_AXIS").action="@_Add_Empty"        
             row = layout.row()
+
             box = layout.box()
             row = box.row()
-
-            
             if Panda_Property.option_trasfrom_xyz == "Rotate":
                 row.label(text="", icon_value=P_icons.custom_icons["custom_icon_8"].icon_id)
             else:
@@ -199,13 +198,18 @@ class UV_PT_Panda(bpy.types.Panel):
         self.layout.label(text="UV Editor", icon_value=P_icons.custom_icons["custom_icon_1"].icon_id)
     def draw(self, context):
         scene = context.scene
-        Panda_Property = scene.Panda_Tools
         layout = self.layout
+        Panda_Property = scene.Panda_Tools
         row = layout.row()
         box = layout.box()
         row = box.row() 
         row.label(text=": UV Unwrap ", icon_value=P_icons.custom_icons["custom_icon_7"].icon_id)
         row = box.row() 
+        row.label(text="Texel set :")
+        row.operator(P_UvEditor_Operators.UV_Editor.bl_idname, text="",icon="REMOVE").action="@_Texel_value_reduce" 
+        row.prop(Panda_Property, "uv_texel_value")
+        row.operator(P_UvEditor_Operators.UV_Editor.bl_idname, text="",icon= "ADD").action="@_Texel_value_increase" 
+        row = box.row()
         row.operator(P_UvEditor_Operators.UV_Editor.bl_idname, text="Smart Unwrap").action="@_SmartUnwrap"  
         row = layout.row()
         box = layout.box()

@@ -2,6 +2,7 @@ import bpy
 from bpy.types import ( PropertyGroup, )
 from bpy.props import (PointerProperty, StringProperty)
 from . import P_Funtion
+from . import P_Property
 
 class MyProperties(PropertyGroup):
     saveList : StringProperty(name="Save List")
@@ -21,6 +22,10 @@ class UV_Editor(bpy.types.Operator):
             self.AlignEdgeUV(self, context)
         elif self.action == "@_PackUV_Together": 
             self.PackUV_Together(self, context)
+        elif self.action == "@_Texel_value_increase": 
+            self.Texel_value_increase(self, context)
+        elif self.action == "@_Texel_value_reduce": 
+            self.Texel_value_reduce(self, context)
         else:
              print("")
 
@@ -29,12 +34,16 @@ class UV_Editor(bpy.types.Operator):
     @staticmethod
     def SmartUnwrap(self, context):
         scene = context.scene
+        uv_texel_value = (context.scene.Panda_Tools.uv_texel_value)
+
         bpy.ops.uv.snap_cursor(target='SELECTED')
         bpy.ops.uv.unwrap(method='ANGLE_BASED', margin=0.05)
         bpy.ops.uv.align_rotation(method='GEOMETRY', axis='Z')
         bpy.ops.uv.align_rotation(method='AUTO')
         bpy.ops.uv.snap_selected(target='CURSOR_OFFSET')
-        P_Funtion.settexel_512(self, context)
+        P_Funtion.settexel_custom(self, context)
+
+        # P_Funtion.settexel_512(self, context)
         bpy.ops.uv.snap_cursor(target='ORIGIN')
 
         
@@ -71,6 +80,22 @@ class UV_Editor(bpy.types.Operator):
         #     bpy.ops.uv.snap_selected(target='CURSOR_OFFSET')
         
         print("AlignEdgeUV")
+        return {'FINISHED'}
+    @staticmethod
+    def Texel_value_increase(self, context):
+        print("Texel value X2")
+        scene = context.scene
+        Panda_Property = scene.Panda_Tools
+        Panda_Property.uv_texel_value *= 2
+        
+        return {'FINISHED'}
+    @staticmethod
+    def Texel_value_reduce(self, context):
+        print("Texel value /2")
+        scene = context.scene
+        Panda_Property = scene.Panda_Tools
+        Panda_Property.uv_texel_value //= 2
+        
         return {'FINISHED'}
 
 

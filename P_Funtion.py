@@ -63,15 +63,29 @@ def GetFaceSeperated():
         bpy.context.view_layer.objects.active = active_separated_object
         
 def settexel_512(self, context): 
-    scene = context.scene       
+    scene = context.scene 
+    uv_texel_value = (context.scene.Panda_Tools.uv_texel_value)      
     try:
         scene.td.units = "1"
         scene.td.texture_size = "1"
         bpy.ops.object.texel_density_check()
         bpy.ops.object.texel_density_set()
-        bpy.ops.object.preset_set(td_value="512")
+        # bpy.context.scene.td.density_set = uv_texel_value
+        bpy.ops.object.preset_set(td_value=uv_texel_value)
+    except: pass
+
+def settexel_custom(self, context): 
+    scene = context.scene 
+    uv_texel_value = (context.scene.Panda_Tools.uv_texel_value)      
+    try:
+        scene.td.units = "1"
+        scene.td.texture_size = "1"
+        bpy.context.scene.td.density_set = str(uv_texel_value)
+        bpy.ops.object.texel_density_check()
+        bpy.ops.object.texel_density_set()
     except: pass
  
+
 def BoundingToBox():
         selected_object = bpy.context.active_object
         dimensions = selected_object.dimensions

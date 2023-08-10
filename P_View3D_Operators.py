@@ -107,15 +107,6 @@ class Speed_process(bpy.types.Operator):
         elif self.action == "@_RotateZ": 
             self.Z_axis(self, context) 
 
-        # elif self.action == "@_ScaleX": 
-        #     self.X_Scale(self, context)
-
-        # elif self.action == "@_ScaleY": 
-        #     self.Y_Scale(self, context)  
-        
-        # elif self.action == "@_ScaleZ": 
-        #     self.Z_Scale(self, context)
-
         elif self.action == "@_ScaleXYZ": 
             self.XYZ_Scale(self, context)  
         

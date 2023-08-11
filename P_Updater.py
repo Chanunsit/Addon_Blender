@@ -44,7 +44,7 @@ class PerformActionOperator(bpy.types.Operator):
     def Update_Addon(self, context):
         scene = context.scene
         self.report({'INFO'}, "Downlaoding Addon!")
-        Zipfile = "PandaTools_Lastest.zip"
+        Zipfile = "PandaTools-main.zip"
         UPDATED_ADDON_URL = "https://github.com/Chanunsit/Addon_Blender/releases/download/Gramma/" + Zipfile
 
         # Get the addon directory and the current addon file path

@@ -75,13 +75,14 @@ class MyProperties(PropertyGroup):
         max=10,
     )
 
-    uv_texel_value:bpy.props.IntProperty(
+    uv_texel_value:bpy.props.StringProperty(
         name="",
         description="Input valuse texel density",
-        default= 512,
-        min=1,
-        max=4096,
-        step=1,
+        default= "512",
+        
+        # min=1,
+        # max=4096,
+        # step=1,
         
     )
     

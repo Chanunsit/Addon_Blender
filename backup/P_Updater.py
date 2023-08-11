@@ -6,7 +6,6 @@ import zipfile
 import shutil
 from bpy.types import ( PropertyGroup, )
 from bpy.props import (PointerProperty, StringProperty)
-from. import P_Funtion
 
 GITHUB_REPO_URL = "https://github.com/Chanunsit/Addon_Blender/releases/tag/Gramma"
 
@@ -45,8 +44,8 @@ class PerformActionOperator(bpy.types.Operator):
     def Update_Addon(self, context):
         scene = context.scene
         self.report({'INFO'}, "Downlaoding Addon!")
-        
-        UPDATED_ADDON_URL = "https://github.com/Chanunsit/PandaTools/archive/refs/heads/main.zip"
+        Zipfile = "PandaTools-main.zip"
+        UPDATED_ADDON_URL = "https://github.com/Chanunsit/Addon_Blender/releases/download/Gramma/" + Zipfile
 
         # Get the addon directory and the current addon file path
         addon_dir = os.path.dirname(os.path.realpath(__file__))
@@ -56,18 +55,17 @@ class PerformActionOperator(bpy.types.Operator):
         data = response.read()
 
         # Save the updated addon zip file in the addon directory
-        updated_addon_file = os.path.join(addon_dir, "main.zip")
+        updated_addon_file = os.path.join(addon_dir, Zipfile)
         with open(updated_addon_file, "wb") as f:
             f.write(data)
 
         # Unzip the updated addon
-        # with zipfile.ZipFile(updated_addon_file, 'r') as zip_ref:
-        #     zip_ref.extractall(addon_dir)
+        with zipfile.ZipFile(updated_addon_file, 'r') as zip_ref:
+            zip_ref.extractall(addon_dir)
 
         # Remove the downloaded zip file
-        # os.remove(updated_addon_file)
+        os.remove(updated_addon_file)
 
-        P_Funtion.copy_files_from_subfolder("PandaTools", "PandaTools-main")
         # Reload the addon module
         bpy.ops.script.reload()
 

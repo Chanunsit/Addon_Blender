@@ -83,19 +83,27 @@ class UV_Editor(bpy.types.Operator):
         return {'FINISHED'}
     @staticmethod
     def Texel_value_increase(self, context):
-        print("Texel value X2")
+        
         scene = context.scene
         Panda_Property = scene.Panda_Tools
-        Panda_Property.uv_texel_value *= 2
-        
+        texel = int (Panda_Property.uv_texel_value) 
+        if texel < 4096:
+            texel *= 2
+        Panda_Property.uv_texel_value = str (texel)
+
+        print("Texel value X2")
         return {'FINISHED'}
     @staticmethod
     def Texel_value_reduce(self, context):
-        print("Texel value /2")
+        
         scene = context.scene
         Panda_Property = scene.Panda_Tools
-        Panda_Property.uv_texel_value //= 2
+        texel = int (Panda_Property.uv_texel_value) 
+        if texel > 1:
+            texel //= 2
+        Panda_Property.uv_texel_value = str (texel)
         
+        print("Texel value /2")
         return {'FINISHED'}
 
 

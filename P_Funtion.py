@@ -1,6 +1,9 @@
 import bpy
 import bmesh
 import mathutils
+import os
+import shutil
+
 from . import P_icons
 def report_message(message, type='INFO'):
     bpy.ops.wm.popup_menu(message=message, title="Message", icon=type,icon_value=P_icons.custom_icons["custom_icon_1"].icon_id)
@@ -85,7 +88,6 @@ def settexel_custom(self, context):
         bpy.ops.object.texel_density_set()
     except: pass
  
-
 def BoundingToBox():
         selected_object = bpy.context.active_object
         dimensions = selected_object.dimensions
@@ -237,7 +239,6 @@ def Extrude_to_opposite():
     else:
         print("No opposite face found.")
         
-
 def TransFromToOrient_Origin():
     bpy.context.scene.tool_settings.use_transform_data_origin = True
     bpy.ops.transform.transform(mode='ALIGN')
@@ -252,6 +253,7 @@ def ObjNameToList():
         object_names.append(obj.name)
 
 def Assign_Material():
+
     #  Get the active object
     
     obj = bpy.context.active_object
@@ -269,3 +271,20 @@ def Assign_Material():
         obj.data.materials[0] = material
     else:
         obj.data.materials.append(material)
+
+
+def copy_files_from_subfolder(main_folder, sub_folder):
+    main_folder_path = bpy.path.abspath(main_folder)
+    sub_folder_path = os.path.join(main_folder_path, sub_folder)
+    
+    if not os.path.exists(main_folder_path):
+        os.makedirs(main_folder_path)
+    
+    if os.path.exists(sub_folder_path):
+        for filename in os.listdir(sub_folder_path):
+            source_file_path = os.path.join(sub_folder_path, filename)
+            destination_file_path = os.path.join(main_folder_path, filename)
+            shutil.copy2(source_file_path, destination_file_path)
+            print(f"Copied '{filename}' from subfolder to main folder.")
+
+# Specify the main folder and subfolder names

@@ -3,7 +3,7 @@ bl_info = {
     "author" : "Gramma",
     "description" : "",
     "blender" : (3, 5, 0),
-    "version" : (0, 1, 0),
+    "version" : (0, 1, 1),
     "location" : "",
     "warning" : "",
     "category" : "3D View"

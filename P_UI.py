@@ -45,19 +45,29 @@ class VIEW3D_PT_Panda(bpy.types.Panel):
             row = layout.row()
             box = layout.box()
             row = box.row() 
-            row.label(text=": Turn ON/Off Option ", icon_value=P_icons.custom_icons["custom_icon_6"].icon_id)
-            row = box.row() 
-            row.prop(context.scene.tool_settings, "use_transform_correct_face_attributes", text="", icon_value=P_icons.custom_icons["custom_icon_10"].icon_id)
-            if bpy.context.scene.tool_settings.use_transform_correct_face_attributes == True:
-                row.prop(context.scene.tool_settings, "use_transform_correct_keep_connected", text="Connect", icon_value=P_icons.custom_icons["custom_icon_10"].icon_id)
-                
-
+            row.label(text=":  Option ", icon_value=P_icons.custom_icons["custom_icon_6"].icon_id)
             
+            
+            if Panda_Property.option_on_off:
+                row.prop(Panda_Property, "option_on_off", text="",icon="TRIA_DOWN")
                 row = box.row() 
-            row.prop(context.space_data.overlay, "show_edge_sharp", text="Sharp", icon_value=P_icons.custom_icons["custom_icon_8"].icon_id)
-            row.prop(context.space_data.overlay, "show_edge_seams", text="Seams", icon_value=P_icons.custom_icons["custom_icon_8"].icon_id)
-            row = layout.row()
+                row.prop(context.scene.tool_settings, "use_transform_correct_face_attributes", text="UV face")
+                if bpy.context.scene.tool_settings.use_transform_correct_face_attributes == True:
+                    row.prop(context.scene.tool_settings, "use_transform_correct_keep_connected", text="Connect")
+                # row.label(text="Overay")
+                row = box.row() 
+                row.prop(context.space_data.overlay, "show_face_orientation", text="Backface")
+                row.prop(context.space_data.overlay, "show_wireframes", text="Wireframes")
+                row = box.row() 
+                row.prop(context.space_data.overlay, "show_edge_seams", text="Seams")
+                row.prop(context.space_data.overlay, "show_edge_sharp", text="Sharp")
+                row = box.row()
+                row.prop(context.space_data.overlay, "show_extra_edge_length", text="Edge length")
 
+                row = layout.row()
+            else:
+                row.prop(Panda_Property, "option_on_off", text="",icon="TRIA_RIGHT")
+            
             box = layout.box()
             row = box.row()
             row.label(text=": Tools", icon_value=P_icons.custom_icons["custom_icon_3"].icon_id)
@@ -99,9 +109,9 @@ class VIEW3D_PT_Panda(bpy.types.Panel):
             box = layout.box()
             row = box.row() 
             row.label(text="", icon_value=P_icons.custom_icons["custom_icon_12"].icon_id)
-            row.label(text=": Bevel")
-            row = box.row()
-            row.prop(Panda_Property, "bevle_shape", text=": Shape")
+            # row.label(text=": Bevel")
+            # row = box.row()
+            row.prop(Panda_Property, "bevle_shape", text="Shape")
             row = box.row()
             if Panda_Property.bevle_shape:
                 row.prop(Panda_Property, "bevel_offset_input_shape", text="")
@@ -185,7 +195,29 @@ class VIEW3D_PT_Panda(bpy.types.Panel):
             row.operator(P_Website_Operators.OpenWebsiteOperator.bl_idname, text="BackOffice").action="@_BackOffice"
             row = layout.row()
 
-        
+             # Add a label
+            layout.label(text="Web favorite")
+
+            # Input for label and link
+            layout.prop(context.scene, "website_label", text="Label")
+            layout.prop(context.scene, "website_link", text="Link")
+            row = layout.row()
+            # Button to add website link
+            row.operator("addon.add_website_link", text="Add Link")
+            box = layout.box()
+            # Display the list of added website links
+            for idx, website_link in enumerate(context.scene.website_links):
+                
+                row = box.row()
+                row.label(text=website_link.label)
+                row.operator("addon.open_website_link", text="Open").website_index = idx
+                if Panda_Property.show_remove_link:
+                    row.operator("addon.remove_website_link", text="",icon="TRASH").website_index = idx
+                
+            
+            row = layout.row()
+            row.prop(Panda_Property, "show_remove_link", text="Remove link")
+    
 
 class UV_PT_Panda(bpy.types.Panel):
 

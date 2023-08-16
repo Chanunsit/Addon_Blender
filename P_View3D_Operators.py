@@ -97,6 +97,7 @@ class Speed_process(bpy.types.Operator):
     action : StringProperty(name="action")
     
     def execute(self, context):  
+        bpy.context.scene.tool_settings.use_transform_correct_keep_connected = True
 
         if self.action == "@_RotateX": 
             self.X_axis(self, context)
@@ -145,7 +146,8 @@ class Speed_process(bpy.types.Operator):
     @staticmethod
     def Appy_all_trasfrom(self, context):
 
-        bpy.ops.object.transform_apply(location=True, rotation=True, scale=True)
+        # bpy.ops.object.transform_apply(location=True, rotation=True, scale=True)
+        bpy.ops.object.transform_apply(location=True, rotation=True, scale=True, properties=True, isolate_users=False)
         print("Appy all trasfrom")
         return {'FINISHED'}
     
@@ -158,7 +160,11 @@ class Speed_process(bpy.types.Operator):
         if Panda_Property.option_trasfrom_xyz == "Rotate":
             rotation_angle = math.radians(context.scene.Panda_Tools.my_rotation_angle)
             if obj.mode == 'OBJECT':
-                obj.rotation_euler.x += rotation_angle
+                selected_objects = bpy.context.selected_objects
+                for obj in selected_objects:
+                    bpy.context.view_layer.objects.active = obj 
+                    bpy.ops.transform.rotate(value=rotation_angle, orient_axis='X')
+                
             elif obj.mode == 'EDIT':
                 orient_type = bpy.context.scene.transform_orientation_slots[0].type
                 bpy.ops.transform.rotate(value=rotation_angle, orient_axis='X', orient_type=orient_type)
@@ -183,7 +189,10 @@ class Speed_process(bpy.types.Operator):
         if Panda_Property.option_trasfrom_xyz == "Rotate":
             rotation_angle = math.radians(context.scene.Panda_Tools.my_rotation_angle)
             if obj.mode == 'OBJECT':
-                obj.rotation_euler.y += rotation_angle
+                selected_objects = bpy.context.selected_objects
+                for obj in selected_objects:
+                    bpy.context.view_layer.objects.active = obj 
+                    bpy.ops.transform.rotate(value=rotation_angle, orient_axis='Y')
             elif obj.mode == 'EDIT':
                 orient_type = bpy.context.scene.transform_orientation_slots[0].type
                 bpy.ops.transform.rotate(value=rotation_angle, orient_axis='Y', orient_type=orient_type)
@@ -206,7 +215,10 @@ class Speed_process(bpy.types.Operator):
             rotation_angle = math.radians(context.scene.Panda_Tools.my_rotation_angle)
 
             if obj.mode == 'OBJECT':
-                obj.rotation_euler.z += rotation_angle
+                selected_objects = bpy.context.selected_objects
+                for obj in selected_objects:
+                    bpy.context.view_layer.objects.active = obj 
+                    bpy.ops.transform.rotate(value=rotation_angle, orient_axis='Z')
             elif obj.mode == 'EDIT':
                 orient_type = bpy.context.scene.transform_orientation_slots[0].type
                 bpy.ops.transform.rotate(value=rotation_angle, orient_axis='Z', orient_type=orient_type)

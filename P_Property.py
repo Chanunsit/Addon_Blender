@@ -9,13 +9,14 @@ option_tap = {
     "B": {"icon": "UV_FACESEL", "label": "UV edit"},
     "C": {"icon": "FILE_3D", "label": "Box builder"},
     "D": {"icon": "SHADERFX", "label": "Object"},
-    "E": {"icon": "OUTLINER_OB_VOLUME", "label": "Internet"},
+    "E": {"icon": "URL", "label": "Internet"},
     # "F": {"icon": "OUTLINER_OB_VOLUME", "label": "open appication on youre pc"} NEW!
 }
 
 transfrom_XYZ_List = {
     "Rotate": {"label": "Rotate"},
-    "Scale": { "label": "Scale"}
+    "Scale": { "label": "Scale"},
+    # "Move": { "label": "Move"}
 }
    
 
@@ -26,6 +27,8 @@ class MyProperties(PropertyGroup):
     auto_orient:bpy.props.BoolProperty(name="Auto Orient",default=True)
     remove_reference:bpy.props.BoolProperty(name="Remove referent object")
     bevle_shape:bpy.props.BoolProperty(name="bevel Shape",default=False)
+    show_remove_link:bpy.props.BoolProperty(name="Show remove link",default=False)
+    option_on_off:bpy.props.BoolProperty(name="Show remove link",default=False)
     # uv_offset:bpy.props.BoolProperty(name="ofFset UV")
     my_rotation_angle:bpy.props.FloatProperty(
         name="My Rotation Angle",
@@ -33,6 +36,7 @@ class MyProperties(PropertyGroup):
         default=90.0,
         min=-360.0,
         max=360.0,
+        step=4500,
     )
     my_scale_value:bpy.props.FloatProperty(
         name="My Scale value",
@@ -40,7 +44,8 @@ class MyProperties(PropertyGroup):
         default=1.0,
         min=-1.0,
         soft_max=10.0,
-        precision=1,
+        precision=2,
+        step=10,
     )
     bevel_offset_input_shape:bpy.props.FloatProperty(
         name="Bevel Offset Input Shape",

@@ -147,7 +147,8 @@ class Speed_process(bpy.types.Operator):
     def Appy_all_trasfrom(self, context):
 
         # bpy.ops.object.transform_apply(location=True, rotation=True, scale=True)
-        bpy.ops.object.transform_apply(location=True, rotation=True, scale=True, properties=True, isolate_users=False)
+        bpy.ops.object.transform_apply(location=True, rotation=True, scale=True, isolate_users=True)
+
         print("Appy all trasfrom")
         return {'FINISHED'}
     

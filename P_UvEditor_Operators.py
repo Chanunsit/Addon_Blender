@@ -1,8 +1,10 @@
 import bpy
+import os
 from bpy.types import ( PropertyGroup, )
 from bpy.props import (PointerProperty, StringProperty)
 from . import P_Funtion
 from . import P_Property
+
 
 class MyProperties(PropertyGroup):
     saveList : StringProperty(name="Save List")
@@ -16,6 +18,8 @@ class UV_Editor(bpy.types.Operator):
     def execute(self, context):
         if self.action == "@_SmartUnwrap": 
             self.SmartUnwrap(self, context)
+        elif self.action == "@_Unwrapmaster": 
+            self.Unwrapmaster(self, context)
         elif self.action == "@_RotateUV90": 
             self.RotateUV90(self, context)
         elif self.action == "@_AlignEdgeUV": 
@@ -26,11 +30,57 @@ class UV_Editor(bpy.types.Operator):
             self.Texel_value_increase(self, context)
         elif self.action == "@_Texel_value_reduce": 
             self.Texel_value_reduce(self, context)
+        elif self.action == "@_Seam_from_island": 
+            self.Seam_from_island(self, context)
+        elif self.action == "@_Checker": 
+            self.Assign_Checker(self, context)
         else:
              print("")
 
         return {'FINISHED'}
-    
+    @staticmethod
+    def Assign_Checker(self, context):
+        selected_texture = context.scene.Panda_Tools.selected_texture
+        textures_path = os.path.join(os.path.dirname(__file__), "P_Texture")
+        # Get the active object's material or create a new one
+        active_object = context.active_object
+        if active_object:
+            if not active_object.data.materials:
+                new_material = bpy.data.materials.new(name="New Material")
+                active_object.data.materials.append(new_material)
+                material = new_material
+                bpy.context.object.active_material.use_nodes = True
+            else:
+                material = active_object.active_material
+                
+
+            if material:
+                 # Check if the image with the same name already exists
+                 
+                image_name = selected_texture + ".png"
+                existing_image = bpy.data.images.get(image_name)
+                texture_node = material.node_tree.nodes.new(type='ShaderNodeTexImage')
+                texture_node.location = (0, 0)
+                texture_path = os.path.join(textures_path, image_name)
+                
+                if existing_image:
+                    texture_node = material.node_tree.nodes.get("Image Texture")
+                    if texture_node:
+                        texture_node.image = existing_image
+                else:
+                    
+                    new_image = bpy.data.images.load(filepath=texture_path)
+                    texture_node.image = new_image
+                    # If the image doesn't exist, load it and assign
+                
+                
+
+                # Connect the image texture node to the base color input
+                principled_node = material.node_tree.nodes.get("Principled BSDF")
+                if principled_node:
+                    material.node_tree.links.new(texture_node.outputs["Color"], principled_node.inputs["Base Color"])
+        print("Assign Checker")
+        return {'FINISHED'}
     @staticmethod
     def SmartUnwrap(self, context):
         scene = context.scene
@@ -47,6 +97,17 @@ class UV_Editor(bpy.types.Operator):
         bpy.ops.uv.snap_cursor(target='ORIGIN')
 
         
+        print("Unwraped")
+        return {'FINISHED'}
+    @staticmethod
+    def Unwrapmaster(self, context):
+        scene = context.scene
+        bpy.ops.uv.smart_project()
+        bpy.ops.uv.smart_project(angle_limit=0.785398)
+        bpy.ops.uv.smart_project(island_margin=0.01)
+
+
+    
         print("Unwraped")
         return {'FINISHED'}
     
@@ -105,7 +166,14 @@ class UV_Editor(bpy.types.Operator):
         
         print("Texel value /2")
         return {'FINISHED'}
+    
+    @staticmethod
+    def Seam_from_island(self, context):
+        scene = context.scene
+        bpy.ops.uv.seams_from_islands()
 
+        print("seams from islands")
+        return {'FINISHED'}
 
 
 

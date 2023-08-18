@@ -18,7 +18,14 @@ transfrom_XYZ_List = {
     "Scale": { "label": "Scale"},
     # "Move": { "label": "Move"}
 }
+
+texture_options = [
    
+    ("512_Texel", "512_Texel",""),
+    ("1024_Texel", "1024_Texel",""),
+    ("2048_Texel", "2048_Texel",""),
+    ("4096_Texel", "4096_Texel","")
+] 
 
 class MyProperties(PropertyGroup):
     option_menu_ui:EnumProperty(items=[(name, option_tap[name]["label"], "", option_tap[name]["icon"], i) for i, name in enumerate(option_tap.keys())])
@@ -91,6 +98,13 @@ class MyProperties(PropertyGroup):
         
     )
     
+    
+    selected_texture : EnumProperty(
+        name="Tab",
+        items = texture_options
+        )
+    
+ 
     
 classes = [MyProperties]
 def register():

@@ -205,12 +205,14 @@ class VIEW3D_PT_Panda(bpy.types.Panel):
             # Button to add website link
             row.operator("addon.add_website_link", text="Add Link")
             box = layout.box()
+            
             # Display the list of added website links
             for idx, website_link in enumerate(context.scene.website_links):
-                
                 row = box.row()
                 row.label(text=website_link.label)
-                row.operator("addon.open_website_link", text="Open").website_index = idx
+                row.scale_x=0.15
+                row.operator("addon.open_website_link", text="Go!").website_index = idx
+                row.scale_x=1
                 if Panda_Property.show_remove_link:
                     row.operator("addon.remove_website_link", text="",icon="TRASH").website_index = idx
                 
@@ -235,14 +237,24 @@ class UV_PT_Panda(bpy.types.Panel):
         row = layout.row()
         box = layout.box()
         row = box.row() 
+        
         row.label(text=": UV Unwrap ", icon_value=P_icons.custom_icons["custom_icon_7"].icon_id)
+        row = box.row() 
+        row.prop(context.scene.tool_settings, "use_uv_select_sync", text="UV sync")
         row = box.row() 
         row.label(text="Texel set :")
         row.operator(P_UvEditor_Operators.UV_Editor.bl_idname, text="",icon="REMOVE").action="@_Texel_value_reduce" 
         row.prop(Panda_Property, "uv_texel_value")
+        
         row.operator(P_UvEditor_Operators.UV_Editor.bl_idname, text="",icon= "ADD").action="@_Texel_value_increase" 
+        
+        layout.prop(Panda_Property, "selected_texture", text="Select Texture")
+        layout.operator(P_UvEditor_Operators.UV_Editor.bl_idname, text="Assing").action="@_Checker"
+        
         row = box.row()
-        row.operator(P_UvEditor_Operators.UV_Editor.bl_idname, text="Smart Unwrap").action="@_SmartUnwrap"  
+        row.operator(P_UvEditor_Operators.UV_Editor.bl_idname, text="Smart Unwrap").action="@_SmartUnwrap" 
+        row = box.row()
+        row.operator(P_UvEditor_Operators.UV_Editor.bl_idname, text="Unwrapmaster").action="@_Unwrapmaster"  
         row = layout.row()
         box = layout.box()
         row = box.row()
@@ -250,6 +262,8 @@ class UV_PT_Panda(bpy.types.Panel):
         row = box.row()
         row.operator(P_UvEditor_Operators.UV_Editor.bl_idname, text="Rotate90°").action="@_RotateUV90"  
         row.operator(P_UvEditor_Operators.UV_Editor.bl_idname, text="AlignEdge").action="@_AlignEdgeUV" 
+        row = box.row()
+        row.operator(P_UvEditor_Operators.UV_Editor.bl_idname, text="Island").action="@_Seam_from_island"
         row = layout.row()
 
         box = layout.box()

@@ -130,6 +130,12 @@ class VIEW3D_PT_Panda(bpy.types.Panel):
             row.label(text=": UV Status ", icon_value=P_icons.custom_icons["custom_icon_6"].icon_id)
             row = box.row()
             row.prop(context.scene.tool_settings, "use_uv_select_sync", text="UV sync")
+            layout.prop(Panda_Property, "selected_texture", text="Checker")
+            layout.operator(P_UvEditor_Operators.UV_Editor.bl_idname, text="Assing").action="@_Checker"
+            row = layout.row()
+            row.operator(P_UvEditor_Operators.UV_Editor.bl_idname, text="+").action="@_Increase_tiling"
+            row.operator(P_UvEditor_Operators.UV_Editor.bl_idname, text="1").action="@_reset_tiling"
+            row.operator(P_UvEditor_Operators.UV_Editor.bl_idname, text="-").action="@_reduce_tiling"
             
             row = layout.row()
             box = layout.box()
@@ -248,8 +254,7 @@ class UV_PT_Panda(bpy.types.Panel):
         
         row.operator(P_UvEditor_Operators.UV_Editor.bl_idname, text="",icon= "ADD").action="@_Texel_value_increase" 
         
-        layout.prop(Panda_Property, "selected_texture", text="Select Texture")
-        layout.operator(P_UvEditor_Operators.UV_Editor.bl_idname, text="Assing").action="@_Checker"
+        
         
         row = box.row()
         row.operator(P_UvEditor_Operators.UV_Editor.bl_idname, text="Smart Unwrap").action="@_SmartUnwrap" 

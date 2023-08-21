@@ -34,6 +34,12 @@ class UV_Editor(bpy.types.Operator):
             self.Seam_from_island(self, context)
         elif self.action == "@_Checker": 
             self.Assign_Checker(self, context)
+        elif self.action == "@_Increase_tiling": 
+            self.Increase_tiling(self, context)
+        elif self.action == "@_reduce_tiling": 
+            self.reduce_tiling(self, context)
+        elif self.action == "@_reset_tiling": 
+            self.reset_tiling(self, context)
         else:
              print("")
 
@@ -55,31 +61,80 @@ class UV_Editor(bpy.types.Operator):
                 
 
             if material:
-                 # Check if the image with the same name already exists
-                 
+               
                 image_name = selected_texture + ".png"
-                existing_image = bpy.data.images.get(image_name)
-                texture_node = material.node_tree.nodes.new(type='ShaderNodeTexImage')
-                texture_node.location = (0, 0)
-                texture_path = os.path.join(textures_path, image_name)
-                
-                if existing_image:
-                    texture_node = material.node_tree.nodes.get("Image Texture")
-                    if texture_node:
-                        texture_node.image = existing_image
-                else:
-                    
+                texture_node = None
+
+                # Check if the image texture node with the same name exists
+                for node in material.node_tree.nodes:
+                    if node.type == 'TEX_IMAGE' and node.image.name == image_name:
+                        texture_node = node
+                        break
+
+                if not texture_node:
+                    # If the image texture node doesn't exist, create one
+                    texture_node = material.node_tree.nodes.new(type='ShaderNodeTexImage')
+                    texture_node.location = (0, 0)
+                    texture_path = os.path.join(textures_path, image_name)
                     new_image = bpy.data.images.load(filepath=texture_path)
                     texture_node.image = new_image
-                    # If the image doesn't exist, load it and assign
-                
-                
+                    
+                # Check if Mapping node already exists
+                mapping_node = material.node_tree.nodes.get("Mapping")
+                if not mapping_node:
+                    mapping_node = material.node_tree.nodes.new(type='ShaderNodeMapping')
+                    mapping_node.location = (-400, 0)
+
+                # Check if Texture Coordinate node already exists
+                texture_coord_node = material.node_tree.nodes.get("Texture Coordinate")
+                if not texture_coord_node:
+                    texture_coord_node = material.node_tree.nodes.new(type='ShaderNodeTexCoord')
+                    texture_coord_node.location = (-600, 0)
+
+                # Connect Texture Coordinate to Mapping, Mapping to Image Texture
+                material.node_tree.links.new(texture_coord_node.outputs["UV"], mapping_node.inputs["Vector"])
+                material.node_tree.links.new(mapping_node.outputs["Vector"], texture_node.inputs["Vector"])
 
                 # Connect the image texture node to the base color input
                 principled_node = material.node_tree.nodes.get("Principled BSDF")
                 if principled_node:
                     material.node_tree.links.new(texture_node.outputs["Color"], principled_node.inputs["Base Color"])
         print("Assign Checker")
+        return {'FINISHED'}
+    
+    @staticmethod
+    def Increase_tiling(self, context):
+        active_object = context.active_object
+        if active_object and active_object.active_material:
+            material = active_object.active_material
+            mapping_node = material.node_tree.nodes.get("Mapping")
+            if mapping_node:
+                mapping_node.inputs[3].default_value[0] *= 2
+                mapping_node.inputs[3].default_value[1] *= 2
+        print("Increase tiling")
+        return {'FINISHED'}
+    
+    @staticmethod
+    def reduce_tiling(self, context):
+        active_object = context.active_object
+        if active_object and active_object.active_material:
+            material = active_object.active_material
+            mapping_node = material.node_tree.nodes.get("Mapping")
+            if mapping_node:
+                mapping_node.inputs[3].default_value[0] *= 0.5
+                mapping_node.inputs[3].default_value[1] *= 0.5
+        print("reduce_tiling")
+        return {'FINISHED'}
+    @staticmethod
+    def reset_tiling(self, context):
+        active_object = context.active_object
+        if active_object and active_object.active_material:
+            material = active_object.active_material
+            mapping_node = material.node_tree.nodes.get("Mapping")
+            if mapping_node:
+                mapping_node.inputs[3].default_value[0] = 1
+                mapping_node.inputs[3].default_value[1] = 1
+        print("Increase tiling")
         return {'FINISHED'}
     @staticmethod
     def SmartUnwrap(self, context):

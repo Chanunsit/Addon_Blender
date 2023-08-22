@@ -281,7 +281,14 @@ class Uv(bpy.types.Operator):
             self.MakeSeam(self, context)
         elif self.action == "@_ClearSeam":
             self.ClearSeam(self, context)
-        
+        elif self.action == "@_View_uv1":
+            self.View_uv1(self, context)
+        elif self.action == "@_View_uv2":
+            self.View_uv2(self, context)
+        elif self.action == "@_Set_name_uv_chanel":
+            self.Set_name_uv_chanel(self, context)
+        elif self.action == "@_remove_uv_chanel":
+            self.remove_uv_chanel(self, context)
         else:
             print("UV_quick has no action")
 
@@ -374,7 +381,43 @@ class Uv(bpy.types.Operator):
 
         
         return {'FINISHED'}
-  
+    @staticmethod
+    def View_uv1(self, context):
+        selected_objects = bpy.context.selected_objects
+        for obj in selected_objects:
+            if obj.type == 'MESH':
+                obj.data.uv_layers[0].active_render = True
+                obj.data.uv_layers.active_index = 0
+        return {'FINISHED'}
+    @staticmethod
+    def View_uv2(self, context):
+        selected_objects = bpy.context.selected_objects
+        for obj in selected_objects:
+            if obj.type == 'MESH':
+                if len(obj.data.uv_layers) <= 1:
+                    obj.data.uv_layers.new(name="uv2")
+                obj.data.uv_layers[1].active_render = True
+                obj.data.uv_layers.active_index = 1
+        return {'FINISHED'}
+    @staticmethod
+    def Set_name_uv_chanel(self, context):
+        selected_objects = bpy.context.selected_objects
+        for obj in selected_objects:
+            if obj.type == 'MESH':
+                obj.data.uv_layers[0].name = "uv1"
+                obj.data.uv_layers[1].name = "uv2"
+        return {'FINISHED'}
+    @staticmethod
+    def remove_uv_chanel(self, context):
+        selected_objects = bpy.context.selected_objects
+
+        for obj in selected_objects:
+            if obj.type == 'MESH':
+                # Remove UV maps with index greater than 2
+                for i in range(2, len(obj.data.uv_layers)):
+                    obj.data.uv_layers.remove(obj.data.uv_layers[2])
+        print ("Removed UV more then 2")
+        return {'FINISHED'}
 class Box_Builder(bpy.types.Operator):
     bl_idname = "object.box_builder"
     bl_label = "BoxBuilder Operator"

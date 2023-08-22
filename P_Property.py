@@ -21,16 +21,16 @@ transfrom_XYZ_List = {
 
 texture_options = [
    
-    ("512_Texel", "512_Texel",""),
-    ("1024_Texel", "1024_Texel",""),
-    ("2048_Texel", "2048_Texel",""),
-    ("4096_Texel", "4096_Texel","")
+    ("Checker_A", "Checker_A",""),
+    ("Checker_B", "Checker_B",""),
+    ("Checker_C", "Checker_C",""),
+    ("Checker_D", "Checker_D","")
 ] 
 
 class MyProperties(PropertyGroup):
     option_menu_ui:EnumProperty(items=[(name, option_tap[name]["label"], "", option_tap[name]["icon"], i) for i, name in enumerate(option_tap.keys())])
     option_trasfrom_xyz:EnumProperty(items=[(name, transfrom_XYZ_List[name]["label"], "", i) for i, name in enumerate(transfrom_XYZ_List.keys())])
-    uv_sync:bpy.props.BoolProperty(name="Uv Sync selection",default=False)
+    uv_keep_position:bpy.props.BoolProperty(name="Uv keep position",default=False)
     auto_orient:bpy.props.BoolProperty(name="Auto Orient",default=True)
     remove_reference:bpy.props.BoolProperty(name="Remove referent object")
     bevle_shape:bpy.props.BoolProperty(name="bevel Shape",default=False)

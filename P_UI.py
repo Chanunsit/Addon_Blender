@@ -130,13 +130,35 @@ class VIEW3D_PT_Panda(bpy.types.Panel):
             row.label(text=": UV Status ", icon_value=P_icons.custom_icons["custom_icon_6"].icon_id)
             row = box.row()
             row.prop(context.scene.tool_settings, "use_uv_select_sync", text="UV sync")
-            layout.prop(Panda_Property, "selected_texture", text="Checker")
-            layout.operator(P_UvEditor_Operators.UV_Editor.bl_idname, text="Assing").action="@_Checker"
-            row = layout.row()
+            row = box.row()
+            row.prop(Panda_Property, "selected_texture", text="")
+            row.scale_x=0.5
+            row.operator(P_UvEditor_Operators.UV_Editor.bl_idname, text="Assign").action="@_Checker"
+            row.scale_x=1
+            row = box.row()
             row.operator(P_UvEditor_Operators.UV_Editor.bl_idname, text="+").action="@_Increase_tiling"
             row.operator(P_UvEditor_Operators.UV_Editor.bl_idname, text="1").action="@_reset_tiling"
             row.operator(P_UvEditor_Operators.UV_Editor.bl_idname, text="-").action="@_reduce_tiling"
-            
+            row = layout.row()
+
+            box = layout.box()
+            row = box.row()
+            row.label(text="UV Map :", icon_value=P_icons.custom_icons["custom_icon_10"].icon_id)
+            active_object = context.active_object
+            if active_object and active_object.type == 'MESH':
+                active_index = active_object.data.uv_layers.active_index + 1
+                # row.label(text="Active Render UV Map Index:")
+                row.label(text=str(active_index))
+                # row.label(text=str(active_object.data.uv_layers.active_index))
+                
+
+            row = box.row()
+            row.operator(P_View3D_Operators.Uv.bl_idname, text="UV 1").action="@_View_uv1"
+            row.operator(P_View3D_Operators.Uv.bl_idname, text="UV 2").action="@_View_uv2"
+            row = box.row()
+            row.operator(P_View3D_Operators.Uv.bl_idname, text="Naming UV chanel").action="@_Set_name_uv_chanel"
+            row = box.row()
+            row.operator(P_View3D_Operators.Uv.bl_idname, text="Remove UV3+").action="@_remove_uv_chanel"
             row = layout.row()
             box = layout.box()
             row = box.row() 
@@ -259,8 +281,12 @@ class UV_PT_Panda(bpy.types.Panel):
         row = box.row()
         row.operator(P_UvEditor_Operators.UV_Editor.bl_idname, text="Smart Unwrap").action="@_SmartUnwrap" 
         row = box.row()
-        row.operator(P_UvEditor_Operators.UV_Editor.bl_idname, text="Unwrapmaster").action="@_Unwrapmaster"  
-        row = layout.row()
+        row.prop(Panda_Property, "uv_keep_position", text="keep position")
+        row = box.row()
+        # row.operator(P_UvEditor_Operators.UV_Editor.bl_idname, text="Unwrapmaster").action="@_Unwrapmaster"  
+        # row = layout.row()
+        row.operator(P_UvEditor_Operators.UV_Editor.bl_idname, text="PackUV").action="@_PackUV_Together"
+        row = box.row()
         box = layout.box()
         row = box.row()
         row.label(text=": UV Align ", icon_value=P_icons.custom_icons["custom_icon_8"].icon_id)
@@ -273,8 +299,7 @@ class UV_PT_Panda(bpy.types.Panel):
 
         box = layout.box()
         row = box.row()
-        row.operator(P_UvEditor_Operators.UV_Editor.bl_idname, text="PackUV").action="@_PackUV_Together"
-        row = box.row()
+        
         # row.prop(Panda_Property, "uv_offset", text="Offset new pack")
         row = layout.row()
 

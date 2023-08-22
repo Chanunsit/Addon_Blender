@@ -140,16 +140,16 @@ class UV_Editor(bpy.types.Operator):
     def SmartUnwrap(self, context):
         scene = context.scene
         uv_texel_value = (context.scene.Panda_Tools.uv_texel_value)
-
-        bpy.ops.uv.snap_cursor(target='SELECTED')
+        if context.scene.Panda_Tools.uv_keep_position:
+            bpy.ops.uv.snap_cursor(target='SELECTED')
         bpy.ops.uv.unwrap(method='ANGLE_BASED', margin=0.05)
         bpy.ops.uv.align_rotation(method='GEOMETRY', axis='Z')
-        bpy.ops.uv.align_rotation(method='AUTO')
+        bpy.ops.uv.align_rotation(method='AUTO')   
         bpy.ops.uv.snap_selected(target='CURSOR_OFFSET')
-        P_Funtion.settexel_custom(self, context)
-
-        # P_Funtion.settexel_512(self, context)
+        P_Funtion.settexel_custom(self, context)    
         bpy.ops.uv.snap_cursor(target='ORIGIN')
+        
+        
 
         
         print("Unwraped")

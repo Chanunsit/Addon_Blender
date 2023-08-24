@@ -146,11 +146,10 @@ class UV_Editor(bpy.types.Operator):
         bpy.ops.uv.align_rotation(method='GEOMETRY', axis='Z')
         bpy.ops.uv.align_rotation(method='AUTO')   
         bpy.ops.uv.snap_selected(target='CURSOR_OFFSET')
-        P_Funtion.settexel_custom(self, context)    
+        if context.scene.Panda_Tools.texel_set:
+            P_Funtion.settexel_custom(self, context)    
         bpy.ops.uv.snap_cursor(target='ORIGIN')
         
-        
-
         
         print("Unwraped")
         return {'FINISHED'}
@@ -184,9 +183,10 @@ class UV_Editor(bpy.types.Operator):
     def PackUV_Together(self, context):
         scene = context.scene
         bpy.ops.uv.snap_cursor(target='SELECTED')
-        bpy.ops.uv.pack_islands(udim_source='ACTIVE_UDIM', rotate=False, margin_method='SCALED', margin=0.05)
+        bpy.ops.uv.pack_islands(udim_source='ACTIVE_UDIM', rotate=False, margin_method='SCALED', margin=0.1)
         bpy.ops.uv.snap_selected(target='CURSOR_OFFSET')
-        P_Funtion.settexel_512(self, context)
+        if context.scene.Panda_Tools.texel_set:
+            P_Funtion.settexel_custom(self, context)    
         bpy.ops.uv.snap_cursor(target='ORIGIN')
 
         # if context.scene.Panda_Tools.uv_offset: 

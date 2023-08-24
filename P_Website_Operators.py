@@ -38,7 +38,7 @@ class OpenWebsiteOperator(bpy.types.Operator):
         return {'FINISHED'}
     @staticmethod
     def Go_WorkLogPro(self, context):
-        website_url = "https://jira.bistudio.com/secure/WPShowTimesheetAction!customTimesheet.jspa?periodMode=MONTH&targetType=USER&calendarType=CUSTOM&groupingType=ISSUE#targetType=USER&targetKey=mantanakulnat&groupingType=Issue&periodMode=MONTH&startDate=2023-07-01&endDate=2023-07-31&&&periodLocked=false&calendarType=CUSTOM&saveToUserHistory=false&extraIssueFilter=&showIssuesWithoutWorklog=false&viewType=TIMESHEET" 
+        website_url = "https://jira.bistudio.com/secure/WPShowTimesheetAction!customTimesheet.jspa?periodMode=MONTH&targetType=USER&calendarType=CUSTOM&groupingType=ISSUE" 
         webbrowser.open(website_url)
         print("Go WorkLogPro")
         return {'FINISHED'}

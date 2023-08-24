@@ -31,6 +31,7 @@ class MyProperties(PropertyGroup):
     option_menu_ui:EnumProperty(items=[(name, option_tap[name]["label"], "", option_tap[name]["icon"], i) for i, name in enumerate(option_tap.keys())])
     option_trasfrom_xyz:EnumProperty(items=[(name, transfrom_XYZ_List[name]["label"], "", i) for i, name in enumerate(transfrom_XYZ_List.keys())])
     uv_keep_position:bpy.props.BoolProperty(name="Uv keep position",default=False)
+    texel_set:bpy.props.BoolProperty(name="texel_set",default=True)
     auto_orient:bpy.props.BoolProperty(name="Auto Orient",default=True)
     remove_reference:bpy.props.BoolProperty(name="Remove referent object")
     bevle_shape:bpy.props.BoolProperty(name="bevel Shape",default=False)

@@ -289,10 +289,50 @@ class Uv(bpy.types.Operator):
             self.Set_name_uv_chanel(self, context)
         elif self.action == "@_remove_uv_chanel":
             self.remove_uv_chanel(self, context)
+        elif self.action == "@_Vertex_group":
+            self.Vertex_group(self, context)
+        elif self.action == "@_Select_group":
+            self.Select_group(self, context)
+        elif self.action == "@_Clear_group":
+            self.Clear_group(self, context)
         else:
             print("UV_quick has no action")
 
         
+        return {'FINISHED'}
+    @staticmethod
+    def Vertex_group(self, context):
+        selected_objects = bpy.context.selected_objects
+        for obj in selected_objects:
+            # if obj.type == 'MESH':
+            #     if "MyVertexGroup" not in obj.vertex_groups:
+            #         obj.vertex_groups.new(name="MyVertexGroup")
+                    
+            #     bpy.ops.object.vertex_group_assign()
+            if obj.type == 'MESH':
+               
+                if "MyFaceMap" not in obj.face_maps:
+                    obj.face_maps.new(name="MyFaceMap")
+                else:
+                    obj.face_maps.active_index = 0
+                bpy.ops.object.face_map_assign()
+                
+        print("Vertex_group")
+        return {'FINISHED'}
+    
+    @staticmethod
+    def Select_group(self, context):
+        
+        bpy.ops.object.face_map_select()
+        # bpy.ops.object.vertex_group_select()
+        print("select_group")
+        return {'FINISHED'}
+    
+    @staticmethod
+    def Clear_group(self, context):
+        bpy.ops.object.face_map_remove()
+        # bpy.ops.object.vertex_group_remove(all=False, all_unlocked=False)
+        print("Clear_group")
         return {'FINISHED'}
     
     @staticmethod

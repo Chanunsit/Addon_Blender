@@ -169,6 +169,10 @@ class VIEW3D_PT_Panda(bpy.types.Panel):
             row = box.row() 
             row.operator(P_View3D_Operators.Uv.bl_idname, text="Shap").action="@_Shap_to_Seam"
             row.operator(P_View3D_Operators.Uv.bl_idname, text="Island").action="@_Island_to_Seam"
+            row = box.row() 
+            row.operator(P_View3D_Operators.Uv.bl_idname, text="Remember").action="@_Vertex_group"
+            row.operator(P_View3D_Operators.Uv.bl_idname, text="Select").action="@_Select_group"
+            row.operator(P_View3D_Operators.Uv.bl_idname, text="Forget it").action="@_Clear_group"
             row = layout.row()
             box = layout.box()
             row = box.row() 
@@ -270,18 +274,19 @@ class UV_PT_Panda(bpy.types.Panel):
         row = box.row() 
         row.prop(context.scene.tool_settings, "use_uv_select_sync", text="UV sync")
         row = box.row() 
-        row.label(text="Texel set :")
-        row.operator(P_UvEditor_Operators.UV_Editor.bl_idname, text="",icon="REMOVE").action="@_Texel_value_reduce" 
-        row.prop(Panda_Property, "uv_texel_value")
-        
-        row.operator(P_UvEditor_Operators.UV_Editor.bl_idname, text="",icon= "ADD").action="@_Texel_value_increase" 
-        
+        # row.label(text="Texel set :")
+        row.prop(Panda_Property, "texel_set", text="Texel Set")
+        row.prop(Panda_Property, "uv_keep_position", text="Location")
+        row = box.row()
+        if Panda_Property.texel_set:
+            row.operator(P_UvEditor_Operators.UV_Editor.bl_idname, text="",icon="REMOVE").action="@_Texel_value_reduce" 
+            row.prop(Panda_Property, "uv_texel_value")
+            row.operator(P_UvEditor_Operators.UV_Editor.bl_idname, text="",icon= "ADD").action="@_Texel_value_increase" 
         
         
         row = box.row()
         row.operator(P_UvEditor_Operators.UV_Editor.bl_idname, text="Smart Unwrap").action="@_SmartUnwrap" 
-        row = box.row()
-        row.prop(Panda_Property, "uv_keep_position", text="keep position")
+        
         row = box.row()
         # row.operator(P_UvEditor_Operators.UV_Editor.bl_idname, text="Unwrapmaster").action="@_Unwrapmaster"  
         # row = layout.row()
@@ -297,11 +302,11 @@ class UV_PT_Panda(bpy.types.Panel):
         row.operator(P_UvEditor_Operators.UV_Editor.bl_idname, text="Island").action="@_Seam_from_island"
         row = layout.row()
 
-        box = layout.box()
-        row = box.row()
+        # box = layout.box()
+        # row = box.row()
         
-        # row.prop(Panda_Property, "uv_offset", text="Offset new pack")
-        row = layout.row()
+        # # row.prop(Panda_Property, "uv_offset", text="Offset new pack")
+        # row = layout.row()
 
 classes = [VIEW3D_PT_Panda,UV_PT_Panda]
 

@@ -180,6 +180,8 @@ class VIEW3D_PT_Panda(bpy.types.Panel):
             row = box.row() 
             row.operator(P_View3D_Operators.Uv.bl_idname, text="Quick", icon="UV").action="@_UV_quick"
             row.operator(P_View3D_Operators.Uv.bl_idname, text="Rotate 90").action="@_RotateUV90"
+            row = box.row() 
+            row.operator(P_View3D_Operators.Uv.bl_idname, text="Pack UV").action="@_Pack_UV"
             row = layout.row()
             box = layout.box()
             row = box.row() 
@@ -282,7 +284,9 @@ class UV_PT_Panda(bpy.types.Panel):
             row.operator(P_UvEditor_Operators.UV_Editor.bl_idname, text="",icon="REMOVE").action="@_Texel_value_reduce" 
             row.prop(Panda_Property, "uv_texel_value")
             row.operator(P_UvEditor_Operators.UV_Editor.bl_idname, text="",icon= "ADD").action="@_Texel_value_increase" 
-        
+        row = box.row()
+        # row.label(text="Margin : ")
+        row.prop(Panda_Property, "Magin", text="Margin")
         
         row = box.row()
         row.operator(P_UvEditor_Operators.UV_Editor.bl_idname, text="Smart Unwrap").action="@_SmartUnwrap" 

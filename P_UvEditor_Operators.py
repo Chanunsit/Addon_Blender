@@ -139,10 +139,11 @@ class UV_Editor(bpy.types.Operator):
     @staticmethod
     def SmartUnwrap(self, context):
         scene = context.scene
+        value_magin = context.scene.Panda_Tools.Magin
         uv_texel_value = (context.scene.Panda_Tools.uv_texel_value)
         if context.scene.Panda_Tools.uv_keep_position:
             bpy.ops.uv.snap_cursor(target='SELECTED')
-        bpy.ops.uv.unwrap(method='ANGLE_BASED', margin=0.05)
+        bpy.ops.uv.unwrap(method='ANGLE_BASED', margin=value_magin)
         bpy.ops.uv.align_rotation(method='GEOMETRY', axis='Z')
         bpy.ops.uv.align_rotation(method='AUTO')   
         bpy.ops.uv.snap_selected(target='CURSOR_OFFSET')
@@ -182,13 +183,20 @@ class UV_Editor(bpy.types.Operator):
     @staticmethod
     def PackUV_Together(self, context):
         scene = context.scene
-        bpy.ops.uv.snap_cursor(target='SELECTED')
-        bpy.ops.uv.pack_islands(udim_source='ACTIVE_UDIM', rotate=False, margin_method='SCALED', margin=0.1)
-        bpy.ops.uv.snap_selected(target='CURSOR_OFFSET')
-        if context.scene.Panda_Tools.texel_set:
-            P_Funtion.settexel_custom(self, context)    
-        bpy.ops.uv.snap_cursor(target='ORIGIN')
+        value_magin = context.scene.Panda_Tools.Magin
 
+        bpy.ops.mesh.select_linked(delimit={'NORMAL'})
+
+        # bpy.ops.uv.snap_cursor(target='SELECTED')
+        bpy.ops.uv.pack_islands(udim_source='ACTIVE_UDIM', rotate=False, margin_method='SCALED', margin=value_magin)
+        
+        if context.scene.Panda_Tools.texel_set:
+            P_Funtion.settexel_custom(self, context)  
+
+        bpy.ops.uv.snap_selected(target='CURSOR_OFFSET')
+
+        bpy.ops.image.view_selected()
+        bpy.ops.image.view_zoom_ratio(ratio=0.02)
         # if context.scene.Panda_Tools.uv_offset: 
         #     # Set the 3D cursor position in the Image Editor
         #     context.space_data.cursor_location[0] += 2.0

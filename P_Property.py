@@ -71,6 +71,24 @@ class MyProperties(PropertyGroup):
         max=10,
     )
     
+    Magin:bpy.props.FloatProperty(
+        name="Bevel Offset Input Smooth",
+        description="Input offset",
+        default=0.02,
+        min=0.00000,
+        max=10.0000,
+        precision=2,
+        step=1,
+    )
+   
+    bevel_segments_input_smooth:bpy.props.IntProperty(
+        name="Bevel segments Input smooth",
+        description="Input segments",
+        default= 1,
+        min=0,
+        max=10,
+    )
+    
     bevel_offset_input_smooth:bpy.props.FloatProperty(
         name="Bevel Offset Input Smooth",
         description="Input offset",
@@ -80,14 +98,6 @@ class MyProperties(PropertyGroup):
         precision=3,
         step=0.5,
     )
-    bevel_segments_input_smooth:bpy.props.IntProperty(
-        name="Bevel segments Input smooth",
-        description="Input segments",
-        default= 1,
-        min=0,
-        max=10,
-    )
-
     uv_texel_value:bpy.props.StringProperty(
         name="",
         description="Input valuse texel density",

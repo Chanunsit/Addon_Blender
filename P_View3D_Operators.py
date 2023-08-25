@@ -295,11 +295,36 @@ class Uv(bpy.types.Operator):
             self.Select_group(self, context)
         elif self.action == "@_Clear_group":
             self.Clear_group(self, context)
+        elif self.action == "@_Pack_UV":
+            self.Pack_UV(self, context)
         else:
             print("UV_quick has no action")
 
         
         return {'FINISHED'}
+    @staticmethod
+    def Pack_UV(self, context):
+        scene = context.scene
+        value_magin = context.scene.Panda_Tools.Magin
+        
+        bpy.context.scene.tool_settings.use_uv_select_sync = False
+
+        bpy.context.area.ui_type = 'UV'
+        bpy.ops.uv.select_all(action='SELECT')
+        bpy.ops.uv.pack_islands(udim_source='ACTIVE_UDIM', rotate=False, margin_method='SCALED', margin=value_magin)
+        
+        
+        if context.scene.Panda_Tools.texel_set:
+            P_Funtion.settexel_custom(self, context)    
+        # bpy.ops.uv.snap_cursor(target='ORIGIN')
+        
+        bpy.ops.uv.snap_selected(target='CURSOR_OFFSET')
+        bpy.context.scene.tool_settings.use_uv_select_sync = True
+        bpy.context.area.ui_type = 'VIEW_3D'
+         
+        print("Pack UV")
+        return {'FINISHED'}
+    
     @staticmethod
     def Vertex_group(self, context):
         selected_objects = bpy.context.selected_objects

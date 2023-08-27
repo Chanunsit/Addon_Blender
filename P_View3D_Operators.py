@@ -1,5 +1,6 @@
 import bpy
 import math
+import os
 from bpy.types import Scene
 from bpy.types import ( PropertyGroup, )
 from bpy.props import (PointerProperty, StringProperty)
@@ -297,6 +298,8 @@ class Uv(bpy.types.Operator):
             self.Clear_group(self, context)
         elif self.action == "@_Pack_UV":
             self.Pack_UV(self, context)
+        elif self.action == "@_PackUV_by_part": 
+            self.pack_by_part(self, context)
         else:
             print("UV_quick has no action")
 
@@ -306,25 +309,87 @@ class Uv(bpy.types.Operator):
     def Pack_UV(self, context):
         scene = context.scene
         value_magin = context.scene.Panda_Tools.Magin
-        
-        bpy.context.scene.tool_settings.use_uv_select_sync = False
+        if context.scene.Panda_Tools.pack_by_part:
+            bpy.ops.object.mode_set(mode='EDIT')
+            bpy.ops.mesh.select_all(action='SELECT')
+            bpy.ops.mesh.separate(type='LOOSE')
+            # -------------------------------------------
+            selected_objects = bpy.context.selected_objects
+            bpy.ops.object.mode_set(mode='OBJECT')
+            value_magin = context.scene.Panda_Tools.Magin
+            for obj in selected_objects:
+                
+                bpy.context.view_layer.objects.active = obj
+                bpy.ops.object.select_all(action='DESELECT')
+                obj.select_set(True)
 
-        bpy.context.area.ui_type = 'UV'
-        bpy.ops.uv.select_all(action='SELECT')
-        bpy.ops.uv.pack_islands(udim_source='ACTIVE_UDIM', rotate=False, margin_method='SCALED', margin=value_magin)
-        
-        
-        if context.scene.Panda_Tools.texel_set:
-            P_Funtion.settexel_custom(self, context)    
-        # bpy.ops.uv.snap_cursor(target='ORIGIN')
-        
-        bpy.ops.uv.snap_selected(target='CURSOR_OFFSET')
-        bpy.context.scene.tool_settings.use_uv_select_sync = True
-        bpy.context.area.ui_type = 'VIEW_3D'
+                bpy.ops.object.mode_set(mode='EDIT')
+                bpy.ops.mesh.select_all(action='SELECT')
+
+                bpy.context.area.ui_type = 'UV'    
+                bpy.ops.uv.select_all(action='SELECT')
+
+                # bpy.ops.uv.unwrap(method='ANGLE_BASED', margin=0.001)
+                bpy.ops.uv.pack_islands(udim_source='ACTIVE_UDIM', rotate=False, margin_method='SCALED', margin=value_magin)
+
+                if context.space_data.cursor_location[0] <= 5:
+                    context.space_data.cursor_location[0] += 1.5
+                    context.space_data.cursor_location[1] += 0
+                
+                else:
+                    
+                    context.space_data.cursor_location[0] = 1.5
+                    context.space_data.cursor_location[1] -= 1.5
+            
+                    
+                bpy.ops.uv.snap_selected(target='CURSOR_OFFSET')
+
+                bpy.context.area.ui_type = 'VIEW_3D'
+                bpy.ops.object.mode_set(mode='OBJECT')
+
+            
+            for obj in selected_objects:
+                obj.select_set(True)
+
+            bpy.context.view_layer.objects.active = selected_objects[0]
+            bpy.ops.object.join()
+
+            bpy.ops.object.mode_set(mode='EDIT')
+            bpy.ops.mesh.select_all(action='SELECT')
+            bpy.context.area.ui_type = 'UV'
+            bpy.ops.uv.select_all(action='SELECT')
+            if context.scene.Panda_Tools.texel_set:
+                P_Funtion.settexel_custom(self, context)      
+            bpy.ops.uv.snap_cursor(target='ORIGIN')
+            bpy.context.area.ui_type = 'VIEW_3D'
+        # ------------------------------------------------------------------------------------------------------------
+        else:
+            bpy.ops.object.mode_set(mode='EDIT')
+            bpy.ops.mesh.select_all(action='SELECT')
+            
+            bpy.context.scene.tool_settings.use_uv_select_sync = False
+            bpy.context.area.ui_type = 'UV'
+            bpy.ops.uv.select_all(action='SELECT')
+            bpy.ops.uv.pack_islands(udim_source='ACTIVE_UDIM', rotate=False, margin_method='SCALED', margin=value_magin)
+            
+            
+            if context.scene.Panda_Tools.texel_set:
+                P_Funtion.settexel_custom(self, context)    
+            # bpy.ops.uv.snap_cursor(target='ORIGIN')
+            
+            bpy.ops.uv.snap_selected(target='CURSOR_OFFSET')
+            bpy.context.scene.tool_settings.use_uv_select_sync = True
+            bpy.context.area.ui_type = 'VIEW_3D'
          
         print("Pack UV")
         return {'FINISHED'}
-    
+   
+    @staticmethod
+    def pack_by_part(self, context):
+         
+
+        print("PackUV by part")
+        return {'FINISHED'}
     @staticmethod
     def Vertex_group(self, context):
         selected_objects = bpy.context.selected_objects

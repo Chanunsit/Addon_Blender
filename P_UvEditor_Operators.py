@@ -40,11 +40,13 @@ class UV_Editor(bpy.types.Operator):
             self.reduce_tiling(self, context)
         elif self.action == "@_reset_tiling": 
             self.reset_tiling(self, context)
+        
         else:
              print("")
 
         return {'FINISHED'}
     @staticmethod
+    
     def Assign_Checker(self, context):
         selected_texture = context.scene.Panda_Tools.selected_texture
         textures_path = os.path.join(os.path.dirname(__file__), "P_Texture")
@@ -143,6 +145,8 @@ class UV_Editor(bpy.types.Operator):
         uv_texel_value = (context.scene.Panda_Tools.uv_texel_value)
         if context.scene.Panda_Tools.uv_keep_position:
             bpy.ops.uv.snap_cursor(target='SELECTED')
+        if context.scene.Panda_Tools.pack_by_linked:
+            bpy.ops.mesh.select_linked(delimit={'NORMAL'})
         bpy.ops.uv.unwrap(method='ANGLE_BASED', margin=value_magin)
         bpy.ops.uv.align_rotation(method='GEOMETRY', axis='Z')
         bpy.ops.uv.align_rotation(method='AUTO')   
@@ -184,10 +188,12 @@ class UV_Editor(bpy.types.Operator):
     def PackUV_Together(self, context):
         scene = context.scene
         value_magin = context.scene.Panda_Tools.Magin
+        
+            
+        if context.scene.Panda_Tools.pack_by_linked:
+            bpy.ops.mesh.select_linked(delimit={'NORMAL'})
 
-        bpy.ops.mesh.select_linked(delimit={'NORMAL'})
-
-        # bpy.ops.uv.snap_cursor(target='SELECTED')
+        
         bpy.ops.uv.pack_islands(udim_source='ACTIVE_UDIM', rotate=False, margin_method='SCALED', margin=value_magin)
         
         if context.scene.Panda_Tools.texel_set:
@@ -196,15 +202,10 @@ class UV_Editor(bpy.types.Operator):
         bpy.ops.uv.snap_selected(target='CURSOR_OFFSET')
 
         bpy.ops.image.view_selected()
-        bpy.ops.image.view_zoom_ratio(ratio=0.02)
-        # if context.scene.Panda_Tools.uv_offset: 
-        #     # Set the 3D cursor position in the Image Editor
-        #     context.space_data.cursor_location[0] += 2.0
-        #     context.space_data.cursor_location[1] += 0
-        #     bpy.ops.uv.snap_selected(target='CURSOR_OFFSET')
         
-        print("AlignEdgeUV")
+        print("Packed")
         return {'FINISHED'}
+
     @staticmethod
     def Texel_value_increase(self, context):
         

@@ -181,7 +181,10 @@ class VIEW3D_PT_Panda(bpy.types.Panel):
             row.operator(P_View3D_Operators.Uv.bl_idname, text="Quick", icon="UV").action="@_UV_quick"
             row.operator(P_View3D_Operators.Uv.bl_idname, text="Rotate 90").action="@_RotateUV90"
             row = box.row() 
+            row.prop(Panda_Property, "pack_by_part", text="Pack by part")
+            row = box.row() 
             row.operator(P_View3D_Operators.Uv.bl_idname, text="Pack UV").action="@_Pack_UV"
+            
             row = layout.row()
             box = layout.box()
             row = box.row() 
@@ -280,7 +283,10 @@ class UV_PT_Panda(bpy.types.Panel):
         row.prop(Panda_Property, "texel_set", text="Texel Set")
         row.prop(Panda_Property, "uv_keep_position", text="Location")
         row = box.row()
+        row.prop(Panda_Property, "pack_by_linked", text="Linked")
+        
         if Panda_Property.texel_set:
+            row = box.row()
             row.operator(P_UvEditor_Operators.UV_Editor.bl_idname, text="",icon="REMOVE").action="@_Texel_value_reduce" 
             row.prop(Panda_Property, "uv_texel_value")
             row.operator(P_UvEditor_Operators.UV_Editor.bl_idname, text="",icon= "ADD").action="@_Texel_value_increase" 
@@ -288,14 +294,13 @@ class UV_PT_Panda(bpy.types.Panel):
         # row.label(text="Margin : ")
         row.prop(Panda_Property, "Magin", text="Margin")
         
-        row = box.row()
-        row.operator(P_UvEditor_Operators.UV_Editor.bl_idname, text="Smart Unwrap").action="@_SmartUnwrap" 
         
         row = box.row()
-        # row.operator(P_UvEditor_Operators.UV_Editor.bl_idname, text="Unwrapmaster").action="@_Unwrapmaster"  
-        # row = layout.row()
-        row.operator(P_UvEditor_Operators.UV_Editor.bl_idname, text="PackUV").action="@_PackUV_Together"
+        row.operator(P_UvEditor_Operators.UV_Editor.bl_idname, text="Smart Unwrap").action="@_SmartUnwrap"  
         row = box.row()
+        row.operator(P_UvEditor_Operators.UV_Editor.bl_idname, text="PackUV").action="@_PackUV_Together"
+       
+        row = layout.row()
         box = layout.box()
         row = box.row()
         row.label(text=": UV Align ", icon_value=P_icons.custom_icons["custom_icon_8"].icon_id)

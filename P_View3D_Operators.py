@@ -314,10 +314,13 @@ class Uv(bpy.types.Operator):
             bpy.ops.mesh.select_all(action='SELECT')
             bpy.ops.mesh.separate(type='LOOSE')
             # -------------------------------------------
-            selected_objects = bpy.context.selected_objects
+            
             bpy.ops.object.mode_set(mode='OBJECT')
+            selected_objects = bpy.context.selected_objects
             value_magin = context.scene.Panda_Tools.Magin
             for obj in selected_objects:
+                
+                obj.data.uv_layers[0].active_render = True
                 
                 bpy.context.view_layer.objects.active = obj
                 bpy.ops.object.select_all(action='DESELECT')
@@ -341,12 +344,12 @@ class Uv(bpy.types.Operator):
                     context.space_data.cursor_location[0] = 1.5
                     context.space_data.cursor_location[1] -= 1.5
             
-                    
+                      
                 bpy.ops.uv.snap_selected(target='CURSOR_OFFSET')
 
                 bpy.context.area.ui_type = 'VIEW_3D'
                 bpy.ops.object.mode_set(mode='OBJECT')
-
+                
             
             for obj in selected_objects:
                 obj.select_set(True)

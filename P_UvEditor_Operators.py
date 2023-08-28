@@ -201,7 +201,7 @@ class UV_Editor(bpy.types.Operator):
 
         bpy.ops.uv.snap_selected(target='CURSOR_OFFSET')
 
-        bpy.ops.image.view_selected()
+        # bpy.ops.image.view_selected()
         
         print("Packed")
         return {'FINISHED'}

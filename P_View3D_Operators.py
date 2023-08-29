@@ -298,8 +298,8 @@ class Uv(bpy.types.Operator):
             self.Clear_group(self, context)
         elif self.action == "@_Pack_UV":
             self.Pack_UV(self, context)
-        elif self.action == "@_PackUV_by_part": 
-            self.pack_by_part(self, context)
+        elif self.action == "@_Hide_Select": 
+            self.hide_select(self, context)
         else:
             print("UV_quick has no action")
 
@@ -334,8 +334,10 @@ class Uv(bpy.types.Operator):
 
                 # bpy.ops.uv.unwrap(method='ANGLE_BASED', margin=0.001)
                 bpy.ops.uv.pack_islands(udim_source='ACTIVE_UDIM', rotate=False, margin_method='SCALED', margin=value_magin)
+                if context.scene.Panda_Tools.texel_set:    
+                    P_Funtion.settexel_textool(self, context) 
 
-                if context.space_data.cursor_location[0] <= 5:
+                if context.space_data.cursor_location[0] <= 10:
                     context.space_data.cursor_location[0] += 1.5
                     context.space_data.cursor_location[1] += 0
                 
@@ -361,8 +363,7 @@ class Uv(bpy.types.Operator):
             bpy.ops.mesh.select_all(action='SELECT')
             bpy.context.area.ui_type = 'UV'
             bpy.ops.uv.select_all(action='SELECT')
-            if context.scene.Panda_Tools.texel_set:
-                P_Funtion.settexel_custom(self, context)      
+                 
             bpy.ops.uv.snap_cursor(target='ORIGIN')
             bpy.context.area.ui_type = 'VIEW_3D'
         # ------------------------------------------------------------------------------------------------------------
@@ -377,8 +378,8 @@ class Uv(bpy.types.Operator):
             
             
             if context.scene.Panda_Tools.texel_set:
-                P_Funtion.settexel_custom(self, context)    
-            # bpy.ops.uv.snap_cursor(target='ORIGIN')
+                P_Funtion.settexel_textool(self, context)      
+            bpy.ops.uv.snap_cursor(target='ORIGIN')
             
             bpy.ops.uv.snap_selected(target='CURSOR_OFFSET')
             bpy.context.scene.tool_settings.use_uv_select_sync = True
@@ -386,12 +387,15 @@ class Uv(bpy.types.Operator):
          
         print("Pack UV")
         return {'FINISHED'}
-   
+        
+        
     @staticmethod
-    def pack_by_part(self, context):
-         
+    def hide_select(self, context):
+        bpy.ops.mesh.select_linked(delimit={'NORMAL'})
+        bpy.ops.mesh.hide(unselected=False)
 
-        print("PackUV by part")
+
+        print("Hide Select")
         return {'FINISHED'}
     @staticmethod
     def Vertex_group(self, context):
@@ -472,13 +476,19 @@ class Uv(bpy.types.Operator):
         distance = 0.07
         if bpy.context.active_object.mode == 'EDIT':
             bpy.context.area.ui_type = 'UV'
+            if context.scene.Panda_Tools.uv_keep_position:
+                bpy.ops.uv.snap_cursor(target='SELECTED')
+            if context.scene.Panda_Tools.pack_by_linked:
+                bpy.ops.mesh.select_linked(delimit={'NORMAL'})
             
-            # bpy.ops.uv.select_all(action='SELECT')
             bpy.ops.uv.unwrap(method='ANGLE_BASED', margin = distance)
             bpy.ops.uv.align_rotation(method='GEOMETRY', axis='Z')
             bpy.ops.uv.align_rotation(method='AUTO')
             bpy.ops.uv.pack_islands(udim_source='ACTIVE_UDIM', rotate=False, margin_method='SCALED', margin=distance)
-            P_Funtion.settexel_512(self, context)
+            
+            if context.scene.Panda_Tools.texel_set:
+                P_Funtion.settexel_textool(self, context)
+            
             bpy.context.area.ui_type = 'VIEW_3D'
             
         elif bpy.context.active_object.mode == 'OBJECT': 
@@ -487,11 +497,19 @@ class Uv(bpy.types.Operator):
             bpy.ops.object.origin_set(type='ORIGIN_GEOMETRY', center='MEDIAN')
             bpy.ops.object.mode_set(mode='EDIT')
             bpy.context.area.ui_type = 'UV'
+            if context.scene.Panda_Tools.uv_keep_position:
+                bpy.ops.uv.snap_cursor(target='SELECTED')
+            if context.scene.Panda_Tools.pack_by_linked:
+                bpy.ops.mesh.select_linked(delimit={'NORMAL'})
+
             bpy.ops.uv.select_all(action='SELECT')
             bpy.ops.uv.unwrap(method='ANGLE_BASED', margin = distance)
             bpy.ops.uv.align_rotation(method='GEOMETRY', axis='Z')
             bpy.ops.uv.pack_islands(udim_source='ACTIVE_UDIM', rotate=False, margin_method='SCALED', margin=distance)
-            P_Funtion.settexel_512(self, context)
+            
+            if context.scene.Panda_Tools.texel_set:
+                P_Funtion.settexel_textool(self, context)
+
             bpy.context.area.ui_type = 'VIEW_3D'
             bpy.ops.mesh.normals_tools(mode='RESET')
             bpy.ops.mesh.normals_make_consistent(inside=False)

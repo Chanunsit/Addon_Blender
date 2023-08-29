@@ -167,6 +167,8 @@ class VIEW3D_PT_Panda(bpy.types.Panel):
             row.operator(P_View3D_Operators.Uv.bl_idname, text="Make").action="@_MakeSeam"
             row.operator(P_View3D_Operators.Uv.bl_idname, text="Clear").action="@_ClearSeam"
             row = box.row() 
+            row.operator(P_View3D_Operators.Uv.bl_idname, text="Hide").action="@_Hide_Select"
+            row = box.row() 
             row.operator(P_View3D_Operators.Uv.bl_idname, text="Shap").action="@_Shap_to_Seam"
             row.operator(P_View3D_Operators.Uv.bl_idname, text="Island").action="@_Island_to_Seam"
             row = box.row() 
@@ -178,7 +180,7 @@ class VIEW3D_PT_Panda(bpy.types.Panel):
             row = box.row() 
             row.label(text=": UV Unwrap ", icon_value=P_icons.custom_icons["custom_icon_2"].icon_id)
             row = box.row() 
-            row.operator(P_View3D_Operators.Uv.bl_idname, text="Quick", icon="UV").action="@_UV_quick"
+            row.operator(P_View3D_Operators.Uv.bl_idname, text="UV_Unwrap", icon="UV").action="@_UV_quick"
             row.operator(P_View3D_Operators.Uv.bl_idname, text="Rotate 90").action="@_RotateUV90"
             row = box.row() 
             row.prop(Panda_Property, "pack_by_part", text="Pack by part")
@@ -287,8 +289,12 @@ class UV_PT_Panda(bpy.types.Panel):
         
         if Panda_Property.texel_set:
             row = box.row()
+            row.scale_x = 2
+            row.operator(P_UvEditor_Operators.UV_Editor.bl_idname, text="",icon="EYEDROPPER").action="@_Picked_texel" 
+            row.scale_x = 1
             row.operator(P_UvEditor_Operators.UV_Editor.bl_idname, text="",icon="REMOVE").action="@_Texel_value_reduce" 
             row.prop(Panda_Property, "uv_texel_value")
+            row.scale_x = 1
             row.operator(P_UvEditor_Operators.UV_Editor.bl_idname, text="",icon= "ADD").action="@_Texel_value_increase" 
         row = box.row()
         # row.label(text="Margin : ")
@@ -296,10 +302,10 @@ class UV_PT_Panda(bpy.types.Panel):
         
         
         row = box.row()
-        row.operator(P_UvEditor_Operators.UV_Editor.bl_idname, text="Smart Unwrap").action="@_SmartUnwrap"  
-        row = box.row()
+        
+        row.operator(P_UvEditor_Operators.UV_Editor.bl_idname, text="Unwrap").action="@_SmartUnwrap"  
         row.operator(P_UvEditor_Operators.UV_Editor.bl_idname, text="PackUV").action="@_PackUV_Together"
-       
+        row.scale_y = 1.64
         row = layout.row()
         box = layout.box()
         row = box.row()

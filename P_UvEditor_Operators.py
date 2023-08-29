@@ -10,7 +10,7 @@ class MyProperties(PropertyGroup):
     saveList : StringProperty(name="Save List")
 
 class UV_Editor(bpy.types.Operator):
-    bl_idname = "uv.my_operator"
+    bl_idname = "uv.panda_operator"
     bl_label = "My Operator"
     bl_options = {"REGISTER", "UNDO"}
     action : StringProperty(name="action")
@@ -30,6 +30,8 @@ class UV_Editor(bpy.types.Operator):
             self.Texel_value_increase(self, context)
         elif self.action == "@_Texel_value_reduce": 
             self.Texel_value_reduce(self, context)
+        elif self.action == "@_Picked_texel": 
+            self.Picked_texel(self, context)
         elif self.action == "@_Seam_from_island": 
             self.Seam_from_island(self, context)
         elif self.action == "@_Checker": 
@@ -103,7 +105,8 @@ class UV_Editor(bpy.types.Operator):
                     material.node_tree.links.new(texture_node.outputs["Color"], principled_node.inputs["Base Color"])
         print("Assign Checker")
         return {'FINISHED'}
-    
+   
+
     @staticmethod
     def Increase_tiling(self, context):
         active_object = context.active_object
@@ -142,17 +145,17 @@ class UV_Editor(bpy.types.Operator):
     def SmartUnwrap(self, context):
         scene = context.scene
         value_magin = context.scene.Panda_Tools.Magin
-        uv_texel_value = (context.scene.Panda_Tools.uv_texel_value)
+        
         if context.scene.Panda_Tools.uv_keep_position:
             bpy.ops.uv.snap_cursor(target='SELECTED')
         if context.scene.Panda_Tools.pack_by_linked:
             bpy.ops.mesh.select_linked(delimit={'NORMAL'})
         bpy.ops.uv.unwrap(method='ANGLE_BASED', margin=value_magin)
         bpy.ops.uv.align_rotation(method='GEOMETRY', axis='Z')
-        bpy.ops.uv.align_rotation(method='AUTO')   
-        bpy.ops.uv.snap_selected(target='CURSOR_OFFSET')
+        bpy.ops.uv.align_rotation(method='AUTO')
         if context.scene.Panda_Tools.texel_set:
-            P_Funtion.settexel_custom(self, context)    
+            P_Funtion.settexel_textool(self, context)     
+        bpy.ops.uv.snap_selected(target='CURSOR_OFFSET')  
         bpy.ops.uv.snap_cursor(target='ORIGIN')
         
         
@@ -188,19 +191,20 @@ class UV_Editor(bpy.types.Operator):
     def PackUV_Together(self, context):
         scene = context.scene
         value_magin = context.scene.Panda_Tools.Magin
-        
+        if context.scene.Panda_Tools.uv_keep_position:
+            bpy.ops.uv.snap_cursor(target='SELECTED')
             
         if context.scene.Panda_Tools.pack_by_linked:
             bpy.ops.mesh.select_linked(delimit={'NORMAL'})
 
-        
         bpy.ops.uv.pack_islands(udim_source='ACTIVE_UDIM', rotate=False, margin_method='SCALED', margin=value_magin)
         
         if context.scene.Panda_Tools.texel_set:
-            P_Funtion.settexel_custom(self, context)  
-
-        bpy.ops.uv.snap_selected(target='CURSOR_OFFSET')
-
+            
+            P_Funtion.settexel_textool(self, context)
+            
+        bpy.ops.uv.snap_selected(target='CURSOR_OFFSET')  
+        bpy.ops.uv.snap_cursor(target='ORIGIN')
         # bpy.ops.image.view_selected()
         
         print("Packed")
@@ -229,6 +233,20 @@ class UV_Editor(bpy.types.Operator):
         Panda_Property.uv_texel_value = str (texel)
         
         print("Texel value /2")
+        return {'FINISHED'}
+    
+    @staticmethod
+    def Picked_texel(self, context):
+        scene = context.scene 
+        bpy.ops.uv.textools_texel_density_get()
+        texel= str(scene.texToolsSettings.texel_density)
+        texel= texel.split(".")
+        texel= str(texel[0])
+        print(texel) 
+        context.scene.Panda_Tools.uv_texel_value = texel
+
+        # print(len(str(scene.texToolsSettings.texel_density)))
+        print("Picked texel")
         return {'FINISHED'}
     
     @staticmethod

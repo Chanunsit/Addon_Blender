@@ -81,7 +81,7 @@ class MyProperties(PropertyGroup):
         min=0.00000,
         max=10.0000,
         precision=2,
-        step=1,
+        step=10,
     )
    
     bevel_segments_input_smooth:bpy.props.IntProperty(
@@ -105,6 +105,7 @@ class MyProperties(PropertyGroup):
         name="",
         description="Input valuse texel density",
         default= "512",
+        maxlen= 6
         
         # min=1,
         # max=4096,

@@ -65,28 +65,31 @@ def GetFaceSeperated():
         active_separated_object.select_set(True)
         bpy.context.view_layer.objects.active = active_separated_object
         
-def settexel_512(self, context): 
+def settexel_textool(self, context): 
     scene = context.scene 
     uv_texel_value = (context.scene.Panda_Tools.uv_texel_value)      
     try:
-        scene.td.units = "1"
-        scene.td.texture_size = "1"
-        bpy.ops.object.texel_density_check()
-        bpy.ops.object.texel_density_set()
-        # bpy.context.scene.td.density_set = uv_texel_value
-        bpy.ops.object.preset_set(td_value=uv_texel_value)
+        bpy.context.scene.texToolsSettings.texel_get_mode = '1024'
+        print(scene.texToolsSettings.texel_set_mode)
+        # if context.scene.Panda_Tools.uv_keep_position:
+        #     bpy.context.scene.texToolsSettings.texel_set_mode = 'ISLAND'
+        # else:
+        bpy.context.scene.texToolsSettings.texel_set_mode = 'ALL'
+        scene.texToolsSettings.texel_density = int(uv_texel_value) 
+        bpy.ops.uv.textools_texel_density_set()
+        
     except: pass
 
-def settexel_custom(self, context): 
-    scene = context.scene 
-    uv_texel_value = (context.scene.Panda_Tools.uv_texel_value)      
-    try:
-        scene.td.units = "1"
-        scene.td.texture_size = "1"
-        bpy.context.scene.td.density_set = str(uv_texel_value)
-        bpy.ops.object.texel_density_check()
-        bpy.ops.object.texel_density_set()
-    except: pass
+# def settexel_custom(self, context): 
+#     scene = context.scene 
+#     uv_texel_value = (context.scene.Panda_Tools.uv_texel_value)      
+#     try:
+#         scene.td.units = "1"
+#         scene.td.texture_size = "1"
+#         bpy.context.scene.td.density_set = str(uv_texel_value)
+#         bpy.ops.object.texel_density_check()
+#         bpy.ops.object.texel_density_set()
+#     except: pass
  
 def BoundingToBox():
         selected_object = bpy.context.active_object

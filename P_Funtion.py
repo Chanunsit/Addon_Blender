@@ -8,6 +8,7 @@ from . import P_icons
 def report_message(message, type='INFO'):
     bpy.ops.wm.popup_menu(message=message, title="Message", icon=type,icon_value=P_icons.custom_icons["custom_icon_1"].icon_id)
     # bpy.ops.wm.popup_menu(message=message, title="Message", icon=type, icon_value=bpy.data.images.load(icon_path).icon_id)
+
 def GetBiggestFace():
     # Get the active object
     obj = bpy.context.active_object
@@ -70,7 +71,7 @@ def settexel_textool(self, context):
     uv_texel_value = (context.scene.Panda_Tools.uv_texel_value)      
     try:
         bpy.context.scene.texToolsSettings.texel_get_mode = '1024'
-        print(scene.texToolsSettings.texel_set_mode)
+        # print(scene.texToolsSettings.texel_set_mode)
         # if context.scene.Panda_Tools.uv_keep_position:
         #     bpy.context.scene.texToolsSettings.texel_set_mode = 'ISLAND'
         # else:
@@ -275,7 +276,6 @@ def Assign_Material():
     else:
         obj.data.materials.append(material)
 
-
 def copy_files_from_subfolder(main_folder, sub_folder):
     main_folder_path = bpy.path.abspath(main_folder)
     sub_folder_path = os.path.join(main_folder_path, sub_folder)
@@ -290,4 +290,43 @@ def copy_files_from_subfolder(main_folder, sub_folder):
             shutil.copy2(source_file_path, destination_file_path)
             print(f"Copied '{filename}' from subfolder to main folder.")
 
+def SmartUnwrap(self, context):
+        scene = context.scene
+        value_magin = context.scene.Panda_Tools.Magin
+        if bpy.context.active_object.mode == 'EDIT':
+            bpy.context.area.ui_type = 'UV'
+        else:
+            bpy.ops.object.transform_apply(location=True, rotation=True, scale=True)
+            bpy.ops.object.origin_set(type='ORIGIN_GEOMETRY', center='MEDIAN')
+            bpy.ops.object.mode_set(mode='EDIT')
+            bpy.context.area.ui_type = 'UV'
+
+        if context.scene.Panda_Tools.uv_keep_position:
+            bpy.ops.uv.snap_cursor(target='SELECTED')
+        if context.scene.Panda_Tools.pack_by_linked:
+            bpy.ops.mesh.select_linked(delimit={'NORMAL'})
+        bpy.ops.uv.unwrap(method='ANGLE_BASED', margin=value_magin)
+        bpy.ops.uv.align_rotation(method='GEOMETRY', axis='Z')
+        bpy.ops.uv.align_rotation(method='AUTO')
+        if context.scene.Panda_Tools.texel_set:
+            settexel_textool(self, context)     
+        bpy.ops.uv.snap_selected(target='CURSOR_OFFSET')  
+        bpy.ops.uv.snap_cursor(target='ORIGIN')
+
+def Find_object_by_size():
+    
+    size_threshold = 2.0 
+    for obj in bpy.context.selected_objects:
+        
+        if obj.type == 'MESH':
+            size = max(obj.dimensions)  
+            if size > size_threshold:
+                
+                print(f"Object Name: {obj.name}, Size: {size}")
+            
 # Specify the main folder and subfolder names
+def focus_UV_editor_area():
+    for area in [a for a in bpy.context.screen.areas if a.type == 'IMAGE_EDITOR']:
+                for region in [r for r in area.regions if r.type == 'WINDOW']:
+                    override = {'area':area, 'region': region}
+                    bpy.ops.image.view_selected(override)

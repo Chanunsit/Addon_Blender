@@ -18,6 +18,12 @@ transfrom_XYZ_List = {
     "Scale": { "label": "Scale"},
     # "Move": { "label": "Move"}
 }
+find_size = [
+   
+    ("More then", "More",""),
+    ("Less then", "Less","")
+    
+] 
 
 texture_options = [
    
@@ -34,13 +40,54 @@ class MyProperties(PropertyGroup):
     texel_set:bpy.props.BoolProperty(name="texel_set",default=True)
     pack_by_part:bpy.props.BoolProperty(name="Pack by part",default=False)
     pack_by_linked:bpy.props.BoolProperty(name="Pack by Linked",default=False)
-    # no_overlap:bpy.props.BoolProperty(name="No overlap",default=False)
+    live_uv:bpy.props.BoolProperty(name="Live UV",default=False)
+    
     auto_orient:bpy.props.BoolProperty(name="Auto Orient",default=True)
     remove_reference:bpy.props.BoolProperty(name="Remove referent object")
     bevle_shape:bpy.props.BoolProperty(name="bevel Shape",default=False)
     show_remove_link:bpy.props.BoolProperty(name="Show remove link",default=False)
     option_on_off:bpy.props.BoolProperty(name="Show remove link",default=False)
+# value
+    
+#  option
+    show_option_uvmap:bpy.props.BoolProperty(name="UV map option",default=False)
+
     # uv_offset:bpy.props.BoolProperty(name="ofFset UV")
+    Size_object:bpy.props.FloatProperty(
+        name="Find size object in select",
+        description="Input offset",
+        default=1,
+        min=0.0,
+        max=10.0,
+        precision=1,
+        step = 10
+    )
+    pack_uv_margin_less :bpy.props.FloatProperty(
+        name=" pack_uv_margin_less",
+        description="uv margin",
+        default=1,
+        min=0.0,
+        max=100.0,
+        precision=1,
+        step = 100
+    )
+    pack_uv_margin_more :bpy.props.FloatProperty(
+        name="pack_uv_margin_More",
+        description="uv margin",
+        default=2,
+        min=0.0,
+        max=100.0,
+        precision=1,
+        step = 100
+    )
+    pack_uv_margin_colum :bpy.props.FloatProperty(
+        name="pack_uv_margin_More",
+        description="uv margin",
+        default=2,
+        min=0.0,
+        max=100.0,
+        precision=1,
+    )
     my_rotation_angle:bpy.props.FloatProperty(
         name="My Rotation Angle",
         description="Input any number with a maximum value of 360",
@@ -117,7 +164,12 @@ class MyProperties(PropertyGroup):
     selected_texture : EnumProperty(
         name="Tab",
         items = texture_options
-        )
+    )
+    
+    find_size_object : EnumProperty(
+        name="",
+        items = find_size
+    )
     
  
     

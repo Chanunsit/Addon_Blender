@@ -309,6 +309,9 @@ class Uv(bpy.types.Operator):
     def Pack_UV(self, context):
         scene = context.scene
         value_magin = context.scene.Panda_Tools.Magin
+        size_threshold = context.scene.Panda_Tools.Size_object
+        more_margin = context.scene.Panda_Tools.pack_uv_margin_more
+        less_margin = context.scene.Panda_Tools.pack_uv_margin_less
         if context.scene.Panda_Tools.pack_by_part:
             bpy.ops.object.mode_set(mode='EDIT')
             bpy.ops.mesh.select_all(action='SELECT')
@@ -319,43 +322,81 @@ class Uv(bpy.types.Operator):
             selected_objects = bpy.context.selected_objects
             value_magin = context.scene.Panda_Tools.Magin
             for obj in selected_objects:
-                
-                obj.data.uv_layers[0].active_render = True
-                
-                bpy.context.view_layer.objects.active = obj
-                bpy.ops.object.select_all(action='DESELECT')
-                obj.select_set(True)
-
-                bpy.ops.object.mode_set(mode='EDIT')
-                bpy.ops.mesh.select_all(action='SELECT')
-
-                bpy.context.area.ui_type = 'UV'    
-                bpy.ops.uv.select_all(action='SELECT')
-
-                # bpy.ops.uv.unwrap(method='ANGLE_BASED', margin=0.001)
-                bpy.ops.uv.pack_islands(udim_source='ACTIVE_UDIM', rotate=False, margin_method='SCALED', margin=value_magin)
-                if context.scene.Panda_Tools.texel_set:    
-                    P_Funtion.settexel_textool(self, context) 
-
-                if context.space_data.cursor_location[0] <= 10:
-                    context.space_data.cursor_location[0] += 1.5
-                    context.space_data.cursor_location[1] += 0
-                
-                else:
+                size = max(obj.dimensions)  
+                if size > size_threshold:
+                    obj.data.uv_layers[0].active_render = True
                     
-                    context.space_data.cursor_location[0] = 1.5
-                    context.space_data.cursor_location[1] -= 1.5
-            
-                      
-                bpy.ops.uv.snap_selected(target='CURSOR_OFFSET')
+                    bpy.context.view_layer.objects.active = obj
+                    bpy.ops.object.select_all(action='DESELECT')
+                    obj.select_set(True)
 
-                bpy.context.area.ui_type = 'VIEW_3D'
-                bpy.ops.object.mode_set(mode='OBJECT')
-                
+                    bpy.ops.object.mode_set(mode='EDIT')
+                    bpy.ops.mesh.select_all(action='SELECT')
+
+                    bpy.context.area.ui_type = 'UV'    
+                    bpy.ops.uv.select_all(action='SELECT')
+
+                    # bpy.ops.uv.unwrap(method='ANGLE_BASED', margin=0.001)
+                    bpy.ops.uv.pack_islands(udim_source='ACTIVE_UDIM', rotate=False, margin_method='SCALED', margin=value_magin)
+                    if context.scene.Panda_Tools.texel_set:    
+                        P_Funtion.settexel_textool(self, context) 
+                    
+                    if context.space_data.cursor_location[0] <= 10:
+                        context.space_data.cursor_location[0] += more_margin
+                        context.space_data.cursor_location[1] += 0
+                    else:
+                        context.space_data.cursor_location[0] = more_margin
+                        context.space_data.cursor_location[1] -= more_margin
+                        
+                    bpy.ops.uv.snap_selected(target='CURSOR_OFFSET')
+
+                    bpy.context.area.ui_type = 'VIEW_3D'
+                    bpy.ops.object.mode_set(mode='OBJECT')
+
+            
+
+            bpy.ops.object.mode_set(mode='EDIT')
+            bpy.ops.mesh.select_all(action='SELECT')
+            bpy.context.area.ui_type = 'UV'
+            bpy.ops.uv.snap_cursor(target='ORIGIN')
+            bpy.context.area.ui_type = 'VIEW_3D'
+            
+
+            for obj in selected_objects:
+                size = max(obj.dimensions)  
+                if size < size_threshold:
+                    obj.data.uv_layers[0].active_render = True
+                    
+                    bpy.context.view_layer.objects.active = obj
+                    bpy.ops.object.select_all(action='DESELECT')
+                    obj.select_set(True)
+
+                    bpy.ops.object.mode_set(mode='EDIT')
+                    bpy.ops.mesh.select_all(action='SELECT')
+
+                    bpy.context.area.ui_type = 'UV'    
+                    bpy.ops.uv.select_all(action='SELECT')
+
+                    # bpy.ops.uv.unwrap(method='ANGLE_BASED', margin=0.001)
+                    bpy.ops.uv.pack_islands(udim_source='ACTIVE_UDIM', rotate=False, margin_method='SCALED', margin=value_magin)
+                    if context.scene.Panda_Tools.texel_set:    
+                        P_Funtion.settexel_textool(self, context) 
+                    
+                    if context.space_data.cursor_location[0] >= -10:
+                        context.space_data.cursor_location[0] -= less_margin
+                        context.space_data.cursor_location[1] -= 0
+                    else:
+                        context.space_data.cursor_location[0] = -less_margin
+                        context.space_data.cursor_location[1] -= less_margin
+                        
+                    bpy.ops.uv.snap_selected(target='CURSOR_OFFSET')
+
+                    bpy.context.area.ui_type = 'VIEW_3D'
+                    bpy.ops.object.mode_set(mode='OBJECT')       
             
             for obj in selected_objects:
                 obj.select_set(True)
-
+# ------------------------------------------------------------------------------------------
             bpy.context.view_layer.objects.active = selected_objects[0]
             bpy.ops.object.join()
 
@@ -436,6 +477,16 @@ class Uv(bpy.types.Operator):
     def MakeSeam(self, context):
         try:
            bpy.ops.mesh.mark_seam(clear=False)
+           if context.scene.Panda_Tools.live_uv:
+            bpy.context.area.ui_type = 'UV'
+            bpy.ops.uv.panda_operator(action="@_SmartUnwrap")
+            bpy.ops.uv.snap_cursor(target='SELECTED')
+            bpy.ops.uv.panda_operator(action="@_PackUV_Together")
+            
+            P_Funtion.focus_UV_editor_area()
+            bpy.context.area.ui_type = 'VIEW_3D'
+
+               
         except:
             self.report({'ERROR'}, "Pls,Do in edit mode")
         
@@ -444,6 +495,14 @@ class Uv(bpy.types.Operator):
     def ClearSeam(self, context):
         try:
             bpy.ops.mesh.mark_seam(clear=True)
+            if context.scene.Panda_Tools.live_uv:
+                bpy.context.area.ui_type = 'UV'
+                bpy.ops.uv.panda_operator(action="@_SmartUnwrap")
+                bpy.ops.uv.panda_operator(action="@_PackUV_Together")
+                P_Funtion.focus_UV_editor_area()
+                bpy.context.area.ui_type = 'VIEW_3D'
+
+
         except:
             self.report({'ERROR'}, "Pls,Do in edit mode")
         return {'FINISHED'}    

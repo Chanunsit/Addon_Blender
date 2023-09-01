@@ -127,74 +127,99 @@ class VIEW3D_PT_Panda(bpy.types.Panel):
             row = layout.row()
             box = layout.box()
             row = box.row() 
-            row.label(text=": UV Status ", icon_value=P_icons.custom_icons["custom_icon_6"].icon_id)
+            row.label(text="Checker ", icon_value=P_icons.custom_icons["custom_icon_6"].icon_id)
             row = box.row()
             row.prop(context.scene.tool_settings, "use_uv_select_sync", text="UV sync")
-            row = box.row()
+            row = box.row(align=True)
             row.prop(Panda_Property, "selected_texture", text="")
             row.scale_x=0.5
             row.operator(P_UvEditor_Operators.UV_Editor.bl_idname, text="Assign").action="@_Checker"
             row.scale_x=1
-            row = box.row()
-            row.operator(P_UvEditor_Operators.UV_Editor.bl_idname, text="+").action="@_Increase_tiling"
+            row = box.row(align=True)
+            row.operator(P_UvEditor_Operators.UV_Editor.bl_idname, text="-").action="@_Increase_tiling"
             row.operator(P_UvEditor_Operators.UV_Editor.bl_idname, text="1").action="@_reset_tiling"
-            row.operator(P_UvEditor_Operators.UV_Editor.bl_idname, text="-").action="@_reduce_tiling"
+            row.operator(P_UvEditor_Operators.UV_Editor.bl_idname, text="+").action="@_reduce_tiling"
             row = layout.row()
-
+            # row = layout.row(align=True)
             box = layout.box()
             row = box.row()
-            row.label(text="UV Map :", icon_value=P_icons.custom_icons["custom_icon_10"].icon_id)
+            row.label(text="Chanel:", icon_value=P_icons.custom_icons["custom_icon_10"].icon_id)
+            
             active_object = context.active_object
             if active_object and active_object.type == 'MESH':
                 active_index = active_object.data.uv_layers.active_index + 1
                 # row.label(text="Active Render UV Map Index:")
                 row.label(text=str(active_index))
                 # row.label(text=str(active_object.data.uv_layers.active_index))
-                
+            if Panda_Property.show_option_uvmap: 
+                row.prop(Panda_Property, "show_option_uvmap", text="",icon="TRIA_DOWN")
+            else:
+                row.prop(Panda_Property, "show_option_uvmap", text="",icon="TRIA_RIGHT")
 
-            row = box.row()
+            row = box.row(align=True)
             row.operator(P_View3D_Operators.Uv.bl_idname, text="UV 1").action="@_View_uv1"
             row.operator(P_View3D_Operators.Uv.bl_idname, text="UV 2").action="@_View_uv2"
-            row = box.row()
-            row.operator(P_View3D_Operators.Uv.bl_idname, text="Naming UV chanel").action="@_Set_name_uv_chanel"
-            row = box.row()
-            row.operator(P_View3D_Operators.Uv.bl_idname, text="Remove UV3+").action="@_remove_uv_chanel"
-            row = layout.row()
+            if Panda_Property.show_option_uvmap: 
+                row = box.row()
+                row.operator(P_View3D_Operators.Uv.bl_idname, text="Set name").action="@_Set_name_uv_chanel"
+                
+                row.operator(P_View3D_Operators.Uv.bl_idname, text="Remove UV3+").action="@_remove_uv_chanel"
+                
             box = layout.box()
             row = box.row() 
-            row.label(text=": UV Seam", icon_value=P_icons.custom_icons["custom_icon_4"].icon_id)
-            row = box.row() 
-            row.operator(P_View3D_Operators.Uv.bl_idname, text="Make").action="@_MakeSeam"
-            row.operator(P_View3D_Operators.Uv.bl_idname, text="Clear").action="@_ClearSeam"
-            row = box.row() 
-            row.operator(P_View3D_Operators.Uv.bl_idname, text="Hide").action="@_Hide_Select"
-            row = box.row() 
+            row.label(text="Unwrap", icon_value=P_icons.custom_icons["custom_icon_4"].icon_id)
+            row.prop(Panda_Property, "live_uv", text="Live UV")
+            
+            row = box.row()
+            row.scale_y=1.5
+            col1 = row.column(align=True)
+            col1.operator(P_View3D_Operators.Uv.bl_idname, text="Face group ").action="@_Vertex_group"
+            col1.operator(P_View3D_Operators.Uv.bl_idname, text="Select").action="@_Select_group"
+            col1.operator(P_View3D_Operators.Uv.bl_idname, text="Clear").action="@_Clear_group"
+            
+            col2 = row.column(align=True) 
+            col2.operator(P_View3D_Operators.Uv.bl_idname, text="Make").action="@_MakeSeam"
+            col2.operator(P_View3D_Operators.Uv.bl_idname, text="Clear").action="@_ClearSeam"
+            col2.operator(P_View3D_Operators.Uv.bl_idname, text="Hide").action="@_Hide_Select"
+
+            row = box.row(align=True) 
             row.operator(P_View3D_Operators.Uv.bl_idname, text="Shap").action="@_Shap_to_Seam"
             row.operator(P_View3D_Operators.Uv.bl_idname, text="Island").action="@_Island_to_Seam"
-            row = box.row() 
-            row.operator(P_View3D_Operators.Uv.bl_idname, text="Remember").action="@_Vertex_group"
-            row.operator(P_View3D_Operators.Uv.bl_idname, text="Select").action="@_Select_group"
-            row.operator(P_View3D_Operators.Uv.bl_idname, text="Forget it").action="@_Clear_group"
-            row = layout.row()
+            row = box.row()
+            if Panda_Property.live_uv == False:
+                row.operator(P_View3D_Operators.Uv.bl_idname, text="Unwrap").action="@_UV_quick" 
+                row = box.row()
+
             box = layout.box()
             row = box.row() 
-            row.label(text=": UV Unwrap ", icon_value=P_icons.custom_icons["custom_icon_2"].icon_id)
-            row = box.row() 
-            row.operator(P_View3D_Operators.Uv.bl_idname, text="UV_Unwrap", icon="UV").action="@_UV_quick"
-            row.operator(P_View3D_Operators.Uv.bl_idname, text="Rotate 90").action="@_RotateUV90"
-            row = box.row() 
-            row.prop(Panda_Property, "pack_by_part", text="Pack by part")
-            row = box.row() 
-            row.operator(P_View3D_Operators.Uv.bl_idname, text="Pack UV").action="@_Pack_UV"
+            row.label(text="Pack", icon_value=P_icons.custom_icons["custom_icon_5"].icon_id)
+            row.prop(Panda_Property, "pack_by_part", text="By Part")
             
-            row = layout.row()
+            if Panda_Property.pack_by_part:
+                row = box.row() 
+                row.label(text="Group size:")
+                row.prop(Panda_Property, "Size_object", text="")
+
+                row = box.row(align=True)   
+                row.prop(Panda_Property, "pack_uv_margin_less", text="Less")       
+                row.prop(Panda_Property, "pack_uv_margin_more", text= "More")
+
+            row = box.row() 
+            row.operator(P_View3D_Operators.Uv.bl_idname, text="Pack!").action="@_Pack_UV"
+            
+            
+            box = layout.box()
+            row = box.row() 
+            row.label(text="Edit", icon_value=P_icons.custom_icons["custom_icon_2"].icon_id)
+            row = box.row() 
+            row.operator(P_View3D_Operators.Uv.bl_idname, text="Rotate 90").action="@_RotateUV90"
             box = layout.box()
             row = box.row() 
             row.operator(P_View3D_Operators.Uv.bl_idname, text="UV Window").action="@_OpenUVEditWindow"
             row = layout.row()
+            
         if Panda_Property.option_menu_ui == "C":
             row = layout.row()
-
             box = layout.box()
             row = box.row() 
             row.label(text=": Collider Builder", icon_value=P_icons.custom_icons["custom_icon_9"].icon_id)
@@ -313,6 +338,9 @@ class UV_PT_Panda(bpy.types.Panel):
         row = box.row()
         row.operator(P_UvEditor_Operators.UV_Editor.bl_idname, text="Rotate90°").action="@_RotateUV90"  
         row.operator(P_UvEditor_Operators.UV_Editor.bl_idname, text="AlignEdge").action="@_AlignEdgeUV" 
+        row = box.row()
+        
+        row.operator(P_UvEditor_Operators.UV_Editor.bl_idname, text="Rectify").action="@_Rectify_Textool"
         row = box.row()
         row.operator(P_UvEditor_Operators.UV_Editor.bl_idname, text="Island").action="@_Seam_from_island"
         row = layout.row()

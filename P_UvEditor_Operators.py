@@ -42,12 +42,21 @@ class UV_Editor(bpy.types.Operator):
             self.reduce_tiling(self, context)
         elif self.action == "@_reset_tiling": 
             self.reset_tiling(self, context)
-        
+        elif self.action == "@_Rectify_Textool": 
+            self.rectify_textool(self, context)
         else:
              print("")
 
         return {'FINISHED'}
+    
     @staticmethod
+    def rectify_textool(self, context):
+        bpy.ops.uv.textools_rectify()
+        print("Rectify")
+        return {'FINISHED'}
+    
+    @staticmethod
+    
     
     def Assign_Checker(self, context):
         selected_texture = context.scene.Panda_Tools.selected_texture
@@ -161,17 +170,6 @@ class UV_Editor(bpy.types.Operator):
         
         print("Unwraped")
         return {'FINISHED'}
-    @staticmethod
-    def Unwrapmaster(self, context):
-        scene = context.scene
-        bpy.ops.uv.smart_project()
-        bpy.ops.uv.smart_project(angle_limit=0.785398)
-        bpy.ops.uv.smart_project(island_margin=0.01)
-
-
-    
-        print("Unwraped")
-        return {'FINISHED'}
     
     @staticmethod
     def RotateUV90(self, context):
@@ -183,7 +181,18 @@ class UV_Editor(bpy.types.Operator):
     @staticmethod
     def AlignEdgeUV(self, context):
         scene = context.scene
-        bpy.ops.uv.align_rotation(method='EDGE')
+        if context.scene.tool_settings.use_uv_select_sync:
+            # bpy.ops.uv.select_linked_pick(extend=True)
+            # bpy.ops.uv.select_linked_pick(extend=True, deselect=False, location=(0, 0))
+            bpy.ops.mesh.select_linked(delimit={'NORMAL'})
+
+            bpy.context.scene.tool_settings.use_uv_select_sync = False
+            bpy.ops.uv.align_rotation(method='EDGE')
+            
+        else:
+
+            bpy.ops.uv.align_rotation(method='EDGE')
+        
         print("AlignEdgeUV")
         return {'FINISHED'}
     

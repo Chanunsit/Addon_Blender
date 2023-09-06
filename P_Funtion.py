@@ -5,6 +5,17 @@ import os
 import shutil
 
 from . import P_icons
+def select_a_face():
+    
+    obj = bpy.context.active_object
+    if obj and obj.type == 'MESH' and bpy.context.mode == 'EDIT_MESH':
+        bpy.ops.mesh.select_all(action='DESELECT')
+        bm = bmesh.from_edit_mesh(obj.data)
+    for face in bm.faces:
+        if not face.hide:
+            face.select_set(True)
+            break
+
 def report_message(message, type='INFO'):
     bpy.ops.wm.popup_menu(message=message, title="Message", icon=type,icon_value=P_icons.custom_icons["custom_icon_1"].icon_id)
     # bpy.ops.wm.popup_menu(message=message, title="Message", icon=type, icon_value=bpy.data.images.load(icon_path).icon_id)

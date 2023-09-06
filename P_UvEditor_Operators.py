@@ -51,13 +51,19 @@ class UV_Editor(bpy.types.Operator):
     
     @staticmethod
     def rectify_textool(self, context):
-        bpy.ops.uv.textools_rectify()
+        if context.scene.tool_settings.use_uv_select_sync:
+            bpy.ops.uv.select_linked()
+            bpy.context.scene.tool_settings.use_uv_select_sync = False
+            bpy.ops.uv.textools_rectify()
+            bpy.context.scene.tool_settings.use_uv_select_sync = True
+        else:
+            bpy.ops.uv.select_linked()
+            bpy.ops.uv.textools_rectify()
+            
         print("Rectify")
         return {'FINISHED'}
     
-    @staticmethod
-    
-    
+    @staticmethod   
     def Assign_Checker(self, context):
         selected_texture = context.scene.Panda_Tools.selected_texture
         textures_path = os.path.join(os.path.dirname(__file__), "P_Texture")
@@ -184,11 +190,9 @@ class UV_Editor(bpy.types.Operator):
         if context.scene.tool_settings.use_uv_select_sync:
             # bpy.ops.uv.select_linked_pick(extend=True)
             # bpy.ops.uv.select_linked_pick(extend=True, deselect=False, location=(0, 0))
-            bpy.ops.mesh.select_linked(delimit={'NORMAL'})
-
+            bpy.ops.uv.select_all(action='SELECT')
             bpy.context.scene.tool_settings.use_uv_select_sync = False
-            bpy.ops.uv.align_rotation(method='EDGE')
-            
+             
         else:
 
             bpy.ops.uv.align_rotation(method='EDGE')

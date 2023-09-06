@@ -434,9 +434,20 @@ class Uv(bpy.types.Operator):
     def hide_select(self, context):
         bpy.ops.mesh.select_linked(delimit={'NORMAL'})
         bpy.ops.mesh.hide(unselected=False)
-
-
         print("Hide Select")
+
+        if context.scene.Panda_Tools.follow_next_face: 
+            P_Funtion.select_a_face()
+            bpy.ops.mesh.select_linked(delimit={'NORMAL'})
+            bpy.ops.view3d.view_selected(use_all_regions=False)
+           
+            active_view = bpy.context.area.spaces.active   
+            zoom_factor = 1
+            active_view.region_3d.view_distance += zoom_factor
+
+
+        print("Selected new face")
+        
         return {'FINISHED'}
     @staticmethod
     def Vertex_group(self, context):
@@ -476,15 +487,20 @@ class Uv(bpy.types.Operator):
     @staticmethod
     def MakeSeam(self, context):
         try:
-           bpy.ops.mesh.mark_seam(clear=False)
-           if context.scene.Panda_Tools.live_uv:
-            bpy.context.area.ui_type = 'UV'
-            bpy.ops.uv.panda_operator(action="@_SmartUnwrap")
-            bpy.ops.uv.snap_cursor(target='SELECTED')
-            bpy.ops.uv.panda_operator(action="@_PackUV_Together")
+            bpy.ops.mesh.mark_seam(clear=False)
             
-            P_Funtion.focus_UV_editor_area()
-            bpy.context.area.ui_type = 'VIEW_3D'
+            if context.scene.Panda_Tools.live_uv:
+                if context.scene.tool_settings.use_uv_select_sync == False:
+                    bpy.context.scene.tool_settings.use_uv_select_sync = True
+                else:
+                    pass
+                bpy.context.area.ui_type = 'UV'
+                bpy.ops.uv.panda_operator(action="@_SmartUnwrap")
+                bpy.ops.uv.snap_cursor(target='SELECTED')
+                bpy.ops.uv.panda_operator(action="@_PackUV_Together")
+            
+                P_Funtion.focus_UV_editor_area()
+                bpy.context.area.ui_type = 'VIEW_3D'
 
                
         except:
@@ -495,7 +511,12 @@ class Uv(bpy.types.Operator):
     def ClearSeam(self, context):
         try:
             bpy.ops.mesh.mark_seam(clear=True)
+
             if context.scene.Panda_Tools.live_uv:
+                if context.scene.tool_settings.use_uv_select_sync == False:
+                    bpy.context.scene.tool_settings.use_uv_select_sync = True
+                else:
+                    pass
                 bpy.context.area.ui_type = 'UV'
                 bpy.ops.uv.panda_operator(action="@_SmartUnwrap")
                 bpy.ops.uv.panda_operator(action="@_PackUV_Together")
@@ -613,6 +634,8 @@ class Uv(bpy.types.Operator):
     def Set_name_uv_chanel(self, context):
         selected_objects = bpy.context.selected_objects
         for obj in selected_objects:
+            if len(obj.data.uv_layers) <= 1:
+                    obj.data.uv_layers.new(name="uv2")
             if obj.type == 'MESH':
                 obj.data.uv_layers[0].name = "uv1"
                 obj.data.uv_layers[1].name = "uv2"

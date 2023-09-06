@@ -23,6 +23,7 @@ def register():
     custom_icons.load("custom_icon_10", os.path.join(icons_dir, "P_UV_Transfrom.png"), 'IMAGE')
     custom_icons.load("custom_icon_11", os.path.join(icons_dir, "P_scale.png"), 'IMAGE')
     custom_icons.load("custom_icon_12", os.path.join(icons_dir, "P_bevel.png"), 'IMAGE')
+    custom_icons.load("custom_icon_13", os.path.join(icons_dir, "P_Checker.png"), 'IMAGE')
 def unregister():
     global custom_icons
     bpy.utils.previews.remove(custom_icons)

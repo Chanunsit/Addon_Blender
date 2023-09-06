@@ -51,6 +51,7 @@ class MyProperties(PropertyGroup):
     
 #  option
     show_option_uvmap:bpy.props.BoolProperty(name="UV map option",default=False)
+    follow_next_face:bpy.props.BoolProperty(name="Follow next face after hide",default=False)
 
     # uv_offset:bpy.props.BoolProperty(name="ofFset UV")
     Size_object:bpy.props.FloatProperty(

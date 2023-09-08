@@ -32,6 +32,9 @@ class UV_Editor(bpy.types.Operator):
             self.Texel_value_reduce(self, context)
         elif self.action == "@_Picked_texel": 
             self.Picked_texel(self, context)
+        elif self.action == "@_Apply_texel": 
+            self.Apply_texel(self, context)
+
         elif self.action == "@_Seam_from_island": 
             self.Seam_from_island(self, context)
         elif self.action == "@_Checker": 
@@ -180,6 +183,8 @@ class UV_Editor(bpy.types.Operator):
     @staticmethod
     def RotateUV90(self, context):
         scene = context.scene
+        if context.scene.Panda_Tools.pack_by_linked:
+            bpy.ops.mesh.select_linked(delimit={'NORMAL'}) 
         bpy.ops.transform.rotate(value=1.5708, orient_axis='Z')
         print("Rotated UV 90")
         return {'FINISHED'}
@@ -215,8 +220,8 @@ class UV_Editor(bpy.types.Operator):
         if context.scene.Panda_Tools.texel_set:
             
             P_Funtion.settexel_textool(self, context)
-            
-        bpy.ops.uv.snap_selected(target='CURSOR_OFFSET')  
+        if context.scene.Panda_Tools.uv_keep_position:   
+            bpy.ops.uv.snap_selected(target='CURSOR_OFFSET')  
         bpy.ops.uv.snap_cursor(target='ORIGIN')
         # bpy.ops.image.view_selected()
         
@@ -259,6 +264,13 @@ class UV_Editor(bpy.types.Operator):
         context.scene.Panda_Tools.uv_texel_value = texel
 
         # print(len(str(scene.texToolsSettings.texel_density)))
+        print("Picked texel")
+        return {'FINISHED'}
+    
+    @staticmethod
+    def Apply_texel(self, context):
+        scene = context.scene 
+        bpy.ops.uv.textools_texel_density_set()
         print("Picked texel")
         return {'FINISHED'}
     

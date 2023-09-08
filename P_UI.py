@@ -38,8 +38,9 @@ class VIEW3D_PT_Panda(bpy.types.Panel):
         layout = self.layout
         scene = context.scene
         Panda_Property = scene.Panda_Tools
-        row = layout.row(align=True)    
+        row = layout.row()    
         row.prop(Panda_Property, "option_menu_ui",text="", expand=True)
+        row.operator(P_Website_Operators.OpenWebsiteOperator.bl_idname, text="LogWork").action="@_Logwork"
 
         if Panda_Property.option_menu_ui == "A":
             row = layout.row()
@@ -127,9 +128,8 @@ class VIEW3D_PT_Panda(bpy.types.Panel):
             row = layout.row()
             box = layout.box()
             row = box.row(align=True)
+
             row.label(text="", icon_value=P_icons.custom_icons["custom_icon_13"].icon_id)
-            
-            
             row.prop(Panda_Property, "selected_texture", text="")
             row.scale_x=0.5
             row.operator(P_UvEditor_Operators.UV_Editor.bl_idname, text="Assign").action="@_Checker"
@@ -171,12 +171,14 @@ class VIEW3D_PT_Panda(bpy.types.Panel):
                 
             box = layout.box()
             row = box.row() 
+            row.scale_x=1.2
             row.label(text="Unwrap", icon_value=P_icons.custom_icons["custom_icon_4"].icon_id)
-            row.prop(Panda_Property, "live_uv", text="Live UV")
+            row.scale_x=1
+            row.prop(Panda_Property, "live_uv", text="LiveUV")
+            
+            row.operator(P_View3D_Operators.Uv.bl_idname, text="",icon= "WINDOW").action="@_OpenUVEditWindow"
             row = box.row()
-            if Panda_Property.live_uv == False:
-                row.operator(P_View3D_Operators.Uv.bl_idname, text="Unwrap").action="@_UV_quick" 
-                row = box.row()
+            
             row.prop(context.scene.tool_settings, "use_uv_select_sync", text="Spync")
             row.prop(Panda_Property, "follow_next_face", text="Follow",icon="TRACKING")
             row = box.row()
@@ -186,46 +188,54 @@ class VIEW3D_PT_Panda(bpy.types.Panel):
             col1.operator(P_View3D_Operators.Uv.bl_idname, text="Select").action="@_Select_group"
             col1.operator(P_View3D_Operators.Uv.bl_idname, text="Clear").action="@_Clear_group"
             
-            col2 = row.column(align=True) 
+            
+            col2 = row.column(align=True)
+            if Panda_Property.live_uv: 
+                col2.alert = True
             col2.operator(P_View3D_Operators.Uv.bl_idname, text="Make").action="@_MakeSeam"
             col2.operator(P_View3D_Operators.Uv.bl_idname, text="Clear").action="@_ClearSeam"
+            col2.alert = False
+            if Panda_Property.follow_next_face:
+                col2.alert = True 
             col2.operator(P_View3D_Operators.Uv.bl_idname, text="Hide").action="@_Hide_Select"
             
+            
+            if Panda_Property.live_uv == False:
+                row = box.row()
+                row.operator(P_View3D_Operators.Uv.bl_idname, text="Unwrap").action="@_UV_quick" 
+                
             row = box.row(align=True) 
             row.operator(P_View3D_Operators.Uv.bl_idname, text="Shap").action="@_Shap_to_Seam"
             row.operator(P_View3D_Operators.Uv.bl_idname, text="Island").action="@_Island_to_Seam"
             
-            if Panda_Property.live_uv == False:
-                row.operator(P_View3D_Operators.Uv.bl_idname, text="Unwrap").action="@_UV_quick" 
-                row = box.row()
-
             box = layout.box()
             row = box.row() 
             row.label(text="Pack", icon_value=P_icons.custom_icons["custom_icon_5"].icon_id)
             row.prop(Panda_Property, "pack_by_part", text="By Part")
             
             if Panda_Property.pack_by_part:
-                row = box.row() 
-                row.label(text="Group size:")
-                row.prop(Panda_Property, "Size_object", text="")
+                row = box.row(align=True) 
+                col2 = row.column(align=True)   
+                
+                col2.label(text="Small")  
+                col2.prop(Panda_Property, "pack_uv_margin_less", text="")  
 
-                row = box.row(align=True)   
-                row.prop(Panda_Property, "pack_uv_margin_less", text="Less")       
-                row.prop(Panda_Property, "pack_uv_margin_more", text= "More")
+                col2 = row.column(align=True)
+                col2.label(text="size/ M")  
+                col2.prop(Panda_Property, "Size_object", text="") 
 
+                col2 = row.column(align=True)
+                col2.label(text="Big") 
+                col2.prop(Panda_Property, "pack_uv_margin_more", text= "")
+            
             row = box.row() 
             row.operator(P_View3D_Operators.Uv.bl_idname, text="Pack!").action="@_Pack_UV"
-            
             
             box = layout.box()
             row = box.row() 
             row.label(text="Edit", icon_value=P_icons.custom_icons["custom_icon_2"].icon_id)
             row = box.row() 
             row.operator(P_View3D_Operators.Uv.bl_idname, text="Rotate 90").action="@_RotateUV90"
-            box = layout.box()
-            row = box.row() 
-            row.operator(P_View3D_Operators.Uv.bl_idname, text="UV Window").action="@_OpenUVEditWindow"
-            row = layout.row()
             
         if Panda_Property.option_menu_ui == "C":
             row = layout.row()
@@ -292,7 +302,7 @@ class VIEW3D_PT_Panda(bpy.types.Panel):
             
             row = layout.row()
             row.prop(Panda_Property, "show_remove_link", text="Remove link")
-    
+        
 
 class UV_PT_Panda(bpy.types.Panel):
 
@@ -311,32 +321,28 @@ class UV_PT_Panda(bpy.types.Panel):
         box = layout.box()
         row = box.row() 
         
-        row.label(text=": UV Unwrap ", icon_value=P_icons.custom_icons["custom_icon_7"].icon_id)
-        row = box.row() 
+        row.label(text="", icon_value=P_icons.custom_icons["custom_icon_7"].icon_id)
+        
         row.prop(context.scene.tool_settings, "use_uv_select_sync", text="UV sync")
         row = box.row() 
         # row.label(text="Texel set :")
-        row.prop(Panda_Property, "texel_set", text="Texel Set")
+        row.prop(Panda_Property, "pack_by_linked", text="Linked")
         row.prop(Panda_Property, "uv_keep_position", text="Location")
         row = box.row()
-        row.prop(Panda_Property, "pack_by_linked", text="Linked")
         
+        row.prop(Panda_Property, "texel_set", text="Texel Set")
+
         if Panda_Property.texel_set:
-            row = box.row()
-            row.scale_x = 2
+            row = box.row(align=True)
             row.operator(P_UvEditor_Operators.UV_Editor.bl_idname, text="",icon="EYEDROPPER").action="@_Picked_texel" 
-            row.scale_x = 1
             row.operator(P_UvEditor_Operators.UV_Editor.bl_idname, text="",icon="REMOVE").action="@_Texel_value_reduce" 
             row.prop(Panda_Property, "uv_texel_value")
-            row.scale_x = 1
             row.operator(P_UvEditor_Operators.UV_Editor.bl_idname, text="",icon= "ADD").action="@_Texel_value_increase" 
+            row.operator(P_UvEditor_Operators.UV_Editor.bl_idname, text="Apply").action="@_Apply_texel" 
         row = box.row()
-        # row.label(text="Margin : ")
         row.prop(Panda_Property, "Magin", text="Margin")
-        
-        
+
         row = box.row()
-        
         row.operator(P_UvEditor_Operators.UV_Editor.bl_idname, text="Unwrap").action="@_SmartUnwrap"  
         row.operator(P_UvEditor_Operators.UV_Editor.bl_idname, text="PackUV").action="@_PackUV_Together"
         row.scale_y = 1.64

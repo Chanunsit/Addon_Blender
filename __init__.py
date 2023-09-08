@@ -14,11 +14,10 @@ from . import P_Website_Operators
 from . import P_Boolean_Operators
 from . import P_UI
 from . import P_Updater
-from . import P_icons
 from . import P_Property
 
 
-classes=[P_icons ,P_View3D_Operators,
+classes=[P_View3D_Operators,
           P_UvEditor_Operators, P_UI,
             P_Updater,P_Website_Operators,P_Boolean_Operators,P_Property]
 def register():

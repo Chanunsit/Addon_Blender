@@ -27,6 +27,9 @@ class OpenWebsiteOperator(bpy.types.Operator):
             self.Go_WorkLogPro(self, context)
         elif self.action == "@_BackOffice":
             self.Go_BackOffice(self, context)
+        elif self.action == "@_Logwork":
+            self.Logwork(self, context)
+        
 
         return {'FINISHED'}
     
@@ -48,7 +51,14 @@ class OpenWebsiteOperator(bpy.types.Operator):
         webbrowser.open(website_url)
         print("Go BackOffice")
         return {'FINISHED'}
-
+    @staticmethod
+    def Logwork(self, context):
+        website_url1 = "https://backoffice.bistudio.com/" 
+        website_url2 = "https://jira.bistudio.com/secure/WPShowTimesheetAction!customTimesheet.jspa?periodMode=MONTH&targetType=USER&calendarType=CUSTOM&groupingType=ISSUE" 
+        webbrowser.open(website_url1)
+        webbrowser.open(website_url2)
+        print("Logwork")
+        return {'FINISHED'}
 class AddWebsiteLinkOperator(bpy.types.Operator):
     bl_idname = "addon.add_website_link"
     bl_label = "Add Website Link"

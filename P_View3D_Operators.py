@@ -315,6 +315,7 @@ class Uv(bpy.types.Operator):
         if context.scene.Panda_Tools.pack_by_part:
             bpy.ops.object.mode_set(mode='EDIT')
             bpy.ops.mesh.select_all(action='SELECT')
+            bpy.ops.mesh.delete_loose()
             bpy.ops.mesh.separate(type='LOOSE')
             # -------------------------------------------
             
@@ -421,8 +422,8 @@ class Uv(bpy.types.Operator):
             if context.scene.Panda_Tools.texel_set:
                 P_Funtion.settexel_textool(self, context)      
             bpy.ops.uv.snap_cursor(target='ORIGIN')
-            
-            bpy.ops.uv.snap_selected(target='CURSOR_OFFSET')
+            if context.scene.Panda_Tools.uv_keep_position:
+                bpy.ops.uv.snap_selected(target='CURSOR_OFFSET')
             bpy.context.scene.tool_settings.use_uv_select_sync = True
             bpy.context.area.ui_type = 'VIEW_3D'
          

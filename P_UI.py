@@ -184,11 +184,14 @@ class VIEW3D_PT_Panda(bpy.types.Panel):
             row = box.row()
             row.scale_y=1.5
             col1 = row.column(align=True)
-            col1.operator(P_View3D_Operators.Uv.bl_idname, text="Face group ").action="@_Vertex_group"
+            col1.operator(P_View3D_Operators.Uv.bl_idname, text="Group ").action="@_Vertex_group"
             col1.operator(P_View3D_Operators.Uv.bl_idname, text="Select").action="@_Select_group"
             col1.operator(P_View3D_Operators.Uv.bl_idname, text="Clear").action="@_Clear_group"
-            
-            
+            # col1.operator(P_View3D_Operators.Uv.bl_idname, text="Smart UV",icon = "ERROR" ).action="@_smart_unwrap"
+           
+            if Panda_Property.live_uv == False:
+               
+                col1.operator(P_View3D_Operators.Uv.bl_idname, text="Unwrap").action="@_UV_quick" 
             col2 = row.column(align=True)
             if Panda_Property.live_uv: 
                 col2.alert = True
@@ -200,13 +203,13 @@ class VIEW3D_PT_Panda(bpy.types.Panel):
             col2.operator(P_View3D_Operators.Uv.bl_idname, text="Hide").action="@_Hide_Select"
             
             
-            if Panda_Property.live_uv == False:
-                row = box.row()
-                row.operator(P_View3D_Operators.Uv.bl_idname, text="Unwrap").action="@_UV_quick" 
+            
                 
             row = box.row(align=True) 
             row.operator(P_View3D_Operators.Uv.bl_idname, text="Shap").action="@_Shap_to_Seam"
             row.operator(P_View3D_Operators.Uv.bl_idname, text="Island").action="@_Island_to_Seam"
+            
+            
             
             box = layout.box()
             row = box.row() 

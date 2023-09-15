@@ -1,5 +1,6 @@
 import bpy
 import math
+import bmesh
 import os
 from bpy.types import Scene
 from bpy.types import ( PropertyGroup, )
@@ -300,11 +301,30 @@ class Uv(bpy.types.Operator):
             self.Pack_UV(self, context)
         elif self.action == "@_Hide_Select": 
             self.hide_select(self, context)
+        elif self.action == "@_smart_unwrap": 
+            self.smart_unwrap(self, context)
         else:
             print("UV_quick has no action")
 
         
         return {'FINISHED'}
+    @staticmethod
+    def smart_unwrap(self, context):
+    
+        obj = bpy.context.active_object
+        for edge in obj.data.edges:
+            edge.select = True
+            
+            bpy.context.area.ui_type = 'UV'
+            bpy.ops.uv.stitch()
+            bpy.ops.uv.stitch(use_limit=True, snap_islands=True, limit=0.25)
+
+            bpy.context.area.ui_type = 'VIEW_3D'
+        bpy.ops.uv.seams_from_islands()
+        
+        print("Smart Unwrap")
+        return {'FINISHED'}
+        
     @staticmethod
     def Pack_UV(self, context):
         scene = context.scene

@@ -160,6 +160,13 @@ class MyProperties(PropertyGroup):
         # step=1,
         
     )
+    Face_index:bpy.props.StringProperty(
+        name="",
+        description="specific face index",
+        default= "1",
+        maxlen= 8
+
+    )
     
     
     selected_texture : EnumProperty(

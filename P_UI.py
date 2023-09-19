@@ -267,7 +267,15 @@ class VIEW3D_PT_Panda(bpy.types.Panel):
             row.label(text=": OBject preset", icon_value=P_icons.custom_icons["custom_icon_3"].icon_id)
             row = box.row() 
             row.operator(P_View3D_Operators.Ready_made.bl_idname, text="Hexagon").action="@_Hexagon"
-            row = layout.row()
+
+            box = layout.box()
+            row = box.row()
+            row.label(text="Index Face", icon_value=P_icons.custom_icons["custom_icon_3"].icon_id)
+            row = box.row()
+            row.prop(Panda_Property, "Face_index")
+
+            row.operator(P_View3D_Operators.Speed_process.bl_idname,text="Catch !").action="@_Find_face_index"
+
         if Panda_Property.option_menu_ui == "E": 
             # row.label(text="Web site")
             box = layout.box()

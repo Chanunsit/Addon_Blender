@@ -85,8 +85,6 @@ class Empty_area(bpy.types.Operator):
         print("Add_Empty")
         return {'FINISHED'}
     
-
-
 class Speed_process(bpy.types.Operator):
 
     bl_idname = "object.speedprocess_operator"
@@ -121,9 +119,41 @@ class Speed_process(bpy.types.Operator):
 
         elif self.action == "@_Bevel_Custom": 
             self.Bevel_Custom(self, context)
-        
+
+        elif self.action == "@_Find_face_index": 
+            self.Find_face_index(self, context)
         else:
              print("worng")
+
+        return {'FINISHED'}
+    
+    @staticmethod
+    def Find_face_index(self, context):
+        
+        selected_object = bpy.context.active_object
+        scene = context.scene
+        Panda_Property = scene.Panda_Tools
+        Face_index = int (Panda_Property.Face_index) 
+        if selected_object and selected_object.type == 'MESH':
+            bpy.ops.mesh.select_mode(use_extend=False, use_expand=False, type='FACE')
+
+            target_face_index = Face_index
+            if 0 <= target_face_index < len(selected_object.data.polygons):
+               
+                bpy.ops.object.mode_set(mode='EDIT')
+                bpy.ops.mesh.select_all(action='DESELECT')
+                bpy.ops.object.mode_set(mode='OBJECT')
+
+                selected_object.data.polygons[target_face_index].select = True
+
+                bpy.ops.object.mode_set(mode='EDIT')
+                print(f"selected the specific face: {target_face_index} ")  
+            else:
+                print(f"Face index {target_face_index} is out of range.")
+    
+        else:
+            print("No active mesh object selected.")
+
 
         return {'FINISHED'}
     
@@ -672,6 +702,7 @@ class Uv(bpy.types.Operator):
                     obj.data.uv_layers.remove(obj.data.uv_layers[2])
         print ("Removed UV more then 2")
         return {'FINISHED'}
+
 class Box_Builder(bpy.types.Operator):
     bl_idname = "object.box_builder"
     bl_label = "BoxBuilder Operator"
@@ -783,8 +814,6 @@ class Box_Builder(bpy.types.Operator):
         
         return {'FINISHED'}
     
-
-
 class Ready_made(bpy.types.Operator):
     bl_idname = "object.ready_made"
     bl_label = "Ready made Object"

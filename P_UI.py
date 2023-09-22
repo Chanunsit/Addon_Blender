@@ -40,6 +40,7 @@ class VIEW3D_PT_Panda(bpy.types.Panel):
         Panda_Property = scene.Panda_Tools
         row = layout.row()    
         row.prop(Panda_Property, "option_menu_ui",text="", expand=True)
+        row.alert = True
         row.operator(P_Website_Operators.OpenWebsiteOperator.bl_idname, text="LogWork").action="@_Logwork"
 
         if Panda_Property.option_menu_ui == "A":
@@ -270,11 +271,44 @@ class VIEW3D_PT_Panda(bpy.types.Panel):
 
             box = layout.box()
             row = box.row()
-            row.label(text="Index Face", icon_value=P_icons.custom_icons["custom_icon_3"].icon_id)
+            row.prop(Panda_Property, "Face_index",text="Face")
+            row.operator(P_View3D_Operators.Speed_process.bl_idname,text="", icon_value=P_icons.custom_icons["custom_icon_3"].icon_id).action="@_Find_face_index"
+            box = layout.box()
             row = box.row()
-            row.prop(Panda_Property, "Face_index")
+            row.label(text="Vertext Color")
+            row.operator(P_View3D_Operators.Speed_process.bl_idname,text="Clear !", icon_value=P_icons.custom_icons["custom_icon_3"].icon_id).action="@_Clear_ColorVertext"
 
-            row.operator(P_View3D_Operators.Speed_process.bl_idname,text="Catch !").action="@_Find_face_index"
+            box = layout.box()
+            row = box.row()
+            row.label(text="Set name")
+            row = box.row()
+            row.prop(Panda_Property, "naming_prifix",text="Pre")
+            row = box.row()
+            row.prop(Panda_Property, "naming_mid",text="Name")
+            row.prop(Panda_Property, "counter_name_mid", text="")
+            row = box.row()
+            # row.prop(Panda_Property, "naming_number",text="Num")
+            # row = box.row()
+            row.prop(Panda_Property, "naming_suffix",text="Suf")
+            row.prop(Panda_Property, "counter_name_suffix", text="")
+            row = box.row()
+
+            row.operator(P_View3D_Operators.Speed_process.bl_idname,text="Set !").action="@_Set_NameObject"
+
+            box = layout.box()
+            row = box.row()
+            row.label(text="Drop Vertex color")
+            row = box.row(align=True)
+            row.operator(P_View3D_Operators.Speed_process.bl_idname,text="Black").action="@_Drop_Black_vertex"
+            row.operator(P_View3D_Operators.Speed_process.bl_idname,text="Red").action="@_Drop_Red_vertex"
+            row.operator(P_View3D_Operators.Speed_process.bl_idname,text="Green").action="@_Drop_Green_vertex"
+            row.operator(P_View3D_Operators.Speed_process.bl_idname,text="Blue").action="@_Drop_Blue_vertex"
+
+            box = layout.box()
+            row = box.row()
+            row.label(text="Bake Vertex color")
+            row = box.row(align=True)
+            row.operator(P_View3D_Operators.Speed_process.bl_idname,text="Bake").action="@_Add_bake_mat"
 
         if Panda_Property.option_menu_ui == "E": 
             # row.label(text="Web site")

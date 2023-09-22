@@ -15,7 +15,29 @@ def select_a_face():
         if not face.hide:
             face.select_set(True)
             break
+def append_material_slot_by_name(object, material_name):
+    # Check if the object is a mesh
+    if object and object.type == 'MESH':
+        # Check if the material exists in the materials data
+        if material_name in bpy.data.materials:
+            # Get the material index by name
+            material_index = bpy.data.materials.find(material_name)
 
+            # Check if the material is already assigned to the object
+            if material_index not in object.data.materials:
+                # Append the material to the object's material slots
+                object.data.materials.append(bpy.data.materials[material_index])
+
+                # Set the newly added material as active
+                object.active_material_index = len(object.data.materials) - 1
+
+                print(f"Appended material '{material_name}' to the object.")
+            else:
+                print(f"Material '{material_name}' is already assigned to the object.")
+        else:
+            print(f"Material '{material_name}' not found in the materials data.")
+    else:
+        print("No active mesh object selected.")
 def report_message(message, type='INFO'):
     bpy.ops.wm.popup_menu(message=message, title="Message", icon=type,icon_value=P_icons.custom_icons["custom_icon_1"].icon_id)
     # bpy.ops.wm.popup_menu(message=message, title="Message", icon=type, icon_value=bpy.data.images.load(icon_path).icon_id)
@@ -92,16 +114,37 @@ def settexel_textool(self, context):
         
     except: pass
 
-# def settexel_custom(self, context): 
-#     scene = context.scene 
-#     uv_texel_value = (context.scene.Panda_Tools.uv_texel_value)      
-#     try:
-#         scene.td.units = "1"
-#         scene.td.texture_size = "1"
-#         bpy.context.scene.td.density_set = str(uv_texel_value)
-#         bpy.ops.object.texel_density_check()
-#         bpy.ops.object.texel_density_set()
-#     except: pass
+def drop_vertexcolor(color_RGB, context): 
+    active_object = bpy.context.active_object
+
+    if active_object and active_object.type == 'MESH':
+        fill_color = color_RGB  # Red color as an example
+
+        selected_faces = [f for f in active_object.data.polygons if f.select]
+
+        if selected_faces:
+
+            bpy.ops.object.mode_set(mode='VERTEX_PAINT')
+
+            bpy.context.tool_settings.vertex_paint.brush.color = fill_color
+            
+            bpy.context.object.data.use_paint_mask = True
+
+            bpy.ops.paint.vertex_color_set()
+
+            bpy.ops.object.mode_set(mode='EDIT')
+
+            # print(f"Filled {len(selected_faces)} selected faces with color: {fill_color}")
+        else:
+            print("No faces are selected.")
+    else:
+        print("No active mesh object selected.")
+
+def check_material_slot(object, material_name):
+    for slot in object.material_slots:
+        if slot.material and slot.material.name == material_name:
+            return True
+    return False
  
 def BoundingToBox():
         selected_object = bpy.context.active_object
@@ -335,7 +378,6 @@ def Find_object_by_size():
                 
                 print(f"Object Name: {obj.name}, Size: {size}")
             
-# Specify the main folder and subfolder names
 def focus_UV_editor_area():
     for area in [a for a in bpy.context.screen.areas if a.type == 'IMAGE_EDITOR']:
                 for region in [r for r in area.regions if r.type == 'WINDOW']:

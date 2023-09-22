@@ -52,7 +52,8 @@ class MyProperties(PropertyGroup):
 #  option
     show_option_uvmap:bpy.props.BoolProperty(name="UV map option",default=False)
     follow_next_face:bpy.props.BoolProperty(name="Follow next face after hide",default=False)
-
+    counter_name_mid:bpy.props.BoolProperty(name="counter_number",default=False)
+    counter_name_suffix:bpy.props.BoolProperty(name="counter_number",default=False)
     # uv_offset:bpy.props.BoolProperty(name="ofFset UV")
     Size_object:bpy.props.FloatProperty(
         name="Find size object in select",
@@ -165,7 +166,6 @@ class MyProperties(PropertyGroup):
         description="specific face index",
         default= "1",
         maxlen= 8
-
     )
     
     
@@ -179,7 +179,29 @@ class MyProperties(PropertyGroup):
         items = find_size
     )
     
- 
+    naming_prifix:bpy.props.StringProperty(
+    name="Naming object",
+    description="specific face index",
+    default= "",  
+    )
+
+    naming_mid:bpy.props.StringProperty(
+        name="Naming object",
+        description="specific face index",
+        default= "",  
+    )
+
+    naming_number:bpy.props.StringProperty(
+    name="Naming object",
+    description="specific face index",
+    default= "",  
+    )
+
+    naming_suffix:bpy.props.StringProperty(
+    name="Naming object",
+    description="specific face index",
+    default= "",  
+    )
     
 classes = [MyProperties]
 def register():

@@ -101,32 +101,167 @@ class Speed_process(bpy.types.Operator):
 
         if self.action == "@_RotateX": 
             self.X_axis(self, context)
-
         elif self.action == "@_RotateY": 
             self.Y_axis(self, context)
-
         elif self.action == "@_RotateZ": 
             self.Z_axis(self, context) 
-
         elif self.action == "@_ScaleXYZ": 
-            self.XYZ_Scale(self, context)  
-        
+            self.XYZ_Scale(self, context)        
         elif self.action == "@_Get_Orientation": 
-            self.Get_Orientation(self, context) 
-        
+            self.Get_Orientation(self, context)      
         elif self.action == "@_AppAllTrasfrom": 
             self.Appy_all_trasfrom(self, context)
-
         elif self.action == "@_Bevel_Custom": 
             self.Bevel_Custom(self, context)
-
         elif self.action == "@_Find_face_index": 
             self.Find_face_index(self, context)
+        elif self.action == "@_Clear_ColorVertext": 
+            self.Clear_colorvertext(self, context)
+        elif self.action == "@_Set_NameObject": 
+            self.Set_NameObject(self, context)
+        elif self.action == "@_Drop_Black_vertex": 
+            self.Drop_Black_vertex(self, context)
+        elif self.action == "@_Drop_Red_vertex": 
+            self.Drop_Red_vertex(self, context)
+        elif self.action == "@_Drop_Green_vertex": 
+            self.Drop_Green_vertex(self, context)
+        elif self.action == "@_Drop_Blue_vertex": 
+            self.Drop_Blue_vertex(self, context)
+        elif self.action == "@_Add_bake_mat": 
+            self.Add_bake_mat(self, context)
         else:
              print("worng")
 
         return {'FINISHED'}
+    @staticmethod
+    def Add_bake_mat(self, context):
+        active_object = bpy.context.active_object
+        material_name = "Bake Mask"
+        material = bpy.data.materials.get(material_name)
+
+        if material is None:
+            new_material = bpy.data.materials.new(name= material_name)
+
+            new_material.use_nodes = True
+
+            shader_node = new_material.node_tree.nodes["Principled BSDF"]
+
+            vertex_color_node = new_material.node_tree.nodes.new(type='ShaderNodeVertexColor')
+            vertex_color_layer_name = "Attribute"
+
+            new_material.node_tree.links.new(vertex_color_node.outputs["Color"], shader_node.inputs["Base Color"])
+            vertex_color_node.layer_name = vertex_color_layer_name
+            
+            new_material.node_tree.nodes.new(type='ShaderNodeTexImage')
+            active_object.data.materials.append(new_material)
+
+        if  P_Funtion.check_material_slot(active_object, material_name):
+            material_index = active_object.data.materials.find(material_name)
+            active_object.active_material_index = material_index
+            # bpy.ops.object.material_slot_assign()
+            
+            print(material_index)
+        else:  
+            selected_object = bpy.context.active_object
+
+            if selected_object and selected_object.type == 'MESH':
+                
+                if material_name in bpy.data.materials:
+                    
+                    material_to_assign = bpy.data.materials[material_name]
+
+                    selected_object.data.materials.append(material_to_assign)
+
+                    
+                    selected_object.active_material_index = len(selected_object.data.materials) - 1
+
+                    print(f"Assigned material '{material_name}' to the object.")
+                else:
+                    print(f"Material '{material_name}' not found in the materials data.")
+            else:
+                print("No active mesh object selected.")
+
+            
+            
+
+    @staticmethod
+    def Drop_Black_vertex(color_RGB, context):
+        color_RGB = (0.0, 0.0, 0.0)
+        P_Funtion.drop_vertexcolor(color_RGB, context)
+        return {'FINISHED'}
+    @staticmethod
+    def Drop_Red_vertex(color_RGB, context):
+        color_RGB = (1.0, 0.0, 0.0)
+        P_Funtion.drop_vertexcolor(color_RGB, context)
+        return {'FINISHED'}
+    @staticmethod
+    def Drop_Green_vertex(color_RGB, context):
+        color_RGB = (0.0, 1.0, 0.0)
+        P_Funtion.drop_vertexcolor(color_RGB, context)
+        return {'FINISHED'}
+    @staticmethod
+    def Drop_Blue_vertex(color_RGB, context):
+        color_RGB = (0.0, 0.0, 1.0)
+        P_Funtion.drop_vertexcolor(color_RGB, context)
+        return {'FINISHED'}
     
+
+    @staticmethod
+    def Set_NameObject(self, context):
+        
+        scene = context.scene
+        Panda_Property = scene.Panda_Tools
+        
+        if Panda_Property.naming_prifix !="":
+            new_name_prefix = (Panda_Property.naming_prifix + "_")
+        else:
+            new_name_prefix = (Panda_Property.naming_prifix)
+
+        # new_name_mid = (Panda_Property.naming_mid + "_") 
+        new_name_mid = (Panda_Property.naming_mid + "_") if  Panda_Property.naming_mid != "" else Panda_Property.naming_mid
+
+        # new_name_number = (Panda_Property.naming_number) 
+        new_name_suffix = (Panda_Property.naming_suffix) 
+        counter = 1
+        
+
+        selected_objects = bpy.context.selected_objects
+
+        if selected_objects:
+            for obj in selected_objects:
+
+                if Panda_Property.counter_name_mid: 
+                    
+                    obj.name = new_name_prefix + new_name_mid + str(counter)+"_" + new_name_suffix
+                else:
+                    obj.name = new_name_prefix + new_name_mid + new_name_suffix
+               
+                if Panda_Property.counter_name_suffix: 
+                    
+                    obj.name = obj.name + str(counter)
+                else:
+                    obj.name = obj.name
+  
+                counter += 1
+        else:
+            print("No objects selected.")
+
+        return {'FINISHED'}
+  
+    @staticmethod
+    def Clear_colorvertext(self, context):
+        if bpy.context.active_object.mode == 'OBJECT':
+    
+            selected_objects = bpy.context.selected_objects
+            for obj in selected_objects: 
+                    obj.select_set(True)
+                    bpy.context.view_layer.objects.active = obj
+                    bpy.ops.object.mode_set(mode='VERTEX_PAINT')
+                    bpy.data.brushes["Draw"].color = (1, 1, 1)
+                    bpy.ops.paint.vertex_color_set()
+                    bpy.ops.object.mode_set(mode='OBJECT')
+
+        return {'FINISHED'}
     @staticmethod
     def Find_face_index(self, context):
         

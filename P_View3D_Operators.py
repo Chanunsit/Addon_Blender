@@ -92,7 +92,7 @@ class Speed_process(bpy.types.Operator):
     bl_icon = "CONSOLE"
     bl_space_type = "VIEW_3D" 
     bl_region_type = "UI" 
-    bl_description = "Rotate Axis XYZ by 90°"
+    bl_description = ""
     bl_options = {"REGISTER", "UNDO"}
     action : StringProperty(name="action")
     
@@ -117,6 +117,9 @@ class Speed_process(bpy.types.Operator):
             self.Find_face_index(self, context)
         elif self.action == "@_Clear_ColorVertext": 
             self.Clear_colorvertext(self, context)
+        elif self.action == "@_Clear_ColorAttribute": 
+            self.Clear_Colorattribute(self, context)  
+
         elif self.action == "@_Set_NameObject": 
             self.Set_NameObject(self, context)
         elif self.action == "@_Drop_Black_vertex": 
@@ -181,9 +184,6 @@ class Speed_process(bpy.types.Operator):
             else:
                 print("No active mesh object selected.")
 
-            
-            
-
     @staticmethod
     def Drop_Black_vertex(color_RGB, context):
         color_RGB = (0.0, 0.0, 0.0)
@@ -205,7 +205,6 @@ class Speed_process(bpy.types.Operator):
         P_Funtion.drop_vertexcolor(color_RGB, context)
         return {'FINISHED'}
     
-
     @staticmethod
     def Set_NameObject(self, context):
         
@@ -247,7 +246,20 @@ class Speed_process(bpy.types.Operator):
             print("No objects selected.")
 
         return {'FINISHED'}
-  
+    @staticmethod
+    def Clear_Colorattribute(self, context):
+
+        if bpy.context.active_object is not None:
+            selected_objects = bpy.context.selected_objects
+            obj = bpy.context.active_object
+            for obj in selected_objects:
+                try:
+                    for attribute in obj.data.color_attributes:
+                        print(f"Removed custom color attribute: {attribute.name}")
+                        bpy.ops.geometry.color_attribute_remove()
+                    bpy.ops.geometry.color_attribute_remove()
+                except:
+                    self.report({'ERROR'},obj.name+":  No Attibute ")
     @staticmethod
     def Clear_colorvertext(self, context):
         if bpy.context.active_object.mode == 'OBJECT':
@@ -456,6 +468,8 @@ class Uv(bpy.types.Operator):
             self.Set_name_uv_chanel(self, context)
         elif self.action == "@_remove_uv_chanel":
             self.remove_uv_chanel(self, context)
+        elif self.action == "@_remove_uv_specify":
+            self.remove_uv_specify(self, context)
         elif self.action == "@_Vertex_group":
             self.Vertex_group(self, context)
         elif self.action == "@_Select_group":
@@ -836,6 +850,22 @@ class Uv(bpy.types.Operator):
                 for i in range(2, len(obj.data.uv_layers)):
                     obj.data.uv_layers.remove(obj.data.uv_layers[2])
         print ("Removed UV more then 2")
+        return {'FINISHED'}
+    @staticmethod
+    def remove_uv_specify(self, context):
+        selected_objects = bpy.context.selected_objects
+        uv_index = (context.scene.Panda_Tools.UV_chanel) 
+        for obj in selected_objects:
+            if obj.type == 'MESH':
+                try: 
+                    obj.data.uv_layers.remove(obj.data.uv_layers[uv_index])
+                except:
+                    print("No That UV chanel")
+                    self.report({'ERROR'},obj.name+":  No index " + str(uv_index))
+                
+
+
+        print ("Removed UV",(uv_index))
         return {'FINISHED'}
 
 class Box_Builder(bpy.types.Operator):

@@ -48,7 +48,13 @@ class MyProperties(PropertyGroup):
     show_remove_link:bpy.props.BoolProperty(name="Show remove link",default=False)
     option_on_off:bpy.props.BoolProperty(name="Show remove link",default=False)
 # value
-    
+    UV_chanel:bpy.props.IntProperty(
+        name="Uv Chanel",
+        description="to specify UV index",
+        default= 0,
+        min=0,
+        max=100,
+    )
 #  option
     show_option_uvmap:bpy.props.BoolProperty(name="UV map option",default=False)
     follow_next_face:bpy.props.BoolProperty(name="Follow next face after hide",default=False)

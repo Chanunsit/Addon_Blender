@@ -277,6 +277,14 @@ class VIEW3D_PT_Panda(bpy.types.Panel):
             row = box.row()
             row.label(text="Vertext Color")
             row.operator(P_View3D_Operators.Speed_process.bl_idname,text="Clear !", icon_value=P_icons.custom_icons["custom_icon_3"].icon_id).action="@_Clear_ColorVertext"
+            row = box.row()
+            row.label(text="Color Attributes")
+            row.operator(P_View3D_Operators.Speed_process.bl_idname,text="Clear !", icon_value=P_icons.custom_icons["custom_icon_3"].icon_id).action="@_Clear_ColorAttribute"
+            
+            box = layout.box()
+            row = box.row(align=True)
+            row.prop(Panda_Property, "UV_chanel",text="")
+            row.operator(P_View3D_Operators.Uv.bl_idname, text="Del UV").action="@_remove_uv_specify"
 
             box = layout.box()
             row = box.row()

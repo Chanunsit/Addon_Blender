@@ -115,6 +115,8 @@ class Speed_process(bpy.types.Operator):
             self.Bevel_Custom(self, context)
         elif self.action == "@_Find_face_index": 
             self.Find_face_index(self, context)
+        elif self.action == "@_Find_edge_index": 
+            self.Find_edge_index(self, context)
         elif self.action == "@_Clear_ColorVertext": 
             self.Clear_colorvertext(self, context)
         elif self.action == "@_Clear_ColorAttribute": 
@@ -132,10 +134,29 @@ class Speed_process(bpy.types.Operator):
             self.Drop_Blue_vertex(self, context)
         elif self.action == "@_Add_bake_mat": 
             self.Add_bake_mat(self, context)
+        elif self.action == "@_Loop_manager": 
+            self.Loop_manager(self, context)
         else:
              print("worng")
 
         return {'FINISHED'}
+    @staticmethod
+    def Loop_manager(self, context):
+        scene = context.scene
+        gap_edge = (context.scene.Panda_Tools.Gap_loop)
+        bpy.ops.mesh.loop_multi_select(ring=True)
+
+        bpy.ops.mesh.select_nth(skip=gap_edge,offset=1)
+        if context.scene.Panda_Tools.Loop_edge:
+            bpy.ops.mesh.loop_multi_select(ring=False)
+        if context.scene.Panda_Tools.remove_edge:
+            bpy.ops.mesh.dissolve_edges()
+
+
+
+        
+        return {'FINISHED'}
+    
     @staticmethod
     def Add_bake_mat(self, context):
         active_object = bpy.context.active_object
@@ -231,7 +252,7 @@ class Speed_process(bpy.types.Operator):
 
                 if Panda_Property.counter_name_mid: 
                     
-                    obj.name = new_name_prefix + new_name_mid + str(counter)+"_" + new_name_suffix
+                    obj.name = new_name_prefix + new_name_mid + str(counter) + new_name_suffix
                 else:
                     obj.name = new_name_prefix + new_name_mid + new_name_suffix
                
@@ -248,18 +269,21 @@ class Speed_process(bpy.types.Operator):
         return {'FINISHED'}
     @staticmethod
     def Clear_Colorattribute(self, context):
-
+        
         if bpy.context.active_object is not None:
             selected_objects = bpy.context.selected_objects
             obj = bpy.context.active_object
             for obj in selected_objects:
-                try:
-                    for attribute in obj.data.color_attributes:
-                        print(f"Removed custom color attribute: {attribute.name}")
+                bpy.context.view_layer.objects.active = obj
+            
+                try:   
+                    for i in obj.data.color_attributes:
                         bpy.ops.geometry.color_attribute_remove()
-                    bpy.ops.geometry.color_attribute_remove()
+                        bpy.ops.geometry.color_attribute_remove()
                 except:
                     self.report({'ERROR'},obj.name+":  No Attibute ")
+            
+        
     @staticmethod
     def Clear_colorvertext(self, context):
         if bpy.context.active_object.mode == 'OBJECT':
@@ -297,6 +321,36 @@ class Speed_process(bpy.types.Operator):
                 print(f"selected the specific face: {target_face_index} ")  
             else:
                 print(f"Face index {target_face_index} is out of range.")
+    
+        else:
+            print("No active mesh object selected.")
+
+
+        return {'FINISHED'}
+    
+    @staticmethod
+    def Find_edge_index(self, context):
+        
+        selected_object = bpy.context.active_object
+        scene = context.scene
+        Panda_Property = scene.Panda_Tools
+        Edge_index = int (Panda_Property.Edge_index) 
+        if selected_object and selected_object.type == 'MESH':
+            bpy.ops.mesh.select_mode(use_extend=False, use_expand=False, type='EDGE')
+
+            target_edge_index = Edge_index
+            if 0 <= target_edge_index < len(selected_object.data.edges):
+               
+                bpy.ops.object.mode_set(mode='EDIT')
+                bpy.ops.mesh.select_all(action='DESELECT')
+                bpy.ops.object.mode_set(mode='OBJECT')
+
+                selected_object.data.edges[target_edge_index].select = True
+
+                bpy.ops.object.mode_set(mode='EDIT')
+                print(f"selected the specific edge: {target_edge_index} ")  
+            else:
+                print(f"Face index {target_edge_index} is out of range.")
     
         else:
             print("No active mesh object selected.")

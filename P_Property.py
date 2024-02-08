@@ -55,6 +55,16 @@ class MyProperties(PropertyGroup):
         min=0,
         max=100,
     )
+
+    Gap_loop:bpy.props.IntProperty(
+        name="Gap loop",
+        description="set distance gap loop",
+        default= 1,
+        min=1,
+        max=10,
+    )
+    Loop_edge:bpy.props.BoolProperty(name="loop edge",default=False)
+    remove_edge:bpy.props.BoolProperty(name="Remove Edge",default=False)
 #  option
     show_option_uvmap:bpy.props.BoolProperty(name="UV map option",default=False)
     follow_next_face:bpy.props.BoolProperty(name="Follow next face after hide",default=False)
@@ -173,7 +183,12 @@ class MyProperties(PropertyGroup):
         default= "1",
         maxlen= 8
     )
-    
+    Edge_index:bpy.props.StringProperty(
+        name="",
+        description="specific edge index",
+        default= "1",
+        maxlen= 8
+    )
     
     selected_texture : EnumProperty(
         name="Tab",

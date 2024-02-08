@@ -270,8 +270,11 @@ class UV_Editor(bpy.types.Operator):
     @staticmethod
     def Apply_texel(self, context):
         scene = context.scene 
+        my_texel=  context.scene.Panda_Tools.uv_texel_value
+        bpy.context.scene.texToolsSettings.texel_density = float(my_texel)
+        bpy.context.scene.texToolsSettings.texel_get_mode = '1024'
         bpy.ops.uv.textools_texel_density_set()
-        print("Picked texel")
+        print("Apply texel")
         return {'FINISHED'}
     
     @staticmethod

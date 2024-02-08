@@ -123,7 +123,19 @@ class VIEW3D_PT_Panda(bpy.types.Panel):
                 row.prop(Panda_Property, "bevel_segments_input_smooth", text="")
             row = box.row()
             row.operator(P_View3D_Operators.Speed_process.bl_idname, text="Bevel").action="@_Bevel_Custom" 
-           
+
+            box = layout.box()
+            row = box.row()
+            row.label(text="Loop Manager") 
+            row = box.row()
+            row.label(text="Edge gap") 
+            row.prop(Panda_Property, "Gap_loop", text="")
+            row = box.row()
+            row.prop(Panda_Property, "Loop_edge", text="Loop")
+            row.prop(Panda_Property, "remove_edge", text="Del edge")
+            row = box.row()
+            row.operator(P_View3D_Operators.Speed_process.bl_idname, text="Optimize Loop").action="@_Loop_manager" 
+
         
         if Panda_Property.option_menu_ui == "B":
             row = layout.row()
@@ -273,6 +285,9 @@ class VIEW3D_PT_Panda(bpy.types.Panel):
             row = box.row()
             row.prop(Panda_Property, "Face_index",text="Face")
             row.operator(P_View3D_Operators.Speed_process.bl_idname,text="", icon_value=P_icons.custom_icons["custom_icon_3"].icon_id).action="@_Find_face_index"
+            row = box.row()
+            row.prop(Panda_Property, "Edge_index",text="Edge")
+            row.operator(P_View3D_Operators.Speed_process.bl_idname,text="", icon_value=P_icons.custom_icons["custom_icon_3"].icon_id).action="@_Find_edge_index"
             box = layout.box()
             row = box.row()
             row.label(text="Vertext Color")

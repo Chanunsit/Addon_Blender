@@ -126,7 +126,7 @@ class VIEW3D_PT_Panda(bpy.types.Panel):
 
             box = layout.box()
             row = box.row()
-            row.label(text="Loop Manager") 
+            row.label(text="Loop Manager_updated") 
             row = box.row()
             row.label(text="Edge gap") 
             row.prop(Panda_Property, "Gap_loop", text="")

@@ -56,7 +56,7 @@ class PerformActionOperator(bpy.types.Operator):
         data = response.read()
 
         # Save the updated addon zip file in the addon directory
-        updated_addon_file = os.path.join(addon_dir, "main.zip")
+        updated_addon_file = os.path.join(addon_dir, "PandaTools-main.zip")
         with open(updated_addon_file, "wb") as f:
             f.write(data)
 

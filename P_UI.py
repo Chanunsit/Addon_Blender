@@ -126,7 +126,7 @@ class VIEW3D_PT_Panda(bpy.types.Panel):
 
             box = layout.box()
             row = box.row()
-            row.label(text="Loop Manager_updated") 
+            row.label(text="Loop Manager") 
             row = box.row()
             row.label(text="Edge gap") 
             row.prop(Panda_Property, "Gap_loop", text="")
@@ -272,7 +272,13 @@ class VIEW3D_PT_Panda(bpy.types.Panel):
             row = box.row()
             
             row.operator(P_View3D_Operators.Box_Builder.bl_idname, text="Opposite Face").action="@_Opposite_Face"
-            row = layout.row()
+
+            box = layout.box()
+            row = box.row()
+            row.operator(P_View3D_Operators.Box_Builder.bl_idname, text="Optimize Box").action="@_Optimize_to_box"
+            
+            
+
         if Panda_Property.option_menu_ui == "D":
             row = layout.row()
             box = layout.box()

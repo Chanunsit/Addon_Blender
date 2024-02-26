@@ -274,8 +274,6 @@ class VIEW3D_PT_Panda(bpy.types.Panel):
             
             row.operator(P_View3D_Operators.Box_Builder.bl_idname, text="Opposite Face").action="@_Opposite_Face"
 
-
-
             box = layout.box()
             row = box.row()
             row.operator(P_View3D_Operators.Box_Builder.bl_idname, text="Optimize Box").action="@_Optimize_to_box"

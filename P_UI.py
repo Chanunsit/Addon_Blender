@@ -124,7 +124,6 @@ class VIEW3D_PT_Panda(bpy.types.Panel):
                 row.prop(Panda_Property, "bevel_offset_input_smooth", text="")
                 row.prop(Panda_Property, "bevel_segments_input_smooth", text="")
             row = box.row()
-<<<<<<< Updated upstream
             row.operator(P_View3D_Operators.Speed_process.bl_idname, text="Bevel").action="@_Bevel_Custom" 
 
             box = layout.box()
@@ -141,10 +140,6 @@ class VIEW3D_PT_Panda(bpy.types.Panel):
 
         
         if Panda_Property.option_menu_ui == "B":
-=======
-            row.operator(P_View3D_Operators.Speed_process.bl_idname, text="Bevel").action="@_Bevel_Custom"        
-        elif Panda_Property.option_menu_ui == "B":
->>>>>>> Stashed changes
             row = layout.row()
             box = layout.box()
             row = box.row(align=True)
@@ -278,31 +273,28 @@ class VIEW3D_PT_Panda(bpy.types.Panel):
             row = box.row()
             
             row.operator(P_View3D_Operators.Box_Builder.bl_idname, text="Opposite Face").action="@_Opposite_Face"
-<<<<<<< HEAD
+
 
             box = layout.box()
             row = box.row()
             row.operator(P_View3D_Operators.Box_Builder.bl_idname, text="Optimize Box").action="@_Optimize_to_box"
             
             
-<<<<<<< Updated upstream
 
-=======
             row = layout.row()
->>>>>>> parent of 74b4bff (OPTIMIZE BRICK)
+
         if Panda_Property.option_menu_ui == "D":
-=======
+
             row.operator(P_View3D_Operators.Box_Builder.bl_idname, text="Opposite Face").action="@_Opposite_Face"
             row = layout.row()
         elif Panda_Property.option_menu_ui == "D":
->>>>>>> Stashed changes
+
             row = layout.row()
             box = layout.box()
             row = box.row()
             row.label(text=": OBject preset", icon_value=P_icons.custom_icons["custom_icon_3"].icon_id)
             row = box.row() 
             row.operator(P_View3D_Operators.Ready_made.bl_idname, text="Hexagon").action="@_Hexagon"
-<<<<<<< Updated upstream
 
             box = layout.box()
             row = box.row()
@@ -357,10 +349,6 @@ class VIEW3D_PT_Panda(bpy.types.Panel):
             row.operator(P_View3D_Operators.Speed_process.bl_idname,text="Bake").action="@_Add_bake_mat"
 
         if Panda_Property.option_menu_ui == "E": 
-=======
-            row = layout.row()
-        elif Panda_Property.option_menu_ui == "E": 
->>>>>>> Stashed changes
             # row.label(text="Web site")
             box = layout.box()
             row = box.row()

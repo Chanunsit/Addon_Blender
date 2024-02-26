@@ -907,6 +907,7 @@ class Uv(bpy.types.Operator):
                     obj.data.uv_layers.remove(obj.data.uv_layers[2])
         print ("Removed UV more then 2")
         return {'FINISHED'}
+<<<<<<< Updated upstream
     @staticmethod
     def remove_uv_specify(self, context):
         selected_objects = bpy.context.selected_objects
@@ -923,6 +924,8 @@ class Uv(bpy.types.Operator):
 
         print ("Removed UV",(uv_index))
         return {'FINISHED'}
+=======
+>>>>>>> Stashed changes
 
 class Box_Builder(bpy.types.Operator):
     bl_idname = "object.box_builder"
@@ -1187,6 +1190,7 @@ class Box_Builder(bpy.types.Operator):
                 P_Funtion.BoundingToBox()
                 bpy.context.object.name = "UBX_"
                 P_Funtion.Assign_Material()
+                
                 P_Funtion.MoveObjectToCollection()
                 obj.select_set(False)
 
@@ -1253,7 +1257,11 @@ class Box_Builder(bpy.types.Operator):
         
         
         return {'FINISHED'}
+<<<<<<< Updated upstream
     
+=======
+
+>>>>>>> Stashed changes
 class Ready_made(bpy.types.Operator):
     bl_idname = "object.ready_made"
     bl_label = "Ready made Object"

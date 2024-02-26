@@ -15,11 +15,12 @@ from . import P_Boolean_Operators
 from . import P_UI
 from . import P_Updater
 from . import P_Property
+from . import P_Bake_Operators
 
 
 classes=[P_View3D_Operators,
           P_UvEditor_Operators, P_UI,
-            P_Updater,P_Website_Operators,P_Boolean_Operators,P_Property]
+            P_Updater,P_Website_Operators,P_Boolean_Operators,P_Property,P_Bake_Operators]
 def register():
     for cls in classes:
         cls.register()

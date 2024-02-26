@@ -4,6 +4,7 @@ import bpy.utils.previews
 from . import P_View3D_Operators
 from . import P_UvEditor_Operators
 from . import P_Website_Operators
+from . import P_Bake_Operators
 
 from . import P_icons
 
@@ -32,7 +33,8 @@ class VIEW3D_PT_Panda(bpy.types.Panel):
             layout.label(text="Object", icon_value=P_icons.custom_icons["custom_icon_1"].icon_id)
         elif Panda_Property.option_menu_ui == "E":  
             layout.label(text="Internet", icon_value=P_icons.custom_icons["custom_icon_1"].icon_id)
-
+        elif Panda_Property.option_menu_ui == "F":  
+            layout.label(text="Bake", icon_value=P_icons.custom_icons["custom_icon_1"].icon_id)
 
     def draw(self, context):
         layout = self.layout
@@ -122,6 +124,7 @@ class VIEW3D_PT_Panda(bpy.types.Panel):
                 row.prop(Panda_Property, "bevel_offset_input_smooth", text="")
                 row.prop(Panda_Property, "bevel_segments_input_smooth", text="")
             row = box.row()
+<<<<<<< Updated upstream
             row.operator(P_View3D_Operators.Speed_process.bl_idname, text="Bevel").action="@_Bevel_Custom" 
 
             box = layout.box()
@@ -138,6 +141,10 @@ class VIEW3D_PT_Panda(bpy.types.Panel):
 
         
         if Panda_Property.option_menu_ui == "B":
+=======
+            row.operator(P_View3D_Operators.Speed_process.bl_idname, text="Bevel").action="@_Bevel_Custom"        
+        elif Panda_Property.option_menu_ui == "B":
+>>>>>>> Stashed changes
             row = layout.row()
             box = layout.box()
             row = box.row(align=True)
@@ -202,9 +209,7 @@ class VIEW3D_PT_Panda(bpy.types.Panel):
             col1.operator(P_View3D_Operators.Uv.bl_idname, text="Clear").action="@_Clear_group"
             # col1.operator(P_View3D_Operators.Uv.bl_idname, text="Smart UV",icon = "ERROR" ).action="@_smart_unwrap"
            
-            if Panda_Property.live_uv == False:
-               
-                col1.operator(P_View3D_Operators.Uv.bl_idname, text="Unwrap").action="@_UV_quick" 
+            
             col2 = row.column(align=True)
             if Panda_Property.live_uv: 
                 col2.alert = True
@@ -221,7 +226,9 @@ class VIEW3D_PT_Panda(bpy.types.Panel):
             row = box.row(align=True) 
             row.operator(P_View3D_Operators.Uv.bl_idname, text="Shap").action="@_Shap_to_Seam"
             row.operator(P_View3D_Operators.Uv.bl_idname, text="Island").action="@_Island_to_Seam"
-            
+            if Panda_Property.live_uv == False:
+               
+                row.operator(P_View3D_Operators.Uv.bl_idname, text="Unwrap").action="@_UV_quick" 
             
             
             box = layout.box()
@@ -251,9 +258,8 @@ class VIEW3D_PT_Panda(bpy.types.Panel):
             row = box.row() 
             row.label(text="Edit", icon_value=P_icons.custom_icons["custom_icon_2"].icon_id)
             row = box.row() 
-            row.operator(P_View3D_Operators.Uv.bl_idname, text="Rotate 90").action="@_RotateUV90"
-            
-        if Panda_Property.option_menu_ui == "C":
+            row.operator(P_View3D_Operators.Uv.bl_idname, text="Rotate 90").action="@_RotateUV90"           
+        elif Panda_Property.option_menu_ui == "C":
             row = layout.row()
             box = layout.box()
             row = box.row() 
@@ -286,14 +292,21 @@ class VIEW3D_PT_Panda(bpy.types.Panel):
 
            
             
+<<<<<<< Updated upstream
 
         if Panda_Property.option_menu_ui == "D":
+=======
+            row.operator(P_View3D_Operators.Box_Builder.bl_idname, text="Opposite Face").action="@_Opposite_Face"
+            row = layout.row()
+        elif Panda_Property.option_menu_ui == "D":
+>>>>>>> Stashed changes
             row = layout.row()
             box = layout.box()
             row = box.row()
             row.label(text=": OBject preset", icon_value=P_icons.custom_icons["custom_icon_3"].icon_id)
             row = box.row() 
             row.operator(P_View3D_Operators.Ready_made.bl_idname, text="Hexagon").action="@_Hexagon"
+<<<<<<< Updated upstream
 
             box = layout.box()
             row = box.row()
@@ -348,6 +361,10 @@ class VIEW3D_PT_Panda(bpy.types.Panel):
             row.operator(P_View3D_Operators.Speed_process.bl_idname,text="Bake").action="@_Add_bake_mat"
 
         if Panda_Property.option_menu_ui == "E": 
+=======
+            row = layout.row()
+        elif Panda_Property.option_menu_ui == "E": 
+>>>>>>> Stashed changes
             # row.label(text="Web site")
             box = layout.box()
             row = box.row()
@@ -384,7 +401,62 @@ class VIEW3D_PT_Panda(bpy.types.Panel):
             
             row = layout.row()
             row.prop(Panda_Property, "show_remove_link", text="Remove link")
+        elif Panda_Property.option_menu_ui == "F":
+            row = layout.row()
+
+            box = layout.box()
+
+            row = box.row()
+            
+            row.label(text="Mask Color")
+            row = box.row(align=True)
+            if "Mask_Black" not in bpy.data.materials or "Mask_Red" not in bpy.data.materials or "Mask_Green" not in bpy.data.materials or "Mask_Blue" not in bpy.data.materials:   
+                row.alert = True
+                row.operator(P_Bake_Operators.Bake_material.bl_idname,text="Start !").action="@_Create_Mask_Mat"
+            else:
+                row.scale_y = 1.5
+                row.operator(P_Bake_Operators.Bake_material.bl_idname,text="Black",icon_value=P_icons.custom_icons["custom_icon_17"].icon_id).action="@_Assigen_Black"
+                row.operator(P_Bake_Operators.Bake_material.bl_idname,text="Red",icon_value=P_icons.custom_icons["custom_icon_14"].icon_id).action="@_Assigen_Red"
+                row.operator(P_Bake_Operators.Bake_material.bl_idname,text="Green",icon_value=P_icons.custom_icons["custom_icon_15"].icon_id).action="@_Assigen_Green"
+                row.operator(P_Bake_Operators.Bake_material.bl_idname,text="Blue",icon_value=P_icons.custom_icons["custom_icon_16"].icon_id).action="@_Assigen_Blue"
+            
+            box = layout.box()
+            row = box.row()
+            scene = context.scene
+            rd = scene.render
+
+            if rd.has_multiple_engines:
         
+                row.label(text="Render")
+                row.scale_x = 1.5
+                row.prop(rd, "engine", text="")
+            
+
+            layout = self.layout
+            
+            row = box.row()
+            # Check if there is an active object with a UV map
+            if bpy.context.active_object and bpy.context.active_object.type == 'MESH':
+                obj = bpy.context.active_object
+                uv_maps = obj.data.uv_layers  # Get all UV maps
+
+                if uv_maps:
+                    row.label(text="UV Maps:")
+
+                    row.prop(context.scene.Panda_Tools, "active_uv_map_index", text="")
+
+                    # Iterate through UV maps and display their indices and names
+                    # for index, uv_map in enumerate(uv_maps):
+                    #     layout.label(text=f"Index {index}: {uv_map.name}")
+
+                else:
+                    layout.label(text="No UV maps on the selected object.")
+            else:
+                layout.label(text="No active object selected.")
+
+            row = layout.row()
+            row.operator(P_Bake_Operators.Bake_material.bl_idname,text="Bake").action="@_Bake"
+
 
 class UV_PT_Panda(bpy.types.Panel):
 

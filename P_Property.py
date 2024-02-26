@@ -10,6 +10,7 @@ option_tap = {
     "C": {"icon": "FILE_3D", "label": "Box builder"},
     "D": {"icon": "SHADERFX", "label": "Object"},
     "E": {"icon": "URL", "label": "Internet"},
+    "F": {"icon": "URL", "label": "Bake"},
     # "F": {"icon": "OUTLINER_OB_VOLUME", "label": "open appication on youre pc"} NEW!
 }
 
@@ -68,8 +69,19 @@ class MyProperties(PropertyGroup):
 #  option
     show_option_uvmap:bpy.props.BoolProperty(name="UV map option",default=False)
     follow_next_face:bpy.props.BoolProperty(name="Follow next face after hide",default=False)
+<<<<<<< Updated upstream
     counter_name_mid:bpy.props.BoolProperty(name="counter_number",default=False)
     counter_name_suffix:bpy.props.BoolProperty(name="counter_number",default=False)
+=======
+    
+    active_uv_map_index:bpy.props.IntProperty(
+    name="Active UV Map Index",
+    description="Index of the active UV map",
+    default=0,
+    min=0,
+    max=10, 
+    )
+>>>>>>> Stashed changes
     # uv_offset:bpy.props.BoolProperty(name="ofFset UV")
     Size_object:bpy.props.FloatProperty(
         name="Find size object in select",

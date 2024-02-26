@@ -113,6 +113,7 @@ def settexel_textool(self, context):
         bpy.ops.uv.textools_texel_density_set()
         
     except: pass
+<<<<<<< Updated upstream
 
 def drop_vertexcolor(color_RGB, context): 
     active_object = bpy.context.active_object
@@ -145,6 +146,8 @@ def check_material_slot(object, material_name):
         if slot.material and slot.material.name == material_name:
             return True
     return False
+=======
+>>>>>>> Stashed changes
  
 def BoundingToBox():
         selected_object = bpy.context.active_object
@@ -329,6 +332,16 @@ def Assign_Material():
         obj.data.materials[0] = material
     else:
         obj.data.materials.append(material)
+def Assign_MatToFace(Material_name,selected_object):
+    if Material_name not in [slot.material.name for slot in selected_object.material_slots]:
+        selected_object.data.materials.append(bpy.data.materials[Material_name])
+
+
+        for i, slot in enumerate(selected_object.material_slots):
+            if slot.material and slot.material.name == Material_name:
+                selected_object.active_material_index = i
+                break
+        bpy.ops.object.material_slot_assign() 
 
 def copy_files_from_subfolder(main_folder, sub_folder):
     main_folder_path = bpy.path.abspath(main_folder)

@@ -947,32 +947,13 @@ class Box_Builder(bpy.types.Operator):
             self.Extrude_to_opposite(self, context)
         elif self.action == "@_Optimize_to_box": 
             self.Optimize_to_box(self, context)
-        elif self.action == "@_merge_to_1_box": 
-            self.merge_to_1_box(self, context)
         else:
             print("Empty area has no action")
 
         return {'FINISHED'}
-
     @staticmethod
     def Optimize_to_box(self, context):
-        
         if bpy.context.active_object.mode == 'OBJECT':
-
-            bpy.ops.object.mode_set(mode='EDIT')
-            bpy.ops.mesh.select_all(action='SELECT')
-            bpy.ops.mesh.separate(type='LOOSE')
-            bpy.ops.object.mode_set(mode='OBJECT')
-            selected_objects = bpy.context.selected_objects
-            if selected_objects:
-                # Create an empty list to hold the separated objects
-                separated_objects = []
-                # Iterate over each selected object
-                for obj in selected_objects:
-                    # Check if the selected object is a mesh
-                    if obj.type == 'MESH':
-                        # Add the selected object to the list
-                        separated_objects.append(obj)
             
             selected_objects = bpy.context.selected_objects
             # Collect object name to remove in the end 
@@ -981,7 +962,7 @@ class Box_Builder(bpy.types.Operator):
             #     object_names.append(obj.name)
 
             bpy.ops.object.select_all(action='DESELECT') 
-            print("slected:",separated_objects)
+            # print("slected:",object_names)
 
             for obj in selected_objects: 
                 bpy.ops.object.select_all(action='DESELECT') 
@@ -989,7 +970,7 @@ class Box_Builder(bpy.types.Operator):
                 bpy.context.view_layer.objects.active = obj
                 # print(obj.name)
                 selected_object = bpy.context.object
-                # print(selected_object)
+                print(selected_object)
                 objects_list = [selected_object]
                 # Create a new object (e.g., a cube)
                 P_Funtion.GetBiggestFace() 
@@ -1004,7 +985,7 @@ class Box_Builder(bpy.types.Operator):
                 selected_object = bpy.context.object
                 objects_list.append(selected_object)
 
-                # print(objects_list)
+                print(objects_list)
 
                 
                 # Select the object at index 0
@@ -1020,150 +1001,22 @@ class Box_Builder(bpy.types.Operator):
                 # Apply the Shrinkwrap modifier
                 bpy.ops.object.modifier_apply(modifier=shrinkwrap_modifier.name)
 
-                # print(objects_list)
+                print(objects_list)
 
                 # Remove the object at index 1 from the scene
                 bpy.data.objects.remove(objects_list[1], do_unlink=True)      
 
                 bpy.ops.object.editmode_toggle()
                 bpy.ops.mesh.select_all(action='SELECT')
-                bpy.ops.mesh.remove_doubles(threshold=0.0001)
-                bpy.ops.mesh.normals_tools(mode='RESET')
+                bpy.ops.mesh.remove_doubles(threshold=0.001)
                 bpy.ops.mesh.tris_convert_to_quads()
                 bpy.ops.object.editmode_toggle()
                 bpy.ops.object.shade_flat()
 
-        
-            
-            if separated_objects:
-                # Deselect all objects
-                bpy.ops.object.select_all(action='DESELECT')
+                # objects_list.clear()
 
-                # Select the objects in the list
-                for obj in separated_objects:
-                    obj.select_set(True)
+        # print(objects_list)
 
-                # Activate the first selected object
-                bpy.context.view_layer.objects.active = separated_objects[0]
-
-                # Join the selected objects
-                bpy.ops.object.join()
-
-            
-      
-
-        if bpy.context.active_object.mode == 'EDIT':
-
-            bpy.ops.object.mode_set(mode='OBJECT')
-            selected_objects = []
-            for obj in bpy.context.scene.objects:
-                if obj.select_get():
-                    selected_objects.append(obj)
-
-            # for obj in selected_objects:
-            #     print("Selected Object:", obj.name)
-
-            bpy.ops.object.mode_set(mode='EDIT')
-            
-            bpy.ops.mesh.select_linked(delimit={'NORMAL'})
-            P_Funtion.GetFaceSeperated()
-            
-            
-            
-            for obj in bpy.context.scene.objects:
-                if obj.select_get():
-                    selected_objects.append(obj)
-
-            # for obj in selected_objects:
-            #     print("Selected Object:", obj.name)
-
-            bpy.ops.object.editmode_toggle()
-            P_Funtion.GetBiggestFace()
-            P_Funtion.SetOriantface() 
-            bpy.ops.object.mode_set(mode='OBJECT')
-            bpy.ops.object.origin_set(type='ORIGIN_GEOMETRY', center='MEDIAN')
-            P_Funtion.TransFromToOrient_Origin()
-            P_Funtion.BoundingToBox()
-            bpy.ops.view3d.snap_cursor_to_active()
-
-
-            obj.select_set(False)
-
-            for obj in bpy.context.scene.objects:
-                if obj.select_get():
-                    selected_objects.append(obj)
-   
-                # for obj in selected_objects:
-                #     print("Selected Object:", obj.name)
-            
-
-            # Select the object at index 1
-            bpy.ops.object.select_all(action='DESELECT') 
-            bpy.context.view_layer.objects.active = selected_objects[1]
-            selected_objects[1].select_set(True)
-
-            
-            bpy.ops.object.mode_set(mode='EDIT')
-            P_Funtion.GetBiggestFace()
-            bpy.ops.mesh.select_linked(delimit={'NORMAL'})
-            bpy.ops.mesh.select_all(action='INVERT')
-            bpy.ops.mesh.delete(type='FACE')
-            bpy.ops.mesh.select_all(action='SELECT')
-
-            scale_up  = 2
-            bpy.ops.transform.resize(value=(scale_up, scale_up, scale_up))
-
-
-            bpy.ops.object.mode_set(mode='OBJECT')
-            bpy.ops.object.origin_set(type='ORIGIN_GEOMETRY', center='MEDIAN')
-            bpy.ops.view3d.snap_selected_to_cursor(use_offset=False)
-
-            bpy.ops.view3d.snap_cursor_to_center()
-
-            # Add Shrinkwrap modifier to the selected object
-
-            shrinkwrap_modifier = selected_objects[1].modifiers.new(name="Shrinkwrap", type='SHRINKWRAP')
-            shrinkwrap_modifier.wrap_method = 'NEAREST_VERTEX'
-            shrinkwrap_modifier.target = selected_objects[2] 
-            bpy.ops.object.modifier_apply(modifier=shrinkwrap_modifier.name)
-
-            bpy.ops.object.editmode_toggle()
-            bpy.ops.mesh.select_all(action='SELECT')
-            bpy.ops.mesh.remove_doubles(threshold=0.0001)
-            bpy.ops.mesh.tris_convert_to_quads()
-            bpy.ops.object.editmode_toggle()
-            bpy.ops.object.shade_flat()
-
-           # Select the object at index 2
-            bpy.ops.object.select_all(action='DESELECT') 
-            bpy.context.view_layer.objects.active = selected_objects[2]
-            selected_objects[2].select_set(True)
-            print(selected_objects[2])
-            bpy.ops.object.delete(use_global=False)
-
-            # Select the object at index 1
-            selected_objects.remove(selected_objects[2])
-            # bpy.ops.object.mode_set(mode='EDIT')
-
-            if selected_objects:
-                # Deselect all objects
-                bpy.ops.object.select_all(action='DESELECT')
-
-                # Select the objects in the list
-                for obj in selected_objects:
-                    obj.select_set(True)
-
-                # Activate the first selected object
-                bpy.context.view_layer.objects.active = selected_objects[0]
-
-                # Join the selected objects
-                bpy.ops.object.join()
-            bpy.ops.object.mode_set(mode='EDIT')
-        else:
-            print("No objects selected.")
-        
-        
-       
 
 
     @staticmethod
@@ -1237,15 +1090,12 @@ class Box_Builder(bpy.types.Operator):
     
     @staticmethod
     def Opposite_Face(self, context):
-        # try:
-        #     P_Funtion.find_opposite_face()
-        # except:
-        #     self.report({'ERROR'}, "Pls,Select a face.")
-        self.report({'ERROR'}, "Function not ready")
-        
+        try:
+            P_Funtion.find_opposite_face()
+        except:
+            self.report({'ERROR'}, "Pls,Select a face.")
+        return {'FINISHED'}
     
-    
-        
     @staticmethod
     def Extrude_to_opposite(self, context):
         

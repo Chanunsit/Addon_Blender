@@ -927,12 +927,10 @@ class Box_Builder(bpy.types.Operator):
 
         elif self.action == "@_Optimize_to_box": 
             self.Optimize_to_box(self, context)
-
         else:
             print("Empty area has no action")
 
         return {'FINISHED'}
-
     @staticmethod
     def Optimize_to_box(self, context):
         if bpy.context.active_object.mode == 'OBJECT':
@@ -998,7 +996,6 @@ class Box_Builder(bpy.types.Operator):
                 # objects_list.clear()
 
         # print(objects_list)
-
 
 
 

@@ -273,6 +273,7 @@ class VIEW3D_PT_Panda(bpy.types.Panel):
             row = box.row()
             
             row.operator(P_View3D_Operators.Box_Builder.bl_idname, text="Opposite Face").action="@_Opposite_Face"
+<<<<<<< HEAD
 
 
             box = layout.box()
@@ -283,6 +284,9 @@ class VIEW3D_PT_Panda(bpy.types.Panel):
 
             row = layout.row()
 
+=======
+            row = layout.row()
+>>>>>>> parent of 74b4bff (OPTIMIZE BRICK)
         if Panda_Property.option_menu_ui == "D":
 
             row.operator(P_View3D_Operators.Box_Builder.bl_idname, text="Opposite Face").action="@_Opposite_Face"

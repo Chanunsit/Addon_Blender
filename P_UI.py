@@ -265,26 +265,18 @@ class VIEW3D_PT_Panda(bpy.types.Panel):
             row = box.row()
             row.prop(Panda_Property, "remove_reference", text=": Delete original")
             row = layout.row()
-           
-           
+            # row.operator(P_View3D_Operators.Box_Builder.bl_idname, text="Extrude to Opposite").action="@_Extrude_to_opposite"
             box = layout.box()
             row = box.row()
-            row.label(text=": Convert to Box", icon_value=P_icons.custom_icons["custom_icon_9"].icon_id)
+            row.label(text=": Selection", icon_value=P_icons.custom_icons["custom_icon_3"].icon_id)
             row = box.row()
-            row.operator(P_View3D_Operators.Box_Builder.bl_idname, text="Shrinkwrap to Box").action="@_Optimize_to_box"
-            # row = box.row()
-            # row.operator(P_View3D_Operators.Box_Builder.bl_idname, text="Merge to 1 box").action="@_merge_to_1_box"
-           
-           
-           
-           
-            # box = layout.box()
-            # row = box.row()
-            # row.label(text=": Not ready to use", icon_value=P_icons.custom_icons["custom_icon_3"].icon_id)
-            # row = box.row()
-            # row.operator(P_View3D_Operators.Box_Builder.bl_idname, text="Opposite Face").action="@_Opposite_Face"
+            
+            row.operator(P_View3D_Operators.Box_Builder.bl_idname, text="Opposite Face").action="@_Opposite_Face"
 
-           
+            box = layout.box()
+            row = box.row()
+            row.operator(P_View3D_Operators.Box_Builder.bl_idname, text="Optimize Box").action="@_Optimize_to_box"
+            
             
 
         if Panda_Property.option_menu_ui == "D":

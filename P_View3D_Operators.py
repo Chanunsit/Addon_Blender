@@ -905,25 +905,6 @@ class Uv(bpy.types.Operator):
                     obj.data.uv_layers.remove(obj.data.uv_layers[2])
         print ("Removed UV more then 2")
         return {'FINISHED'}
-<<<<<<< Updated upstream
-    @staticmethod
-    def remove_uv_specify(self, context):
-        selected_objects = bpy.context.selected_objects
-        uv_index = (context.scene.Panda_Tools.UV_chanel) 
-        for obj in selected_objects:
-            if obj.type == 'MESH':
-                try: 
-                    obj.data.uv_layers.remove(obj.data.uv_layers[uv_index])
-                except:
-                    print("No That UV chanel")
-                    self.report({'ERROR'},obj.name+":  No index " + str(uv_index))
-                
-
-
-        print ("Removed UV",(uv_index))
-        return {'FINISHED'}
-=======
->>>>>>> Stashed changes
 
 class Box_Builder(bpy.types.Operator):
     bl_idname = "object.box_builder"
@@ -943,18 +924,15 @@ class Box_Builder(bpy.types.Operator):
             self.Opposite_Face(self, context)
         elif self.action == "@_Extrude_to_opposite": 
             self.Extrude_to_opposite(self, context)
-<<<<<<< HEAD
-=======
+
         elif self.action == "@_Optimize_to_box": 
             self.Optimize_to_box(self, context)
->>>>>>> parent of 81755d2 (Add marge ShinkWrap to box)
+
         else:
             print("Empty area has no action")
 
         return {'FINISHED'}
-<<<<<<< HEAD
-    
-=======
+
     @staticmethod
     def Optimize_to_box(self, context):
         if bpy.context.active_object.mode == 'OBJECT':
@@ -1023,7 +1001,7 @@ class Box_Builder(bpy.types.Operator):
 
 
 
->>>>>>> parent of 81755d2 (Add marge ShinkWrap to box)
+
     @staticmethod
     def MakeToBox(self, context):
         
@@ -1112,11 +1090,7 @@ class Box_Builder(bpy.types.Operator):
         
         
         return {'FINISHED'}
-<<<<<<< Updated upstream
     
-=======
-
->>>>>>> Stashed changes
 class Ready_made(bpy.types.Operator):
     bl_idname = "object.ready_made"
     bl_label = "Ready made Object"

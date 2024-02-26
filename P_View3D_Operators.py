@@ -943,11 +943,87 @@ class Box_Builder(bpy.types.Operator):
             self.Opposite_Face(self, context)
         elif self.action == "@_Extrude_to_opposite": 
             self.Extrude_to_opposite(self, context)
+<<<<<<< HEAD
+=======
+        elif self.action == "@_Optimize_to_box": 
+            self.Optimize_to_box(self, context)
+>>>>>>> parent of 81755d2 (Add marge ShinkWrap to box)
         else:
             print("Empty area has no action")
 
         return {'FINISHED'}
+<<<<<<< HEAD
     
+=======
+    @staticmethod
+    def Optimize_to_box(self, context):
+        if bpy.context.active_object.mode == 'OBJECT':
+            
+            selected_objects = bpy.context.selected_objects
+            # Collect object name to remove in the end 
+            # object_names = []
+            # for obj in selected_objects:
+            #     object_names.append(obj.name)
+
+            bpy.ops.object.select_all(action='DESELECT') 
+            # print("slected:",object_names)
+
+            for obj in selected_objects: 
+                bpy.ops.object.select_all(action='DESELECT') 
+                obj.select_set(True)
+                bpy.context.view_layer.objects.active = obj
+                # print(obj.name)
+                selected_object = bpy.context.object
+                print(selected_object)
+                objects_list = [selected_object]
+                # Create a new object (e.g., a cube)
+                P_Funtion.GetBiggestFace() 
+                P_Funtion.SetOriantface() 
+                bpy.ops.object.mode_set(mode='OBJECT')
+                bpy.ops.object.origin_set(type='ORIGIN_GEOMETRY', center='MEDIAN')
+                P_Funtion.TransFromToOrient_Origin()
+                P_Funtion.BoundingToBox()
+                
+
+                # Add the new object to the list at position index 1
+                selected_object = bpy.context.object
+                objects_list.append(selected_object)
+
+                print(objects_list)
+
+                
+                # Select the object at index 0
+                bpy.context.view_layer.objects.active = objects_list[0]
+                objects_list[0].select_set(True)
+                bpy.ops.object.mode_set(mode='OBJECT')
+
+                    # Add Shrinkwrap modifier to the selected object
+                shrinkwrap_modifier = objects_list[0].modifiers.new(name="Shrinkwrap", type='SHRINKWRAP')
+                shrinkwrap_modifier.wrap_method = 'NEAREST_VERTEX'
+                shrinkwrap_modifier.target = objects_list[1]    
+                
+                # Apply the Shrinkwrap modifier
+                bpy.ops.object.modifier_apply(modifier=shrinkwrap_modifier.name)
+
+                print(objects_list)
+
+                # Remove the object at index 1 from the scene
+                bpy.data.objects.remove(objects_list[1], do_unlink=True)      
+
+                bpy.ops.object.editmode_toggle()
+                bpy.ops.mesh.select_all(action='SELECT')
+                bpy.ops.mesh.remove_doubles(threshold=0.001)
+                bpy.ops.mesh.tris_convert_to_quads()
+                bpy.ops.object.editmode_toggle()
+                bpy.ops.object.shade_flat()
+
+                # objects_list.clear()
+
+        # print(objects_list)
+
+
+
+>>>>>>> parent of 81755d2 (Add marge ShinkWrap to box)
     @staticmethod
     def MakeToBox(self, context):
         

@@ -113,7 +113,6 @@ def settexel_textool(self, context):
         bpy.ops.uv.textools_texel_density_set()
         
     except: pass
-<<<<<<< Updated upstream
 
 def drop_vertexcolor(color_RGB, context): 
     active_object = bpy.context.active_object
@@ -146,8 +145,6 @@ def check_material_slot(object, material_name):
         if slot.material and slot.material.name == material_name:
             return True
     return False
-=======
->>>>>>> Stashed changes
  
 def BoundingToBox():
         selected_object = bpy.context.active_object
